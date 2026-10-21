@@ -1,0 +1,25 @@
+# .NET build output
+bin/
+obj/
+.vs/
+*.user
+*.suo
+*.rsuser
+
+# Test output
+TestResults/
+*.trx
+coverage*/
+
+# Published binaries (distributed via GitHub Releases)
+publish/
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Logs and temp
+*.log
+*.tmp
+.DS_Store
+Thumbs.db

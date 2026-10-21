@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <UseWindowsForms>true</UseWindowsForms>
+    <AssemblyName>YangiAlifbo</AssemblyName>
+    <RootNamespace>YangiAlifbo</RootNamespace>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Core\Dictionaries\uzbek_words.txt" LogicalName="uzbek_words.txt" />
+    <EmbeddedResource Include="Core\Dictionaries\english_reject.txt" LogicalName="english_reject.txt" />
+  </ItemGroup>
+
+</Project>
