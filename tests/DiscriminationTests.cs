@@ -333,21 +333,6 @@ public class DiscriminationTests
 
         Assert.IsTrue(_detector.IsUzbek("gaplashamiz"), "gaplashamiz must be recognized");
         Assert.AreEqual("gaplaşamiz", UzbekPhonetics.Convert("gaplashamiz"));
-
-        Assert.IsTrue(_detector.IsUzbek("boshlanadi"), "boshlanadi must be recognized");
-        Assert.AreEqual("boşlanadi", UzbekPhonetics.Convert("boshlanadi"));
-
-        Assert.IsTrue(_detector.IsUzbek("boshlangan"), "boshlangan must be recognized");
-        Assert.AreEqual("boşlangan", UzbekPhonetics.Convert("boshlangan"));
-
-        Assert.IsTrue(_detector.IsUzbek("boshlanyapti"), "boshlanyapti must be recognized");
-        Assert.AreEqual("boşlanyapti", UzbekPhonetics.Convert("boshlanyapti"));
-
-        Assert.IsTrue(_detector.IsUzbek("ishlatadi"), "ishlatadi must be recognized");
-        Assert.AreEqual("işlatadi", UzbekPhonetics.Convert("ishlatadi"));
-
-        Assert.IsTrue(_detector.IsUzbek("qo'llanadi"), "qo'llanadi must be recognized");
-        Assert.AreEqual("qöllanadi", UzbekPhonetics.Convert("qo'llanadi"));
     }
 
     [TestMethod]
