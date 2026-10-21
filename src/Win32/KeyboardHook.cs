@@ -53,6 +53,9 @@ public sealed class KeyboardHook : IDisposable
     /// </summary>
     public TransliterationMode Mode { get; set; } = TransliterationMode.Strict;
 
+    /// <summary>Whether chat normalizer (colloquial words, contractions, w->sh, unaccented vowels) is active.</summary>
+    public bool IsChatSlangNormalizerEnabled { get; set; } = true;
+
     /// <summary>Running count of words converted this session (for statistics).</summary>
     public int WordsConverted { get; private set; }
 
@@ -316,20 +319,41 @@ public sealed class KeyboardHook : IDisposable
     /// </summary>
     private string? TryConvertWord(string word)
     {
-        // Quick check: does the word even contain convertible patterns?
-        if (!UzbekPhonetics.HasConvertiblePatterns(word))
+        if (string.IsNullOrWhiteSpace(word) || word.Length < 2)
             return null;
+
+        // Tier 1: Absolute protection for English and foreign words
+        if (_detector.IsForeignOrReject(word))
+            return null;
+
+        string workWord = word;
+        if (IsChatSlangNormalizerEnabled)
+        {
+            workWord = ChatNormalizer.Normalize(word);
+        }
+
+        // Quick check: does the workWord contain convertible patterns?
+        if (!UzbekPhonetics.HasConvertiblePatterns(workWord))
+        {
+            // If the word was expanded/normalized (e.g. contraction like bilmadm -> bilmadim, or kirasz -> kirasiz),
+            // and it changed from the original word:
+            if (workWord != word && _detector.IsUzbek(workWord))
+            {
+                return workWord;
+            }
+            return null;
+        }
 
         // In Aggressive mode, skip dictionary checks
         if (Mode == TransliterationMode.Aggressive)
         {
-            return UzbekPhonetics.Convert(word);
+            return UzbekPhonetics.Convert(workWord);
         }
 
         // Strict mode: verify the word is Uzbek before converting
-        if (_detector.IsUzbek(word))
+        if (_detector.IsUzbek(workWord))
         {
-            return UzbekPhonetics.Convert(word);
+            return UzbekPhonetics.Convert(workWord);
         }
 
         return null;

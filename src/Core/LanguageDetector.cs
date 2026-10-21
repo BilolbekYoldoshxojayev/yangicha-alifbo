@@ -28,6 +28,7 @@ public interface ILanguageDetector
 {
     bool ShouldConvert(string word, ConversionMode mode = ConversionMode.Strict);
     bool IsUzbek(string word);
+    bool IsForeignOrReject(string word);
     void AddToWhitelist(string word);
     void AddToBlacklist(string word);
     void ReloadUserLists();
@@ -80,6 +81,7 @@ public sealed class LanguageDetector : ILanguageDetector, IDisposable
         "moqchisiz", "sayliklar", "veradilar", "verdingiz", "verganlar",
         "versangiz", "ydiganlar",
         // 8-letter suffixes
+        "vottilar", "vottimiz",
         "adiganda", "adigandan", "adiganga", "adiganni", "averaman", "averamiz",
         "averasan", "averasiz", "averding", "avergach", "avergani", "aversang",
         "ayliklar", "chilikda", "chilikka", "chilikni", "ganingiz", "ingizdan",
@@ -90,6 +92,7 @@ public sealed class LanguageDetector : ILanguageDetector, IDisposable
         "olmaymiz", "olsangiz", "qaningiz", "veraylik", "verdilar",
         "versalar", "yaptilar", "ydiganda", "ydigandan", "ydiganga", "ydiganni",
         // 7-letter suffixes
+        "vording", "vordik", "vordim", "vorilar", "vorila", "voring", "vorish", "voradi",
         "adigan", "averadi", "averdik", "averdim", "avergan", "averish",
         "avermoq", "aversak", "aversam", "ayotgan", "chasiga", "dagilar",
         "gandilar", "gandimiz", "ganimiz", "imizdan", "ingizda", "ingizga", "ingizni",
@@ -99,6 +102,7 @@ public sealed class LanguageDetector : ILanguageDetector, IDisposable
         "olmaydi", "olsalar", "qandilar", "qandimiz", "qanimiz", "veraman", "veramiz",
         "verasan", "verasiz", "verding", "versang", "ydigan", "yotibdi",
         // 6-letter suffixes
+        "vottik", "vommiz", "vomman", "vossiz", "vosila", "votgan", "vovoti",
         "adilar", "averdi", "aversa", "chilik", "dingiz",
         "gancha", "gandan", "ganday", "gandek", "gandik", "gandim", "ganding", "ganing",
         "ganlar", "ganlik", "guncha", "ibdilar", "imizda", "imizga",
@@ -114,6 +118,7 @@ public sealed class LanguageDetector : ILanguageDetector, IDisposable
         "versak", "versam", "yapman", "yapmiz", "yapsan",
         "yapsiz", "ydilar", "yotgan",
         // 5-letter suffixes
+        "votti", "votdi", "vomiz", "voman", "vosiz", "vosan", "ekansz",
         "aylik", "dilar", "ganda", "ganim", "ganin",
         "ibman", "ibmiz", "ibsan", "ibsiz", "ingiz", "kanda", "kanim", "kanin", "larda",
         "larga", "larim", "larni", "likda", "likka",
@@ -124,6 +129,7 @@ public sealed class LanguageDetector : ILanguageDetector, IDisposable
         "qanin", "salar", "samiz", "sasiz", "saydi", "tilar",
         "verdi", "versa", "yapti", "yotir",
         // 4-letter suffixes
+        "voti", "misz",
         "aman", "amiz", "asan", "asiz", "aver",
         "ayin", "chak", "choq", "dagi", "ding",
         "dosh", "gach", "gani", "gina", "ibdi", "imiz",
@@ -132,6 +138,7 @@ public sealed class LanguageDetector : ILanguageDetector, IDisposable
         "qach", "qani", "qina", "sang", "ting",
         "yman", "ymiz", "ysan", "ysiz",
         // 3-letter suffixes
+        "amz", "asz", "ymz", "ysz", "vob",
         "adi", "ani", "cha", "chi", "dan",
         "day", "dek", "dik", "dim", "dir",
         "gan", "gil", "gin", "ida", "iga",
@@ -140,6 +147,7 @@ public sealed class LanguageDetector : ILanguageDetector, IDisposable
         "sam", "san", "sin", "siz", "tik",
         "tim", "ver", "ydi",
         // 2-letter suffixes
+        "dm", "dk", "sz",
         "ay", "da", "di", "ga", "ib", "im",
         "in", "ka", "ku", "li", "ma", "mi", "ng", "ni",
         "ov", "qa", "sa", "sh", "si", "ti", "uv", "yu",
@@ -230,6 +238,25 @@ public sealed class LanguageDetector : ILanguageDetector, IDisposable
     /// <summary>
     /// Determines whether a word is Uzbek with explicit mode control.
     /// </summary>
+        /// <summary>
+    /// Checks whether a word is in the user blacklist or English/foreign reject list (Tier 1).
+    /// </summary>
+    public bool IsForeignOrReject(string word)
+    {
+        if (string.IsNullOrWhiteSpace(word))
+            return false;
+
+        string normalized = NormalizeForLookup(word);
+
+        if (_userBlacklist.Contains(normalized))
+            return true;
+
+        if (_userWhitelist.Contains(normalized))
+            return false;
+
+        return _englishReject.Contains(normalized);
+    }
+
     public bool IsUzbek(string word, ConversionMode mode)
     {
         if (string.IsNullOrWhiteSpace(word) || word.Length < 2)
@@ -358,9 +385,9 @@ public sealed class LanguageDetector : ILanguageDetector, IDisposable
         // 3-letter
         "lar", "lik", "chi", "dan", "dek", "day", "gan", "qan", "kan",
         "ish", "sak", "sam", "san", "siz", "miz", "ini", "ida", "iga",
-        "tir", "dir", "sat", "kaz", "qaz", "gaz", "lan",
+        "tir", "dir", "sat", "kaz", "qaz", "gaz", "lan", "vor", "amz", "asz",
         // 2-letter
-        "da", "di", "ga", "ka", "qa", "ni", "im", "in", "ma", "sa", "sh", "si", "ti", "ib", "li", "il",
+        "da", "di", "ga", "ka", "qa", "ni", "im", "in", "ma", "sa", "sh", "si", "ti", "ib", "li", "il", "dm", "dk", "sz",
         // 1-letter
         "i", "k", "m", "q", "b", "n", "l", "t"
     };

@@ -41,6 +41,7 @@ internal sealed class TrayApplicationContext : ApplicationContext
     private readonly ToolStripMenuItem _strictModeItem;
     private readonly ToolStripMenuItem _aggressiveModeItem;
     private readonly ToolStripMenuItem _startupItem;
+    private readonly ToolStripMenuItem _chatSlangItem;
 
     // ── Hotkey Window ──────────────────────────────────────────────────
     private readonly HotkeyWindow _hotkeyWindow;
@@ -85,6 +86,11 @@ internal sealed class TrayApplicationContext : ApplicationContext
         // ── Ensure Startup is enabled by default ───────────────────
         EnsureStartupDefault();
 
+        _chatSlangItem = new ToolStripMenuItem("💬 Jonli til va chat qisqartmalari (Chat Slang Normalizer)", null, OnToggleChatSlang)
+        {
+            Checked = _keyboardHook.IsChatSlangNormalizerEnabled
+        };
+
         _startupItem = new ToolStripMenuItem("Windows bilan ishga tushirish (Run on Startup)", null, OnToggleStartup)
         {
             Checked = IsStartupEnabled()
@@ -94,13 +100,14 @@ internal sealed class TrayApplicationContext : ApplicationContext
         contextMenu.Items.Add(_enableItem);
         contextMenu.Items.Add(new ToolStripSeparator());
         contextMenu.Items.Add(modeMenu);
+        contextMenu.Items.Add(_chatSlangItem);
         contextMenu.Items.Add(new ToolStripSeparator());
         contextMenu.Items.Add("Oq ro'yxatni tahrirlash (Edit Whitelist)...", null, OnEditWhitelist);
         contextMenu.Items.Add("Qora ro'yxatni tahrirlash (Edit Blacklist)...", null, OnEditBlacklist);
         contextMenu.Items.Add(new ToolStripSeparator());
         contextMenu.Items.Add(_startupItem);
         contextMenu.Items.Add(new ToolStripSeparator());
-        contextMenu.Items.Add($"ℹ️ Haqida (About) — Lug'at: {_detector.UzbekLexiconCount:N0} so'z", null, OnAbout);
+        contextMenu.Items.Add($"ℹ️ Haqida (About) — v1.2.0 | Lug'at: {_detector.UzbekLexiconCount:N0} so'z", null, OnAbout);
         contextMenu.Items.Add("❌ Chiqish (Exit)", null, OnExit);
 
         // ── Create tray icon ───────────────────────────────────────
@@ -188,6 +195,12 @@ internal sealed class TrayApplicationContext : ApplicationContext
         "YangiAlifbo",
         "startup_disabled.flag");
 
+    private void OnToggleChatSlang(object? sender, EventArgs e)
+    {
+        _keyboardHook.IsChatSlangNormalizerEnabled = !_keyboardHook.IsChatSlangNormalizerEnabled;
+        _chatSlangItem.Checked = _keyboardHook.IsChatSlangNormalizerEnabled;
+    }
+
     private void OnToggleStartup(object? sender, EventArgs e)
     {
         if (IsStartupEnabled())
@@ -218,7 +231,7 @@ internal sealed class TrayApplicationContext : ApplicationContext
     {
         MessageBox.Show(
             "YangiAlifbo — O'zbek Yozuvi Konvertori\n" +
-            "Versiya 1.0.0\n\n" +
+            "Versiya 1.2.0 (Telegram va Jonli Muloqot Nashri)\n\n" +
             "1995 lotin alifbosidan 2024 yangi alifboga\n" +
             "real-vaqtda konvertatsiya qiladi.\n\n" +
             $"O'zbek lug'ati: {_detector.UzbekLexiconCount:N0} so'z\n" +
