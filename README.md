@@ -33,6 +33,7 @@ Get-FileHash .\YangiAlifbo.exe -Algorithm SHA256
 
 - **`Ctrl + Shift + U`** — konvertorni yoqish / o‘chirish.
 - Patnisdagi belgi: yashil — faol, kulrang — to‘xtatilgan. O‘ng tugma menyusida: yoqish/o‘chirish, rejim (Qat’iy / Agressiv), oq va qora ro‘yxatni tahrirlash, Windows bilan birga ishga tushirish, dastur haqida, chiqish.
+- **Avtomatik ishga tushirish** sukut bo‘yicha yoqilgan (v1.1.0 dan). Menyudan o‘chirsangiz, tanlov saqlanadi.
 - **Qat’iy rejim** (standart): faqat lug‘at yoki morfologiya tasdiqlagan so‘zlar o‘zgaradi. **Agressiv rejim**: filtrdan o‘tgan har qanday so‘z o‘zgaradi.
 - Shaxsiy ro‘yxatlar: `%AppData%\YangiAlifbo\user_whitelist.txt` va `user_blacklist.txt` (har qatorda bitta so‘z, saqlanganda qayta yuklanadi).
 
@@ -41,7 +42,7 @@ Get-FileHash .\YangiAlifbo.exe -Algorithm SHA256
 1. **Naqsh.** So‘zda `sh`, `ch`, `o‘`, `g‘` bo‘lmasa, unga tegilmaydi. Tutuq belgisi ajratgan `s'h` / `c'h` (Is’hoq, mus’haf, as’hob) hisobga olinmaydi.
 2. **Filtr.** 10 055 ta inglizcha va dasturlash so‘zi (`show`, `push`, `switch`, `catch`…) o‘zgartirilmaydi.
 3. **Lug‘at.** 938 526 yozuvli o‘zbek lug‘ati (so‘z va o‘zaklar, eski va yangi imloda).
-4. **Morfologiya.** 400+ qo‘shimchani (`-lar`, `-imiz`, `-dan`, `-gan`, `-yapti`…) ajratib, o‘zak qidiriladi.
+4. **Morfologiya.** 400+ qo‘shimchani (`-lar`, `-imiz`, `-dan`, `-gan`, `-yapti`…) va nisbat qo‘shimchalarini (`-n`, `-il`, `-t`, `-tir`) ajratib, o‘zak qidiriladi.
 
 Katta-kichik harf saqlanadi (`Shahar → Şahar`, `SHAHAR → ŞAHAR`), apostrofning 9 xil ko‘rinishi (`' ‘ ’ ʻ ʼ ` ´ ‛ ′`) taniladi.
 
@@ -49,7 +50,7 @@ Katta-kichik harf saqlanadi (`Shahar → Şahar`, `SHAHAR → ŞAHAR`), apostrof
 
 **Ma’lum cheklovlar:**
 - Administrator huquqi bilan ishlayotgan dasturlarda ishlamaydi (Windows UIPI chegarasi).
-- Qat’iy rejimda lug‘atda yo‘q so‘zlar o‘zgarmaydi — masalan, ba’zi atoqli otlar (`Toshkent`) va morfologiya topa olmagan ayrim shakllar (`boshlanadi`). Ularni oq ro‘yxatga qo‘shing yoki xato sifatida xabar bering.
+- Qat’iy rejimda lug‘atda yo‘q so‘zlar o‘zgarmaydi — masalan, ba’zi atoqli otlar (`Toshkent`). Ularni oq ro‘yxatga qo‘shing yoki xato sifatida xabar bering.
 
 ## Loyihani yig‘ish
 
