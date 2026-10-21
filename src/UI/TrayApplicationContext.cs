@@ -82,6 +82,9 @@ internal sealed class TrayApplicationContext : ApplicationContext
         modeMenu.DropDownItems.Add(_strictModeItem);
         modeMenu.DropDownItems.Add(_aggressiveModeItem);
 
+        // ── Ensure Startup is enabled by default ───────────────────
+        EnsureStartupDefault();
+
         _startupItem = new ToolStripMenuItem("Windows bilan ishga tushirish (Run on Startup)", null, OnToggleStartup)
         {
             Checked = IsStartupEnabled()
@@ -180,17 +183,34 @@ internal sealed class TrayApplicationContext : ApplicationContext
         OpenFileInEditor(LanguageDetector.GetBlacklistPath());
     }
 
+    private static readonly string StartupDisabledFlagPath = Path.Combine(
+        Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+        "YangiAlifbo",
+        "startup_disabled.flag");
+
     private void OnToggleStartup(object? sender, EventArgs e)
     {
         if (IsStartupEnabled())
         {
             RemoveFromStartup();
             _startupItem.Checked = false;
+            try
+            {
+                Directory.CreateDirectory(Path.GetDirectoryName(StartupDisabledFlagPath)!);
+                File.WriteAllText(StartupDisabledFlagPath, "disabled");
+            }
+            catch { }
         }
         else
         {
             AddToStartup();
             _startupItem.Checked = true;
+            try
+            {
+                if (File.Exists(StartupDisabledFlagPath))
+                    File.Delete(StartupDisabledFlagPath);
+            }
+            catch { }
         }
     }
 
@@ -223,6 +243,25 @@ internal sealed class TrayApplicationContext : ApplicationContext
 
     // ── Startup Registry Management ────────────────────────────────────
 
+    private static void EnsureStartupDefault()
+    {
+        try
+        {
+            // If the user explicitly disabled startup via menu, respect their choice
+            if (File.Exists(StartupDisabledFlagPath))
+                return;
+
+            if (!IsStartupEnabled())
+            {
+                AddToStartup();
+            }
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Failed to ensure startup default: {ex.Message}");
+        }
+    }
+
     private static bool IsStartupEnabled()
     {
         try
@@ -246,11 +285,7 @@ internal sealed class TrayApplicationContext : ApplicationContext
         }
         catch (Exception ex)
         {
-            MessageBox.Show(
-                $"Startupga qo'shib bo'lmadi:\n{ex.Message}",
-                "Xatolik",
-                MessageBoxButtons.OK,
-                MessageBoxIcon.Error);
+            System.Diagnostics.Debug.WriteLine($"Startup registration failed: {ex.Message}");
         }
     }
 
