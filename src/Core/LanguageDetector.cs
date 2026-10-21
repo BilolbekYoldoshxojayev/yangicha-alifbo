@@ -358,10 +358,11 @@ public sealed class LanguageDetector : ILanguageDetector, IDisposable
         // 3-letter
         "lar", "lik", "chi", "dan", "dek", "day", "gan", "qan", "kan",
         "ish", "sak", "sam", "san", "siz", "miz", "ini", "ida", "iga",
+        "tir", "dir", "sat", "kaz", "qaz", "gaz", "lan",
         // 2-letter
-        "da", "di", "ga", "ka", "qa", "ni", "im", "in", "ma", "sa", "sh", "si", "ti", "ib", "li",
+        "da", "di", "ga", "ka", "qa", "ni", "im", "in", "ma", "sa", "sh", "si", "ti", "ib", "li", "il",
         // 1-letter
-        "i", "k", "m", "q", "b"
+        "i", "k", "m", "q", "b", "n", "l", "t"
     };
 
     /// <summary>
@@ -455,6 +456,43 @@ public sealed class LanguageDetector : ILanguageDetector, IDisposable
             if (_uzbekLexicon.Contains(kStem)) return true;
             string convK = UzbekPhonetics.Convert(kStem);
             if (convK != kStem && _uzbekLexicon.Contains(convK)) return true;
+        }
+
+        // 5. Voice Derivations (Passive -n/-il, Causative -t/-tir/-dir)
+        // Passive/Reflexive: stem ending in 'n' -> bare stem (e.g. boshlan -> boshla, ishlan -> ishla)
+        if (stem.EndsWith('n') && stem.Length > 2)
+        {
+            string baseStem = stem[..^1];
+            if (_uzbekLexicon.Contains(baseStem) || _uzbekLexicon.Contains(baseStem + "moq")) return true;
+            string convBase = UzbekPhonetics.Convert(baseStem);
+            if (_uzbekLexicon.Contains(convBase) || _uzbekLexicon.Contains(convBase + "moq")) return true;
+        }
+
+        // Passive: stem ending in 'il' -> bare stem (e.g. yozil -> yoz, ochil -> och, aytil -> ayt)
+        if (stem.EndsWith("il", StringComparison.OrdinalIgnoreCase) && stem.Length > 3)
+        {
+            string baseStem = stem[..^2];
+            if (_uzbekLexicon.Contains(baseStem) || _uzbekLexicon.Contains(baseStem + "moq")) return true;
+            string convBase = UzbekPhonetics.Convert(baseStem);
+            if (_uzbekLexicon.Contains(convBase) || _uzbekLexicon.Contains(convBase + "moq")) return true;
+        }
+
+        // Causative: stem ending in 't' -> bare stem (e.g. ishlat -> ishla, boshlat -> boshla)
+        if (stem.EndsWith('t') && stem.Length > 2)
+        {
+            string baseStem = stem[..^1];
+            if (_uzbekLexicon.Contains(baseStem) || _uzbekLexicon.Contains(baseStem + "moq")) return true;
+            string convBase = UzbekPhonetics.Convert(baseStem);
+            if (_uzbekLexicon.Contains(convBase) || _uzbekLexicon.Contains(convBase + "moq")) return true;
+        }
+
+        // Causative: stem ending in 'tir'/'dir' -> bare stem (e.g. tushuntir -> tushun, kuldir -> kul)
+        if (stem.Length > 4 && (stem.EndsWith("tir", StringComparison.OrdinalIgnoreCase) || stem.EndsWith("dir", StringComparison.OrdinalIgnoreCase)))
+        {
+            string baseStem = stem[..^3];
+            if (_uzbekLexicon.Contains(baseStem) || _uzbekLexicon.Contains(baseStem + "moq")) return true;
+            string convBase = UzbekPhonetics.Convert(baseStem);
+            if (_uzbekLexicon.Contains(convBase) || _uzbekLexicon.Contains(convBase + "moq")) return true;
         }
 
         return false;

@@ -1,0 +1,445 @@
+<!doctype html>
+<html lang="uz">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>YangiAlifbo — o‘zbekcha yozing, yangi alifbo o‘zi qo‘yiladi</title>
+  <meta name="description" content="YangiAlifbo — Windows uchun bepul va ochiq kodli dastur. Word, Telegram va brauzerda odatdagidek yozing: so‘z tugashi bilan sh, ch, o‘, g‘ yangi alifbodagi ş, ç, ö, ğ harflariga o‘giriladi.">
+  <link rel="canonical" href="https://bilolbekyoldoshxojayev.github.io/yangicha-alifbo/">
+  <meta name="theme-color" content="#13205c">
+
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="uz_UZ">
+  <meta property="og:site_name" content="YangiAlifbo">
+  <meta property="og:title" content="YangiAlifbo — o‘zbekcha yozing, yangi alifbo o‘zi qo‘yiladi">
+  <meta property="og:description" content="Windows bo‘ylab real vaqtda: sh → ş, ch → ç, o‘ → ö, g‘ → ğ. Bepul, ochiq kodli, MIT litsenziyasi.">
+  <meta property="og:url" content="https://bilolbekyoldoshxojayev.github.io/yangicha-alifbo/">
+  <meta property="og:image" content="https://bilolbekyoldoshxojayev.github.io/yangicha-alifbo/assets/img/og.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+
+  <link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
+  <script>
+    // Hide the opening-sequence elements until animations.js takes over; never longer than 4s.
+    if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      document.documentElement.classList.add('js-motion');
+      setTimeout(function () { document.documentElement.classList.remove('js-motion'); }, 4000);
+    }
+  </script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Commissioner:wght@400;500;600;700&family=Unbounded:wght@300;500;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/styles.css">
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "YangiAlifbo",
+    "operatingSystem": "Windows 10, Windows 11",
+    "applicationCategory": "UtilitiesApplication",
+    "softwareVersion": "1.0.0",
+    "license": "https://opensource.org/licenses/MIT",
+    "downloadUrl": "https://github.com/BilolbekYoldoshxojayev/yangicha-alifbo/releases/download/v1.0.0/YangiAlifbo.exe",
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+    "inLanguage": "uz"
+  }
+  </script>
+</head>
+<body>
+  <a class="skip" href="#asosiy">Asosiy qismga o‘tish</a>
+
+  <header class="nav" data-nav>
+    <div class="nav__inner">
+      <a class="brand" href="#top" aria-label="YangiAlifbo, sahifa boshiga">
+        <svg class="brand__mark" viewBox="0 0 32 32" aria-hidden="true"><use href="#i-mark"/></svg>
+        <span>YangiAlifbo</span>
+      </a>
+      <nav class="nav__links" id="nav-links" aria-label="Asosiy menyu">
+        <a href="#qanday">Qanday ishlaydi</a>
+        <a href="#sinash">Sinab ko‘ring</a>
+        <a href="#jadval">Harflar</a>
+        <a href="#ornatish">O‘rnatish</a>
+        <a href="#savollar">Savollar</a>
+        <a class="nav__gh" href="https://github.com/BilolbekYoldoshxojayev/yangicha-alifbo">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-github"/></svg>GitHub
+        </a>
+      </nav>
+      <a class="btn btn--small btn--gold nav__cta" href="https://github.com/BilolbekYoldoshxojayev/yangicha-alifbo/releases/download/v1.0.0/YangiAlifbo.exe" data-download>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-download"/></svg>Yuklab olish
+      </a>
+      <button class="nav__toggle" type="button" aria-expanded="false" aria-controls="nav-links" data-menu-toggle>
+        <span class="sr-only">Menyuni ochish</span>
+        <span class="nav__burger" aria-hidden="true"></span>
+      </button>
+    </div>
+  </header>
+
+  <main id="asosiy">
+    <!-- ───────────── HERO ───────────── -->
+    <section class="hero" id="top" aria-labelledby="hero-title">
+      <svg class="hero__girih" aria-hidden="true" focusable="false"><rect width="100%" height="100%" fill="url(#girih)"/></svg>
+
+      <div class="hero__copy wrap">
+        <h1 id="hero-title" class="hero__title">
+          <span class="hero__wordmark" data-split>YangiAlifbo</span>
+          <span class="hero__promise" data-reveal>O‘zbek tilida yangi alifboda yozishning yangi usuli.</span>
+        </h1>
+        <p class="hero__lede" data-reveal>Word, Telegram yoki brauzerda odatdagidek yozing. So‘z tugashi bilan YangiAlifbo uni yangi alifboga o‘giradi — klaviaturani ham, odatlaringizni ham o‘zgartirish shart emas.</p>
+        <div class="hero__actions" data-reveal>
+          <a class="btn btn--gold" href="https://github.com/BilolbekYoldoshxojayev/yangicha-alifbo/releases/download/v1.0.0/YangiAlifbo.exe" data-download>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-download"/></svg>
+            <span>Yuklab olish (.exe)</span>
+          </a>
+          <a class="btn btn--ghost" href="https://github.com/BilolbekYoldoshxojayev/yangicha-alifbo">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-github"/></svg>
+            <span>GitHub’da ko‘rish</span>
+          </a>
+          <p class="hero__meta">v1.0.0, 54,2 MB, Windows 10/11 (x64)</p>
+        </div>
+      </div>
+
+      <figure class="stage" aria-label="Namuna: o‘zbekcha so‘zi özbekça bo‘lib o‘zgaradi">
+        <div class="stage__line wrap" aria-hidden="true">
+          <span class="stage__word" data-stage-word></span><span class="caret" data-stage-caret></span>
+        </div>
+        <figcaption class="stage__foot wrap">
+          <span class="stage__key" data-stage-key aria-hidden="true">probel</span>
+          <span class="stage__rule" data-stage-rule aria-hidden="true"></span>
+          <ul class="facts" aria-label="Asosiy ma’lumotlar">
+            <li>Windows 10 va 11</li>
+            <li>.NET 10 ichida, o‘rnatuvchisiz</li>
+            <li>938&nbsp;526 yozuvli lug‘at</li>
+            <li>So‘z tahlili ≈ 1 µs</li>
+            <li>MIT, bepul va ochiq kodli</li>
+          </ul>
+        </figcaption>
+      </figure>
+    </section>
+
+    <!-- ───────────── STORY ───────────── -->
+    <section class="story paper" id="qanday" aria-labelledby="story-title">
+      <div class="story__pin" data-story>
+        <div class="story__inner wrap">
+          <div class="story__text">
+            <h2 id="story-title" class="h2">Siz yozasiz.<br>Probel bosilganda so‘z yangilanadi.</h2>
+            <ol class="steps" data-story-steps>
+              <li class="is-active"><b>Eski imloda yozasiz.</b> Klaviatura va qo‘l odati o‘sha-o‘sha: <i>sh</i>, <i>ch</i>, <i>o‘</i>, <i>g‘</i>.</li>
+              <li><b>So‘z tugaydi.</b> Probel, Enter yoki tinish belgisi bosilganda dastur oxirgi so‘zni tekshiradi.</li>
+              <li><b>Faqat o‘zbekcha so‘z o‘zgaradi.</b> <i>push</i> va <i>chat</i> kabi inglizcha so‘zlar joyida qoladi.</li>
+            </ol>
+          </div>
+          <div class="doc" aria-hidden="true">
+            <div class="doc__bar"><span></span><span></span><span></span><em>Hujjat1 — Word</em></div>
+            <p class="doc__text" data-story-text></p>
+          </div>
+          <p class="sr-only">Misol: “Bog‘chada o‘g‘il-qizlar choy ichib, push va chat haqida gaplashishdi.” matni “Boğçada öğil-qizlar çoy içib, push va chat haqida gaplaşişdi.” bo‘ladi.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ───────────── APPS / SAFETY ───────────── -->
+    <section class="apps ink" id="ilovalar" aria-labelledby="apps-title">
+      <div class="wrap">
+        <div class="apps__head">
+          <h2 id="apps-title" class="h2">Siz yozadigan joyda ishlaydi.</h2>
+          <p class="lede">YangiAlifbo Windows’ning past darajali klaviatura hook’i orqali ishlaydi, shuning uchun alohida plagin kerak emas. Oddiy matn maydoni bor dasturlarda — hujjat, xabar, brauzer yoki bloknotda — bir xil yo‘l bilan ishlaydi.</p>
+        </div>
+
+        <div class="wall" data-wall>
+          <div class="win win--word">
+            <div class="win__bar"><i></i><span>Word</span></div>
+            <p class="win__body" data-type="Hisobotni ertaga o‘qituvchilarimizga topshiramiz."></p>
+          </div>
+          <div class="win win--tg">
+            <div class="win__bar"><i></i><span>Telegram</span></div>
+            <div class="win__body win__chat"><p class="bubble" data-type="Choyxonada uchrashamizmi?"></p></div>
+          </div>
+          <div class="win win--web">
+            <div class="win__bar"><i></i><span>Brauzer</span><em>qidiruv</em></div>
+            <p class="win__body win__search" data-type="g‘alla o‘rimi qachon"></p>
+          </div>
+          <div class="win win--pad">
+            <div class="win__bar"><i></i><span>Bloknot</span></div>
+            <p class="win__body" data-type="Shanba kuni bog‘chaga boraman."></p>
+          </div>
+        </div>
+
+        <div class="guard">
+          <h3 class="h3">Kerak bo‘lmagan joyda o‘zi to‘xtaydi.</h3>
+          <div class="guard__grid">
+            <div class="guard__item">
+              <div class="term" aria-hidden="true"><span class="term__p">PS&gt;</span> git push origin shohruh-branch</div>
+              <p><b>Terminal va dasturlash muhitlari.</b> cmd, PowerShell, Windows Terminal, VS Code, Visual Studio, Git Bash, WSL va boshqalarda konvertatsiya o‘chiq turadi — buyruq va kod buzilmaydi.</p>
+            </div>
+            <div class="guard__item">
+              <div class="pw" aria-hidden="true"><svg viewBox="0 0 24 24"><use href="#i-lock"/></svg><span>••••••••••</span></div>
+              <p><b>Parol maydonlari.</b> Windows parol maydoni deb belgilagan joylar (ES_PASSWORD uslubi yoki UI Automation’dagi IsPassword) aniqlanadi va u yerda hech narsa o‘zgartirilmaydi.</p>
+            </div>
+            <div class="guard__item">
+              <div class="tray" aria-hidden="true"><span class="tray__icon">Ö</span><span class="tray__clock">21:08</span></div>
+              <p><b>Patnisda jim turadi.</b> Ilova tizim patnisida (soat yonida) ishlaydi va tarmoqqa ulanmaydi: manba kodida tarmoq so‘rovlari yo‘q. Siz yozgan matn hech qayerga saqlanmaydi.</p>
+            </div>
+          </div>
+          <p class="fine">Administrator huquqi bilan ochilgan dasturlarga Windows oddiy dasturlarning kiritishiga ruxsat bermaydi — u yerda YangiAlifbo ishlamaydi. Ba’zi maxsus himoyalangan oynalar ham shunday.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ───────────── LINGUISTIC PIPELINE ───────────── -->
+    <section class="lang paper" id="til" aria-labelledby="lang-title">
+      <div class="wrap">
+        <div class="lang__head">
+          <h2 id="lang-title" class="h2">Qaysi so‘z o‘zbekcha ekanini biladi.</h2>
+          <p class="lede"><i>show</i> ham, <i>shahar</i> ham “sh” bilan yoziladi. Ikkinchisini o‘zgartirib, birinchisiga tegmaslik uchun har bir so‘z uch bosqichdan o‘tadi. So‘z tanlang va yo‘lini kuzating.</p>
+        </div>
+
+        <div class="pipe" data-pipe>
+          <div class="pipe__pick" role="radiogroup" aria-label="Namuna so‘z">
+            <button type="button" role="radio" aria-checked="true" data-word="shahar">shahar</button>
+            <button type="button" role="radio" aria-checked="false" data-word="show">show</button>
+            <button type="button" role="radio" aria-checked="false" data-word="gaplashishdi">gaplashishdi</button>
+            <button type="button" role="radio" aria-checked="false" data-word="Is'hoq">Is’hoq</button>
+            <button type="button" role="radio" aria-checked="false" data-word="Toshkent">Toshkent</button>
+          </div>
+
+          <ol class="pipe__track" data-pipe-track>
+            <li class="pipe__st" data-st="0">
+              <span class="pipe__dot"></span>
+              <b>Naqsh</b>
+              <span>sh, ch, o‘, g‘ bormi? Tutuq belgisi (Is’hoq) ajratib turgan joy hisobga olinmaydi.</span>
+            </li>
+            <li class="pipe__st" data-st="1">
+              <span class="pipe__dot"></span>
+              <b>Filtr <em>10&nbsp;055</em></b>
+              <span>Inglizcha va dasturlash so‘zlari: show, push, switch, catch…</span>
+            </li>
+            <li class="pipe__st" data-st="2">
+              <span class="pipe__dot"></span>
+              <b>Lug‘at <em>938&nbsp;526</em></b>
+              <span>O‘zbekcha so‘z va o‘zaklar, eski va yangi imloda.</span>
+            </li>
+            <li class="pipe__st" data-st="3">
+              <span class="pipe__dot"></span>
+              <b>Morfologiya <em>400+</em></b>
+              <span>-lar, -imiz, -dan, -gan, -yapti… qo‘shimchalarini ajratib, o‘zakni qidiradi.</span>
+            </li>
+            <span class="pipe__token" data-pipe-token aria-hidden="true"></span>
+          </ol>
+
+          <div class="pipe__out" aria-live="polite">
+            <p class="pipe__result"><span data-pipe-in>shahar</span> <span class="arrow" aria-hidden="true">→</span> <strong data-pipe-out>şahar</strong></p>
+            <p class="pipe__why" data-pipe-why>Lug‘atda bor. O‘zgartiriladi.</p>
+          </div>
+        </div>
+        <p class="fine">Bu natijalar dasturning standart “Qat’iy” rejimidagi haqiqiy javoblari. “Agressiv” rejimda filtrdan o‘tgan har qanday so‘z o‘zgartiriladi. Lug‘atda yo‘q so‘zni (masalan, Toshkent) oq ro‘yxatga qo‘shib qo‘yish mumkin.</p>
+      </div>
+    </section>
+
+    <!-- ───────────── DEMO ───────────── -->
+    <section class="demo ink" id="sinash" aria-labelledby="demo-title">
+      <div class="wrap demo__grid">
+        <div class="demo__intro">
+          <h2 id="demo-title" class="h2">Shu yerda sinab ko‘ring.</h2>
+          <p class="lede">Eski imloda yozing va probel bosing. Brauzer versiyasi harf qoidalari va 10&nbsp;055 so‘zli filtrni ishlatadi; 938&nbsp;526 yozuvli lug‘at va morfologiya faqat Windows ilovasida bor.</p>
+          <div class="demo__ctrl">
+            <button class="btn btn--line" type="button" data-demo-sample>
+              <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-type"/></svg>Namunani yozish
+            </button>
+            <button class="btn btn--line" type="button" data-demo-reset>
+              <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-reset"/></svg>Tozalash
+            </button>
+          </div>
+        </div>
+
+        <div class="sheet">
+          <label class="sheet__label" for="demo-input">Matn maydoni</label>
+          <textarea id="demo-input" class="sheet__input" rows="5" spellcheck="false" autocapitalize="off" autocomplete="off" placeholder="o'zbekcha gaplashsak ham bo'laveradi" aria-describedby="demo-hint"></textarea>
+          <p id="demo-hint" class="sheet__hint">So‘z probel, Enter yoki tinish belgisidan keyin o‘giriladi. Apostrofning istalgan ko‘rinishi (' ‘ ’ ʻ `) ishlaydi.</p>
+          <div class="sheet__log">
+            <p class="sheet__count" aria-live="polite" aria-atomic="true"><span data-demo-count>0</span> ta so‘z o‘girildi<span data-demo-skip></span></p>
+            <ol class="sheet__list" data-demo-log aria-label="Oxirgi o‘zgarishlar"></ol>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ───────────── LETTER TABLE ───────────── -->
+    <section class="letters paper" id="jadval" aria-labelledby="letters-title">
+      <div class="wrap">
+        <h2 id="letters-title" class="h2">To‘rt harf. Bitta tovush — bitta belgi.</h2>
+        <p class="lede">Yangi alifboda ikki belgi bilan yoziladigan tovushlar bitta harfga aylanadi. Qatorni bosing yoki ustiga olib boring — misol yangilanadi.</p>
+
+        <table class="ltable">
+          <caption class="sr-only">Eski va yangi lotin alifbosidagi harflar</caption>
+          <thead>
+            <tr><th scope="col">Eski</th><th scope="col">Yangi</th><th scope="col">Misol</th></tr>
+          </thead>
+          <tbody>
+            <tr tabindex="0" data-row data-old="shahar" data-new="şahar"><td class="ltable__old">sh</td><td class="ltable__new">ş</td><td class="ltable__ex"><span data-ex>shahar</span></td></tr>
+            <tr tabindex="0" data-row data-old="choyxona" data-new="çoyxona"><td class="ltable__old">ch</td><td class="ltable__new">ç</td><td class="ltable__ex"><span data-ex>choyxona</span></td></tr>
+            <tr tabindex="0" data-row data-old="o‘rtoq" data-new="örtoq"><td class="ltable__old">o‘</td><td class="ltable__new">ö</td><td class="ltable__ex"><span data-ex>o‘rtoq</span></td></tr>
+            <tr tabindex="0" data-row data-old="g‘alaba" data-new="ğalaba"><td class="ltable__old">g‘</td><td class="ltable__new">ğ</td><td class="ltable__ex"><span data-ex>g‘alaba</span></td></tr>
+          </tbody>
+        </table>
+
+        <div class="rules">
+          <div class="rule">
+            <h3 class="h4">Katta-kichik harf saqlanadi</h3>
+            <p class="rule__ex">Shahar → Şahar<br>SHAHAR → ŞAHAR<br>O‘RTOQ → ÖRTOQ</p>
+          </div>
+          <div class="rule">
+            <h3 class="h4">Tutuq belgisi — istisno</h3>
+            <p class="rule__ex">Is’hoq → Is’hoq<br>mus’haf → mus’haf<br>as’hob → as’hob</p>
+            <p>Bu so‘zlarda <i>s</i> va <i>h</i> alohida tovush, shuning uchun ş bo‘lmaydi.</p>
+          </div>
+          <div class="rule">
+            <h3 class="h4">Apostrofning 9 ko‘rinishi</h3>
+            <p class="rule__ex rule__aps">' ‘ ’ ʻ ʼ ` ´ ‛ ′</p>
+            <p>Klaviaturada qaysi belgini bossangiz ham, <i>o‘</i> va <i>g‘</i> taniladi.</p>
+          </div>
+        </div>
+        <p class="fine">Jadval faqat harf qoidasini ko‘rsatadi. Qoidani qaysi so‘zga qo‘llashni yuqoridagi til bosqichlari hal qiladi.</p>
+      </div>
+    </section>
+
+    <!-- ───────────── INSTALL ───────────── -->
+    <section class="install paper paper--deep" id="ornatish" aria-labelledby="install-title">
+      <div class="wrap">
+        <h2 id="install-title" class="h2">Uch qadamda boshlang.</h2>
+        <ol class="qs">
+          <li class="qs__step">
+            <h3 class="h3">Yuklab oling</h3>
+            <p>Rasmiy relizdan <code>YangiAlifbo.exe</code> faylini oling — 54&nbsp;193&nbsp;433 bayt.</p>
+            <a class="btn btn--ink" href="https://github.com/BilolbekYoldoshxojayev/yangicha-alifbo/releases/download/v1.0.0/YangiAlifbo.exe" data-download>
+              <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-download"/></svg>Yuklab olish (.exe)
+            </a>
+            <div class="hash">
+              <span class="hash__label">SHA-256</span>
+              <code class="hash__value" data-hash>29c8ca104e4a10f66d38c9a4d8bbd554e8ead002448008372cf526823a7bfb81</code>
+              <button class="hash__copy" type="button" data-copy aria-label="SHA-256 ni nusxalash">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-copy"/></svg><span data-copy-label>Nusxalash</span>
+              </button>
+            </div>
+          </li>
+          <li class="qs__step">
+            <h3 class="h3">Ishga tushiring</h3>
+            <p>O‘rnatuvchi yo‘q: .NET 10 faylning o‘zida. Ikki marta bosing — belgi soat yonidagi patnisda paydo bo‘ladi.</p>
+            <p class="note">Fayl raqamli imzolanmagan, shuning uchun Windows SmartScreen ogohlantirish ko‘rsatishi mumkin. Faylni faqat shu relizdan yuklang va SHA-256 qiymatini solishtiring: <code>Get-FileHash .\YangiAlifbo.exe</code></p>
+          </li>
+          <li class="qs__step">
+            <h3 class="h3">Yozishni boshlang</h3>
+            <p>Odatdagidek yozing. Kerak bo‘lsa, bir tugma birikmasi bilan to‘xtatib qo‘ying:</p>
+            <div class="hotkey" data-hotkey>
+              <button class="hotkey__btn" type="button" data-hotkey-btn aria-label="Ctrl + Shift + U birikmasini bosish">
+                <kbd data-k="Control">Ctrl</kbd><span aria-hidden="true">+</span><kbd data-k="Shift">Shift</kbd><span aria-hidden="true">+</span><kbd data-k="U">U</kbd>
+              </button>
+              <span class="hotkey__state" aria-live="polite"><span class="tray__icon" aria-hidden="true">Ö</span><span data-hotkey-text>Yoqilgan</span></span>
+            </div>
+            <p class="fine">Shu yerda sinab ko‘ring: uchta tugmani bosing yoki tugmalar ustiga bosing. Patnisdagi belgi rangi shunday o‘zgaradi.</p>
+          </li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- ───────────── FAQ ───────────── -->
+    <section class="faq paper" id="savollar" aria-labelledby="faq-title">
+      <div class="wrap faq__grid">
+        <h2 id="faq-title" class="h2">Ko‘p beriladigan savollar</h2>
+        <div class="faq__list">
+          <details>
+            <summary>Qaysi Windows versiyalarida ishlaydi?</summary>
+            <p>Windows 10 va Windows 11, 64-bit (x64). .NET alohida o‘rnatilishi shart emas — u faylning ichida.</p>
+          </details>
+          <details>
+            <summary>Konvertatsiya qanday ishlaydi?</summary>
+            <p>Dastur siz yozayotgan harflarni kuzatib, joriy so‘zni xotirada ushlab turadi. Probel, Enter, Tab yoki tinish belgisi bosilganda so‘z tekshiriladi; u o‘zbekcha bo‘lsa, eski so‘z o‘chirilib, yangi imlodagisi yoziladi. Strelka tugmalari yoki boshqa oynaga o‘tish xotiradagi so‘zni tozalaydi, shuning uchun matn buzilmaydi.</p>
+          </details>
+          <details>
+            <summary>Qanday yoqaman yoki o‘chiraman?</summary>
+            <p><kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>U</kbd> — konvertorni darhol yoqadi yoki o‘chiradi. Patnisdagi belgini o‘ng tugma bilan bossangiz, menyuda “Yoqilgan”, rejim (Qat’iy yoki Agressiv), oq va qora ro‘yxat hamda “Windows bilan ishga tushirish” bor. Yashil belgi — faol, kulrang — to‘xtatilgan.</p>
+          </details>
+          <details>
+            <summary>Parol maydonlari va himoyalangan dasturlarda nima bo‘ladi?</summary>
+            <p>Windows parol maydoni deb belgilagan joylarda va terminal yoki dasturlash muhitlarida dastur hech narsani o‘zgartirmaydi. Administrator huquqi bilan ishlayotgan dasturlarga Windows oddiy dasturning kiritishiga yo‘l qo‘ymaydi, shuning uchun u yerda YangiAlifbo ishlamaydi. Parol maydonini aniqlash dastur o‘zini qanday belgilashiga bog‘liq — o‘zingizga ishonchsiz bo‘lsa, <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>U</kbd> bilan o‘chirib qo‘ying.</p>
+          </details>
+          <details>
+            <summary>Nega ba’zi so‘zlar o‘zgarmaydi?</summary>
+            <p>Standart “Qat’iy” rejimda faqat lug‘at yoki morfologiya tasdiqlagan so‘zlar o‘zgaradi. Ba’zi atoqli otlar, masalan joy nomlari, lug‘atda yo‘q. Ularni <code>%AppData%\YangiAlifbo\user_whitelist.txt</code> fayliga qo‘shing yoki “Agressiv” rejimni yoqing. O‘zgarmasligi kerak bo‘lgan so‘zlar uchun <code>user_blacklist.txt</code> bor; fayllar saqlanishi bilan qayta yuklanadi.</p>
+          </details>
+          <details>
+            <summary>Litsenziyasi qanday?</summary>
+            <p>MIT litsenziyasi: bepul, manba kodi ochiq, o‘zgartirish va tarqatish mumkin. Batafsil — <a href="https://github.com/BilolbekYoldoshxojayev/yangicha-alifbo/blob/main/LICENSE">LICENSE</a>.</p>
+          </details>
+          <details>
+            <summary>Xato topdim yoki yordam bermoqchiman.</summary>
+            <p>Noto‘g‘ri o‘zgargan yoki o‘zgarmay qolgan so‘zni <a href="https://github.com/BilolbekYoldoshxojayev/yangicha-alifbo/issues/new">GitHub Issues</a>da yozing: so‘z, kutilgan natija va qaysi dasturda yozganingiz. Kod bilan yordam berish uchun repozitoriyani fork qiling, <code>dotnet test</code> o‘tishini tekshiring va pull request yuboring.</p>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <!-- ───────────── FINALE ───────────── -->
+    <section class="finale ink" aria-labelledby="finale-title">
+      <div class="wrap">
+        <p class="finale__glyphs" aria-hidden="true" data-finale>
+          <span class="fg"><span class="fg__acc">ş</span><span class="fg__base">s</span></span>
+          <span class="fg"><span class="fg__acc">ç</span><span class="fg__base">c</span></span>
+          <span class="fg"><span class="fg__acc">ö</span><span class="fg__base">o</span></span>
+          <span class="fg"><span class="fg__acc">ğ</span><span class="fg__base">g</span></span>
+        </p>
+        <h2 id="finale-title" class="h2 finale__title">Yangi alifbo — eski odat bilan.</h2>
+        <div class="finale__actions">
+          <a class="btn btn--gold" href="https://github.com/BilolbekYoldoshxojayev/yangicha-alifbo/releases/download/v1.0.0/YangiAlifbo.exe" data-download>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-download"/></svg>Yuklab olish (.exe)
+          </a>
+          <a class="btn btn--ghost" href="https://github.com/BilolbekYoldoshxojayev/yangicha-alifbo/releases/tag/v1.0.0">Reliz haqida</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="foot ink">
+    <div class="wrap foot__inner">
+      <p>21-oktabr, O‘zbek tili bayrami kuni chiqarildi. MIT litsenziyasi, © 2026 Bilolbek Yoldoshxojayev.</p>
+      <ul>
+        <li><a href="https://github.com/BilolbekYoldoshxojayev/yangicha-alifbo">Manba kodi</a></li>
+        <li><a href="https://github.com/BilolbekYoldoshxojayev/yangicha-alifbo/releases">Relizlar</a></li>
+        <li><a href="https://github.com/BilolbekYoldoshxojayev/yangicha-alifbo/issues">Xato haqida xabar</a></li>
+      </ul>
+    </div>
+  </footer>
+
+  <!-- Icons and patterns -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+    <defs>
+      <pattern id="girih" width="96" height="96" patternUnits="userSpaceOnUse">
+        <g fill="none" stroke="currentColor" stroke-width="1">
+          <path d="M48 8 L59.3 36.7 L88 48 L59.3 59.3 L48 88 L36.7 59.3 L8 48 L36.7 36.7 Z"/>
+          <path d="M19.7 19.7 L48 31.4 L76.3 19.7 L64.6 48 L76.3 76.3 L48 64.6 L19.7 76.3 L31.4 48 Z"/>
+          <circle cx="48" cy="48" r="6"/>
+          <path d="M0 0 L8 0 M0 0 L0 8 M96 0 L88 0 M96 0 L96 8 M0 96 L8 96 M0 96 L0 88 M96 96 L88 96 M96 96 L96 88"/>
+        </g>
+      </pattern>
+    </defs>
+    <symbol id="i-mark" viewBox="0 0 32 32"><rect x="1" y="1" width="30" height="30" rx="7" fill="#f0b23a"/><text x="16" y="23" text-anchor="middle" font-family="Unbounded, Arial, sans-serif" font-weight="800" font-size="18" fill="#13205c">Ö</text></symbol>
+    <symbol id="i-download" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M12 3v12m0 0-5-5m5 5 5-5M4 19h16"/></symbol>
+    <symbol id="i-github" viewBox="0 0 24 24"><path fill="currentColor" d="M12 .5a11.5 11.5 0 0 0-3.64 22.41c.58.1.79-.25.79-.56v-2c-3.2.7-3.88-1.37-3.88-1.37-.53-1.33-1.28-1.69-1.28-1.69-1.05-.71.08-.7.08-.7 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.7 1.26 3.36.96.1-.75.4-1.26.73-1.55-2.55-.29-5.24-1.28-5.24-5.68 0-1.26.45-2.28 1.19-3.09-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.17 1.18a11 11 0 0 1 5.77 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.76.11 3.05.74.81 1.19 1.83 1.19 3.09 0 4.41-2.69 5.38-5.25 5.67.41.36.78 1.06.78 2.14v3.17c0 .31.21.67.8.56A11.5 11.5 0 0 0 12 .5Z"/></symbol>
+    <symbol id="i-lock" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M6 11h12v9H6zM8.5 11V8a3.5 3.5 0 0 1 7 0v3"/></symbol>
+    <symbol id="i-copy" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" d="M9 9h11v11H9zM5 15H4V4h11v1"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" d="m5 12.5 4.5 4.5L19 7.5"/></symbol>
+    <symbol id="i-type" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" d="M4 7V5h16v2M12 5v14M9 19h6"/></symbol>
+    <symbol id="i-reset" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M4 12a8 8 0 1 0 2.4-5.7M4 4v4h4"/></symbol>
+  </svg>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" integrity="sha384-g4NTh/Iv5PPU4xPyhEWqPcwtNXOvdaDI8LLnyYfyNZOjKJeYQyjzQ9X5275eBjpt" crossorigin="anonymous" referrerpolicy="no-referrer" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js" integrity="sha384-Z3REaz79l2IaAZqJsSABtTbhjgOUYyV3p90XNnAPCSHg3EMTz1fouunq9WZRtj3d" crossorigin="anonymous" referrerpolicy="no-referrer" defer></script>
+  <script src="assets/js/engine.js" defer></script>
+  <script src="assets/js/glyphs.js" defer></script>
+  <script src="assets/js/demo.js" defer></script>
+  <script src="assets/js/animations.js" defer></script>
+  <script src="assets/js/main.js" defer></script>
+</body>
+</html>
