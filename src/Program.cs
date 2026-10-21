@@ -29,7 +29,7 @@ internal static class Program
 
         try
         {
-            File.AppendAllText(logFile, $"[{DateTime.Now}] Starting YangiAlifbo v1.3.0...\n");
+            File.AppendAllText(logFile, $"[{DateTime.Now}] Starting YangiAlifbo v1.4.0...\n");
 
             // ── Clean up any legacy or duplicate running instances ─────
             // Ensures new versions cleanly replace old versions without collision.

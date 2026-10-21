@@ -115,7 +115,7 @@ internal sealed class TrayApplicationContext : ApplicationContext
         contextMenu.Items.Add(new ToolStripSeparator());
         contextMenu.Items.Add(_startupItem);
         contextMenu.Items.Add(new ToolStripSeparator());
-        contextMenu.Items.Add($"ℹ️ Haqida (About) — v1.3.0 | Lug'at: {_detector.UzbekLexiconCount:N0} so'z", null, OnAbout);
+        contextMenu.Items.Add($"ℹ️ Haqida (About) — v1.4.0 | Lug'at: {_detector.UzbekLexiconCount:N0} so'z", null, OnAbout);
         contextMenu.Items.Add("❌ Chiqish (Exit)", null, OnExit);
 
         // ── Create tray icon ───────────────────────────────────────
@@ -127,7 +127,9 @@ internal sealed class TrayApplicationContext : ApplicationContext
             Visible = true
         };
 
-        // Double-click tray icon = toggle
+        // Single click tray icon opens dashboard
+        _trayIcon.MouseClick += (s, e) => { if (e.Button == MouseButtons.Left) OpenDashboard(); };
+        // Double-click tray icon also opens dashboard
         _trayIcon.DoubleClick += (_, _) => OpenDashboard();
 
         // ── Install hooks and start ────────────────────────────────
@@ -145,21 +147,27 @@ internal sealed class TrayApplicationContext : ApplicationContext
 
     // ── Toggle Logic ───────────────────────────────────────────────────
 
-    private void ToggleEnabled()
+    public void ToggleEnabled()
     {
         _keyboardHook.IsEnabled = !_keyboardHook.IsEnabled;
         UpdateUI();
     }
 
-    private void UpdateUI()
+    public void UpdateUI()
     {
         bool enabled = _keyboardHook.IsEnabled;
         _trayIcon.Icon = enabled ? _iconActive : _iconDisabled;
         _enableItem.Text = enabled ? "✅ Yoqilgan (Enabled)" : "⬜ O'chirilgan (Disabled)";
         _enableItem.Checked = enabled;
+        _strictModeItem.Checked = _keyboardHook.Mode == TransliterationMode.Strict;
+        _aggressiveModeItem.Checked = _keyboardHook.Mode == TransliterationMode.Aggressive;
+        _chatSlangItem.Checked = _keyboardHook.IsChatSlangNormalizerEnabled;
+        _startupItem.Checked = IsStartupEnabled();
         _trayIcon.Text = enabled
             ? "YangiAlifbo — Faol ✓\n(Ctrl+Shift+U o'chirish)"
             : "YangiAlifbo — O'chirilgan ✗\n(Ctrl+Shift+U yoqish)";
+
+        _dashboardForm?.NotifyStateChanged();
     }
 
     // ── Event Handlers ─────────────────────────────────────────────────
@@ -235,15 +243,40 @@ internal sealed class TrayApplicationContext : ApplicationContext
         }
     }
 
+
+    public bool IsEnabled => _keyboardHook.IsEnabled;
+    public TransliterationMode Mode => _keyboardHook.Mode;
+    public bool IsChatSlangNormalizerEnabled => _keyboardHook.IsChatSlangNormalizerEnabled;
+
+    public void SetMode(TransliterationMode mode)
+    {
+        _keyboardHook.Mode = mode;
+        UpdateUI();
+    }
+
+    public void SetChatSlang(bool enabled)
+    {
+        _keyboardHook.IsChatSlangNormalizerEnabled = enabled;
+        UpdateUI();
+    }
+
+    public bool GetIsStartupEnabled() => IsStartupEnabled();
+
+    public void SetStartup(bool enabled)
+    {
+        SetStartupEnabled(enabled);
+        UpdateUI();
+    }
+
+    public void OpenWhitelist() => OnEditWhitelist(null, EventArgs.Empty);
+    public void OpenBlacklist() => OnEditBlacklist(null, EventArgs.Empty);
+    public void ExitApplication() => OnExit(null, EventArgs.Empty);
+
     public void OpenDashboard()
     {
         if (_dashboardForm == null || _dashboardForm.IsDisposed)
         {
-            _dashboardForm = new DashboardForm(
-                _keyboardHook,
-                _detector,
-                SetStartupEnabled,
-                IsStartupEnabled);
+            _dashboardForm = new DashboardForm(this, _keyboardHook, _detector);
         }
 
         if (!_dashboardForm.Visible)
@@ -290,7 +323,7 @@ internal sealed class TrayApplicationContext : ApplicationContext
     {
         MessageBox.Show(
             "YangiAlifbo — O'zbek Yozuvi Konvertori\n" +
-            "Versiya 1.3.0 (Telegram va Jonli Muloqot Nashri)\n\n" +
+            "Versiya 1.4.0 (Telegram va Jonli Muloqot Nashri)\n\n" +
             "1995 lotin alifbosidan 2024 yangi alifboga\n" +
             "real-vaqtda konvertatsiya qiladi.\n\n" +
             $"O'zbek lug'ati: {_detector.UzbekLexiconCount:N0} so'z\n" +
