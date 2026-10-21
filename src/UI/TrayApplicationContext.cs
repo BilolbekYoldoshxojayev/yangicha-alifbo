@@ -42,6 +42,7 @@ internal sealed class TrayApplicationContext : ApplicationContext
     private readonly ToolStripMenuItem _aggressiveModeItem;
     private readonly ToolStripMenuItem _startupItem;
     private readonly ToolStripMenuItem _chatSlangItem;
+    private DashboardForm? _dashboardForm;
 
     // ── Hotkey Window ──────────────────────────────────────────────────
     private readonly HotkeyWindow _hotkeyWindow;
@@ -96,7 +97,14 @@ internal sealed class TrayApplicationContext : ApplicationContext
             Checked = IsStartupEnabled()
         };
 
+        var openDashboardItem = new ToolStripMenuItem("🖥️ Boshqaruv paneli (Open Dashboard)...", null, (_, _) => OpenDashboard())
+        {
+            Font = new Font("Segoe UI", 9f, FontStyle.Bold)
+        };
+
         var contextMenu = new ContextMenuStrip();
+        contextMenu.Items.Add(openDashboardItem);
+        contextMenu.Items.Add(new ToolStripSeparator());
         contextMenu.Items.Add(_enableItem);
         contextMenu.Items.Add(new ToolStripSeparator());
         contextMenu.Items.Add(modeMenu);
@@ -107,7 +115,7 @@ internal sealed class TrayApplicationContext : ApplicationContext
         contextMenu.Items.Add(new ToolStripSeparator());
         contextMenu.Items.Add(_startupItem);
         contextMenu.Items.Add(new ToolStripSeparator());
-        contextMenu.Items.Add($"ℹ️ Haqida (About) — v1.2.0 | Lug'at: {_detector.UzbekLexiconCount:N0} so'z", null, OnAbout);
+        contextMenu.Items.Add($"ℹ️ Haqida (About) — v1.3.0 | Lug'at: {_detector.UzbekLexiconCount:N0} so'z", null, OnAbout);
         contextMenu.Items.Add("❌ Chiqish (Exit)", null, OnExit);
 
         // ── Create tray icon ───────────────────────────────────────
@@ -120,7 +128,7 @@ internal sealed class TrayApplicationContext : ApplicationContext
         };
 
         // Double-click tray icon = toggle
-        _trayIcon.DoubleClick += (_, _) => ToggleEnabled();
+        _trayIcon.DoubleClick += (_, _) => OpenDashboard();
 
         // ── Install hooks and start ────────────────────────────────
         _focusTracker.Install();
@@ -201,6 +209,57 @@ internal sealed class TrayApplicationContext : ApplicationContext
         _chatSlangItem.Checked = _keyboardHook.IsChatSlangNormalizerEnabled;
     }
 
+    public void SetStartupEnabled(bool enable)
+    {
+        if (enable)
+        {
+            AddToStartup();
+            _startupItem.Checked = true;
+            try
+            {
+                if (File.Exists(StartupDisabledFlagPath))
+                    File.Delete(StartupDisabledFlagPath);
+            }
+            catch { }
+        }
+        else
+        {
+            RemoveFromStartup();
+            _startupItem.Checked = false;
+            try
+            {
+                Directory.CreateDirectory(Path.GetDirectoryName(StartupDisabledFlagPath)!);
+                File.WriteAllText(StartupDisabledFlagPath, "disabled");
+            }
+            catch { }
+        }
+    }
+
+    public void OpenDashboard()
+    {
+        if (_dashboardForm == null || _dashboardForm.IsDisposed)
+        {
+            _dashboardForm = new DashboardForm(
+                _keyboardHook,
+                _detector,
+                SetStartupEnabled,
+                IsStartupEnabled);
+        }
+
+        if (!_dashboardForm.Visible)
+        {
+            _dashboardForm.Show();
+        }
+
+        if (_dashboardForm.WindowState == FormWindowState.Minimized)
+        {
+            _dashboardForm.WindowState = FormWindowState.Normal;
+        }
+
+        _dashboardForm.Activate();
+        _dashboardForm.BringToFront();
+    }
+
     private void OnToggleStartup(object? sender, EventArgs e)
     {
         if (IsStartupEnabled())
@@ -231,7 +290,7 @@ internal sealed class TrayApplicationContext : ApplicationContext
     {
         MessageBox.Show(
             "YangiAlifbo — O'zbek Yozuvi Konvertori\n" +
-            "Versiya 1.2.0 (Telegram va Jonli Muloqot Nashri)\n\n" +
+            "Versiya 1.3.0 (Telegram va Jonli Muloqot Nashri)\n\n" +
             "1995 lotin alifbosidan 2024 yangi alifboga\n" +
             "real-vaqtda konvertatsiya qiladi.\n\n" +
             $"O'zbek lug'ati: {_detector.UzbekLexiconCount:N0} so'z\n" +
@@ -383,6 +442,7 @@ internal sealed class TrayApplicationContext : ApplicationContext
             // Unregister hotkey
             NativeMethods.UnregisterHotKey(_hotkeyWindow.Handle, HOTKEY_ID);
             _hotkeyWindow.Dispose();
+            _dashboardForm?.Dispose();
 
             // Unhook keyboard and focus tracking
             _keyboardHook.Dispose();

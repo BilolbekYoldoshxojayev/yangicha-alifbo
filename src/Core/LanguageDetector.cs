@@ -52,6 +52,7 @@ public sealed class LanguageDetector : ILanguageDetector, IDisposable
     private readonly System.Threading.Timer? _debounceTimer;
     private readonly object _fileLock = new();
     private bool _isDisposed;
+    private readonly System.Collections.Concurrent.ConcurrentDictionary<string, bool> _lookupCache = new(StringComparer.OrdinalIgnoreCase);
 
     // ── 140+ Known Uzbek suffixes for morphological analysis ───────────
 
@@ -264,6 +265,20 @@ public sealed class LanguageDetector : ILanguageDetector, IDisposable
 
         string normalized = NormalizeForLookup(word);
 
+        if (mode == ConversionMode.Strict && _lookupCache.TryGetValue(normalized, out bool cached))
+            return cached;
+
+        bool result = ComputeIsUzbek(normalized, mode);
+
+        if (mode == ConversionMode.Strict && _lookupCache.Count < 10000)
+            _lookupCache.TryAdd(normalized, result);
+
+        return result;
+    }
+
+    private bool ComputeIsUzbek(string normalized, ConversionMode mode)
+    {
+
         // ── User blacklist — highest priority reject ───────────────
         if (_userBlacklist.Contains(normalized))
             return false;
@@ -310,6 +325,7 @@ public sealed class LanguageDetector : ILanguageDetector, IDisposable
             if (_userWhitelist.Contains(norm)) return;
             var updated = new HashSet<string>(_userWhitelist, StringComparer.OrdinalIgnoreCase) { norm };
             Interlocked.Exchange(ref _userWhitelist, updated);
+            _lookupCache.Clear();
             try
             {
                 Directory.CreateDirectory(AppDataDir);
@@ -330,6 +346,7 @@ public sealed class LanguageDetector : ILanguageDetector, IDisposable
             if (_userBlacklist.Contains(norm)) return;
             var updated = new HashSet<string>(_userBlacklist, StringComparer.OrdinalIgnoreCase) { norm };
             Interlocked.Exchange(ref _userBlacklist, updated);
+            _lookupCache.Clear();
             try
             {
                 Directory.CreateDirectory(AppDataDir);
@@ -346,6 +363,7 @@ public sealed class LanguageDetector : ILanguageDetector, IDisposable
         var newBlack = LoadUserFile(BlacklistPath, _userBlacklist);
         Interlocked.Exchange(ref _userWhitelist, newWhite);
         Interlocked.Exchange(ref _userBlacklist, newBlack);
+        _lookupCache.Clear();
     }
 
     /// <summary>Gets the path to the user whitelist file.</summary>
