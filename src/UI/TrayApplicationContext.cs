@@ -115,7 +115,7 @@ internal sealed class TrayApplicationContext : ApplicationContext, IControlCente
         contextMenu.Items.Add(new ToolStripSeparator());
         contextMenu.Items.Add(_startupItem);
         contextMenu.Items.Add(new ToolStripSeparator());
-        contextMenu.Items.Add($"ℹ️ Haqida (About) — v1.5.0 | Lug'at: {_detector.UzbekLexiconCount:N0} so'z", null, OnAbout);
+        contextMenu.Items.Add($"ℹ️ Haqida (About) — v{UpdateController.CurrentVersion} | Lug'at: {_detector.UzbekLexiconCount:N0} so'z", null, OnAbout);
         contextMenu.Items.Add("❌ Chiqish (Exit)", null, OnExit);
 
         // ── Create tray icon ───────────────────────────────────────
@@ -131,6 +131,27 @@ internal sealed class TrayApplicationContext : ApplicationContext, IControlCente
         _trayIcon.MouseClick += (s, e) => { if (e.Button == MouseButtons.Left) OpenDashboard(); };
         // Double-click tray icon also opens dashboard
         _trayIcon.DoubleClick += (_, _) => OpenDashboard();
+
+        // ── Self-update: checks GitHub Releases, installs, reports what changed ──
+        Updates = new UpdateController(
+            (title, text) => _trayIcon.ShowBalloonTip(6000, title, text, ToolTipIcon.Info),
+            () => OnExit(null, EventArgs.Empty));
+        Updates.Changed += () => (_dashboardForm as IStateView)?.NotifyStateChanged();
+        _trayIcon.BalloonTipClicked += (_, _) => OpenDashboard("yangilanish");
+        Updates.Start();
+        if (Updates.JustUpdated is { } updated)
+        {
+            // Wait for the message loop, then say what changed.
+            var once = new System.Windows.Forms.Timer { Interval = 1500 };
+            once.Tick += (_, _) =>
+            {
+                once.Dispose();
+                _trayIcon.ShowBalloonTip(8000, $"YangiAlifbo v{updated.Version} ga yangilandi",
+                    "Nima yangi ekanini ko‘rish uchun bosing.", ToolTipIcon.Info);
+                OpenDashboard("yangilanish");
+            };
+            once.Start();
+        }
 
         // ── Install hooks and start ────────────────────────────────
         _focusTracker.Install();
@@ -272,7 +293,9 @@ internal sealed class TrayApplicationContext : ApplicationContext, IControlCente
     public void OpenBlacklist() => OnEditBlacklist(null, EventArgs.Empty);
     public void ExitApplication() => OnExit(null, EventArgs.Empty);
 
-    public void OpenDashboard()
+    public UpdateController Updates { get; }
+
+    public void OpenDashboard(string? page = null)
     {
         if (_dashboardForm == null || _dashboardForm.IsDisposed)
         {
@@ -295,6 +318,7 @@ internal sealed class TrayApplicationContext : ApplicationContext, IControlCente
 
         _dashboardForm.Activate();
         _dashboardForm.BringToFront();
+        if (page != null) (_dashboardForm as ControlCenterForm)?.ShowPage(page);
     }
 
     private void OnToggleStartup(object? sender, EventArgs e)
@@ -327,7 +351,7 @@ internal sealed class TrayApplicationContext : ApplicationContext, IControlCente
     {
         MessageBox.Show(
             "YangiAlifbo — O'zbek Yozuvi Konvertori\n" +
-            "Versiya 1.5.0 (Raqamli Tartib & Kengaytirilgan Lug'at)\n\n" +
+            $"Versiya {UpdateController.CurrentVersion}\n\n" +
             "1995 lotin alifbosidan 2024 yangi alifboga\n" +
             "real-vaqtda konvertatsiya qiladi.\n\n" +
             $"O'zbek lug'ati: {_detector.UzbekLexiconCount:N0} so'z\n" +
@@ -480,6 +504,7 @@ internal sealed class TrayApplicationContext : ApplicationContext, IControlCente
             NativeMethods.UnregisterHotKey(_hotkeyWindow.Handle, HOTKEY_ID);
             _hotkeyWindow.Dispose();
             _dashboardForm?.Dispose();
+            Updates.Dispose();
 
             // Unhook keyboard and focus tracking
             _keyboardHook.Dispose();

@@ -34,6 +34,7 @@ Get-FileHash .\YangiAlifbo.exe -Algorithm SHA256
 - **`Ctrl + Shift + U`** — konvertorni yoqish / o‘chirish.
 - **Boshqaruv paneli:** patnisdagi belgini bosing. Panel saytdagi dizaynda (WebView2): jonli sinash maydoni to‘liq dvigatel bilan, sozlamalar, lug‘at statistikasi. WebView2 runtime bo‘lmagan kompyuterda oddiy oyna ochiladi.
 - Patnisdagi belgi: yashil — faol, kulrang — to‘xtatilgan. O‘ng tugma menyusida: yoqish/o‘chirish, rejim (Qat’iy / Agressiv), oq va qora ro‘yxatni tahrirlash, Windows bilan birga ishga tushirish, dastur haqida, chiqish.
+- **Avtomatik yangilanish** (v1.6.0 dan): har 6 soatda so‘nggi reliz tekshiriladi; yangisi topilsa yuklab olinadi, GitHub e’lon qilgan SHA-256 bilan solishtiriladi, `.exe` almashtiriladi va dastur qayta ishga tushib, boshqaruv panelida nima o‘zgarganini ko‘rsatadi. Boshqaruv panelidagi “Yangilanish” bo‘limida o‘chirish yoki qo‘lda tekshirish mumkin. `.exe` joylashgan papkaga yozish huquqi bo‘lishi kerak.
 - **Avtomatik ishga tushirish** sukut bo‘yicha yoqilgan (v1.1.0 dan). Menyudan o‘chirsangiz, tanlov saqlanadi.
 - **Qat’iy rejim** (standart): faqat lug‘at yoki morfologiya tasdiqlagan so‘zlar o‘zgaradi. **Agressiv rejim**: filtrdan o‘tgan har qanday so‘z o‘zgaradi.
 - Shaxsiy ro‘yxatlar: `%AppData%\YangiAlifbo\user_whitelist.txt` va `user_blacklist.txt` (har qatorda bitta so‘z, saqlanganda qayta yuklanadi).
@@ -47,7 +48,7 @@ Get-FileHash .\YangiAlifbo.exe -Algorithm SHA256
 
 Katta-kichik harf saqlanadi (`Shahar → Şahar`, `SHAHAR → ŞAHAR`), raqamli tartib ham ishlaydi (`5-chi → 5-çi`), apostrofning 9 xil ko‘rinishi (`' ‘ ’ ʻ ʼ ` ´ ‛ ′`) taniladi.
 
-**Xavfsizlik:** terminal va IDE jarayonlarida (cmd, PowerShell, Windows Terminal, VS Code, Visual Studio, Git Bash, WSL va b.) va Windows parol maydoni deb belgilagan joylarda (ES_PASSWORD, UI Automation IsPassword) konvertatsiya o‘chadi. `SendInput` orqali kiritilgan belgilar `dwExtraInfo = 0x59414E47` bilan belgilanadi, shuning uchun hook o‘z kiritishini qayta ishlamaydi. Ilova tarmoqqa ulanmaydi.
+**Xavfsizlik:** terminal va IDE jarayonlarida (cmd, PowerShell, Windows Terminal, VS Code, Visual Studio, Git Bash, WSL va b.) va Windows parol maydoni deb belgilagan joylarda (ES_PASSWORD, UI Automation IsPassword) konvertatsiya o‘chadi. `SendInput` orqali kiritilgan belgilar `dwExtraInfo = 0x59414E47` bilan belgilanadi, shuning uchun hook o‘z kiritishini qayta ishlamaydi. Ilova internetga faqat yangilanishni tekshirish uchun GitHub Releases API’ga murojaat qiladi; yozilgan matn hech qayerga yuborilmaydi.
 
 **Ma’lum cheklovlar:**
 - Administrator huquqi bilan ishlayotgan dasturlarda ishlamaydi (Windows UIPI chegarasi).

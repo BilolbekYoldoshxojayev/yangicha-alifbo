@@ -37,6 +37,7 @@ public interface IControlCenterHost
     void OpenWhitelist();
     void OpenBlacklist();
     void ExitApplication();
+    UpdateController Updates { get; }
 }
 
 public sealed class ControlCenterForm : Form, IStateView
@@ -54,6 +55,7 @@ public sealed class ControlCenterForm : Form, IStateView
     private readonly WebView2 _web;
     private readonly System.Windows.Forms.Timer _ticker = new() { Interval = 1000 };
     private bool _ready;
+    private string? _pendingPage;
 
     private static bool? _runtimeAvailable;
 
@@ -168,6 +170,13 @@ public sealed class ControlCenterForm : Form, IStateView
             case "ready":
                 _ready = true;
                 PostState();
+                if (_pendingPage != null) { Post(new { type = "page", page = _pendingPage }); _pendingPage = null; }
+                break;
+            case "checkUpdate":
+                _ = _context.Updates.CheckAsync(install: true);
+                break;
+            case "setAutoUpdate":
+                _context.Updates.AutoUpdate = msg.GetProperty("value").GetBoolean();
                 break;
             case "toggleEnabled":
                 _context.ToggleEnabled();
@@ -215,6 +224,7 @@ public sealed class ControlCenterForm : Form, IStateView
             case "blacklist": _context.OpenBlacklist(); break;
             case "github": Launch(RepoUrl); break;
             case "site": Launch(SiteUrl); break;
+            case "release": Launch(_context.Updates.Latest?.HtmlUrl is { Length: > 0 } u ? u : RepoUrl + "/releases"); break;
             case "logs":
                 string dir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "YangiAlifbo");
                 Directory.CreateDirectory(dir);
@@ -229,6 +239,13 @@ public sealed class ControlCenterForm : Form, IStateView
     }
 
     // ── State to the page ──────────────────────────────────────────
+
+    /// <summary>Switches the page to one of the sections in index.html.</summary>
+    public void ShowPage(string page)
+    {
+        if (_ready) Post(new { type = "page", page });
+        else _pendingPage = page;
+    }
 
     public void NotifyStateChanged()
     {
@@ -252,8 +269,30 @@ public sealed class ControlCenterForm : Form, IStateView
             words = _keyboardHook.WordsConverted,
             lexicon = _detector.UzbekLexiconCount,
             reject = _detector.EnglishRejectCount,
-            memoryMb = Environment.WorkingSet / (1024 * 1024)
+            memoryMb = Environment.WorkingSet / (1024 * 1024),
+            update = UpdatePayload()
         });
+    }
+
+    private object UpdatePayload()
+    {
+        var u = _context.Updates;
+        // Notes: the update that just happened, else the latest release seen.
+        var shown = u.JustUpdated is { } w
+            ? new { version = w.Version, name = w.Name, notes = w.Notes, from = w.From }
+            : u.Latest is { } l ? new { version = l.Version.ToString(), name = l.Name, notes = l.Notes, from = "" } : null;
+        return new
+        {
+            status = u.Status.ToString(),
+            auto = u.AutoUpdate,
+            canSelfUpdate = UpdateController.CanSelfUpdate,
+            latest = u.Latest?.Version.ToString(),
+            progress = u.Progress,
+            error = u.Error,
+            lastChecked = u.LastChecked?.ToString("HH:mm"),
+            justUpdated = u.JustUpdated != null,
+            shown
+        };
     }
 
     private void Post(object payload)

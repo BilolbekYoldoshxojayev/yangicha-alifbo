@@ -22,6 +22,9 @@
       <button class="nav__item" data-page="lugat" type="button">
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h11a3 3 0 0 1 3 3v13H8a3 3 0 0 1-3-3z"/><path d="M5 17a3 3 0 0 1 3-3h11"/></svg>Lug‘at
       </button>
+      <button class="nav__item" data-page="yangilanish" type="button">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 12a8 8 0 1 1-2.3-5.7M20 4v5h-5"/></svg>Yangilanish<span class="dot" data-up-dot hidden></span>
+      </button>
       <button class="nav__item" data-page="harflar" type="button">
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 19 10 5h1l5 14M7 14h7M18 9v10"/></svg>Harflar
       </button>
@@ -125,6 +128,30 @@
         <button class="btn" data-cmd="reload" type="button" data-reload-label>Ro‘yxatlarni qayta yuklash</button>
         <button class="btn" data-cmd="open" data-target="logs" type="button">Dastur papkasini ochish</button>
       </div>
+    </section>
+
+    <!-- Yangilanish -->
+    <section class="page" id="yangilanish" aria-labelledby="t-yan">
+      <h1 id="t-yan" class="h1">Yangilanish</h1>
+      <p class="banner" data-up-banner hidden></p>
+      <div class="upd">
+        <p class="upd__status" data-up-status aria-live="polite">Hali tekshirilmagan.</p>
+        <div class="bar" data-up-bar hidden><span></span></div>
+        <div class="btns">
+          <button class="btn btn--gold" data-cmd="checkUpdate" type="button" data-up-btn>Hozir tekshirish</button>
+          <button class="btn" data-cmd="open" data-target="release" type="button">Reliz sahifasi</button>
+        </div>
+      </div>
+      <div class="rows">
+        <div class="row">
+          <div><b>Avtomatik yangilash</b><span>Har 6 soatda GitHub’dagi so‘nggi relizni tekshiradi, SHA-256 nazorat summasi mos kelsa o‘rnatadi va qayta ishga tushadi. Faqat versiya ma’lumoti so‘raladi — yozganlaringiz yuborilmaydi.</span></div>
+          <button class="switch" role="switch" aria-checked="true" data-cmd="toggleAutoUpdate" data-up-auto aria-label="Avtomatik yangilash"><span class="switch__knob"></span></button>
+        </div>
+      </div>
+      <article class="notes" data-notes-wrap hidden>
+        <h2 class="notes__title" data-notes-title></h2>
+        <div class="notes__body" data-notes></div>
+      </article>
     </section>
 
     <!-- Harflar -->

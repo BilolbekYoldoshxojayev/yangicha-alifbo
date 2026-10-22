@@ -239,7 +239,7 @@ public sealed class DashboardForm : Form, IStateView
 
         var versionBadge = new Label
         {
-            Text = " v1.5.0 ",
+            Text = $" v{UpdateController.CurrentVersion} ",
             Font = new Font("Segoe UI", 8.5f, FontStyle.Bold),
             BackColor = ColorTurq,
             ForeColor = ColorInk,

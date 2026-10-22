@@ -156,6 +156,9 @@ public class ChatNormalizerTests
             "tushundm", "gaplashamz", "kirasz", "bopti", "bovotti"
         };
 
+        // Warm up first so JIT and static initialisation are not timed.
+        foreach (string w in sampleWords) UzbekPhonetics.Convert(ChatNormalizer.Normalize(w));
+
         var sw = System.Diagnostics.Stopwatch.StartNew();
         for (int i = 0; i < 1000; i++)
         {
