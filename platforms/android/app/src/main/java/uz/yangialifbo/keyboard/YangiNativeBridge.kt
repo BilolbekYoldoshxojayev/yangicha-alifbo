@@ -80,9 +80,9 @@ object YangiNativeBridge {
                 lower.contains("o‘") || lower.contains("g‘") || lower.contains("o’") || lower.contains("g’")
     }
 
-    private fun fallbackConvertWord(word: String): Boolean {
-        if (!fallbackShouldConvert(word)) return false
-        return true
+    private fun fallbackConvertWord(word: String): String {
+        if (!fallbackShouldConvert(word)) return word
+        return applyPhonetics(word)
     }
 
     internal fun applyPhonetics(word: String): String {
