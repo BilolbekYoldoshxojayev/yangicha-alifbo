@@ -4,11 +4,11 @@
 
 | Workstream | Description | State | Branch | Last Commit | CI Run Link | Notes |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| **A. Ground truth** | Test vector generator, eval set, benchmarks | **COMPLETE** | `multiplatform` | `b11c255` | Local Verified | `tools/vectors`, `tools/eval`, `tools/bench` fully working |
-| **B. Compact data + Rust core** | Coverage experiment, FST binary format, `yangi-core`, FFI, wasm | **COMPLETE** | `multiplatform` | `ac3d6c6` | Local Verified | 100% vector parity on 74,100 vectors; 59x size & 409x RAM reduction; C ABI & wasm |
-| **C. Unknown-word model** | Char n-gram quantized classifier (int8) | **COMPLETE** | `multiplatform` | Pending commit | Local Verified | 16 KB int8 model, 0 English FP on validation & eval, +6.3% eval recall (87.5%->93.8%), default OFF |
-| **D. Browser extension** | Chrome/Edge/Firefox MV3 extension via wasm core | **COMPLETE** | `multiplatform` | Local Verified | 52/52 tests pass | Manifest V3, zero network permissions, real-time input/textarea/contenteditable transliteration, caret preservation, password safety, popup with live sandbox, packaged zip (243 KB) |
-| **J. CI Workflows** | GitHub Actions multiplatform matrix | **COMPLETE** | `multiplatform` | Local Verified | `.github/workflows/ci.yml` | Multi-OS Rust core + 74k parity, Wasm & browser tests, .NET tests, strict privacy/security lint |
+| **A. Ground truth** | Test vector generator, eval set, benchmarks | **COMPLETE** | `multiplatform` | `b11c255` | [Run 39769838793](https://github.com/BilolbekYoldoshxojayev/yangicha-alifbo/actions/runs/39769838793) | `tools/vectors`, `tools/eval`, `tools/bench` fully working |
+| **B. Compact data + Rust core** | Coverage experiment, FST binary format, `yangi-core`, FFI, wasm | **COMPLETE** | `multiplatform` | `ac3d6c6` | [Run 39769838793](https://github.com/BilolbekYoldoshxojayev/yangicha-alifbo/actions/runs/39769838793) | 100% vector parity on 74,100 vectors; 59x size & 409x RAM reduction; C ABI & wasm |
+| **C. Unknown-word model** | Char n-gram quantized classifier (int8) | **COMPLETE** | `multiplatform` | `7c927cd` | [Run 39769838793](https://github.com/BilolbekYoldoshxojayev/yangicha-alifbo/actions/runs/39769838793) | 16 KB int8 model, 0 English FP on validation & eval, +6.3% eval recall (87.5%->93.8%), default OFF |
+| **D. Browser extension** | Chrome/Edge/Firefox MV3 extension via wasm core | **COMPLETE** | `multiplatform` | `4dd27ea` | [Run 39769838793](https://github.com/BilolbekYoldoshxojayev/yangicha-alifbo/actions/runs/39769838793) | Manifest V3, zero network permissions, real-time input/textarea/contenteditable transliteration, caret preservation, password safety, popup with live sandbox, packaged zip (243 KB) |
+| **J. CI Workflows** | GitHub Actions multiplatform matrix | **COMPLETE** | `multiplatform` | `4dd27ea` | [Run 39769838793](https://github.com/BilolbekYoldoshxojayev/yangicha-alifbo/actions/runs/39769838793) | Multi-OS Rust core + 74k parity, Wasm & browser tests, .NET tests, strict privacy/security lint |
 | **E. Android keyboard** | Kotlin InputMethodService + JNI | **Next** | `multiplatform` | — | — | Depends on B (FFI) |
 | **F. macOS input method** | Swift InputMethodKit + menu bar app | **Queued** | `multiplatform` | — | — | Depends on B (FFI) |
 | **G. Linux IME** | IBus engine + Fcitx5 addon via C ABI | **Queued** | `multiplatform` | — | — | Depends on B (FFI) |
@@ -79,9 +79,34 @@ Every metric recorded below comes directly from commands executed in this enviro
 
 ---
 
-## Exact Prioritised Next Steps
+## Prioritised Next Steps
 
-1. **Workstream E**: Android keyboard (Kotlin InputMethodService + JNI calling `yangi-ffi`).
-2. **Workstream F**: macOS input method (Swift InputMethodKit + menu bar app).
-3. **Workstream G**: Linux IME (IBus engine + Fcitx5 addon).
-4. **Workstream H**: Windows 1.6.1 on branch `windows-1.6.1`.
+1. **Workstream E (Android Keyboard)**:
+   - Setup `platforms/android/` project structure.
+   - Implement Kotlin `InputMethodService` + JNI bindings calling `yangi-ffi` C ABI.
+   - QWERTY layout with long-press diacritics (`ş`, `ç`, `ö`, `ğ`) and candidate bar.
+   - Enforce zero network permissions (`no android.permission.INTERNET`).
+   - Implement strict password protection (`TYPE_TEXT_VARIATION_PASSWORD` bypass).
+2. **Workstream F (macOS Input Method)**:
+   - Swift `InputMethodKit` engine + menu bar app consuming `yangi-ffi` C ABI.
+3. **Workstream G (Linux IME)**:
+   - IBus C engine plugin / Fcitx5 addon consuming `yangi-ffi` C ABI.
+4. **Workstream H (Windows 1.6.1 Maintenance)**:
+   - Work strictly on branch `windows-1.6.1`.
+   - Fix `ChatNormalizer` bovot out-of-bounds bug.
+   - Implement 3-hour delayed update notifications.
+   - Add optional compact data reader and fix testhost exit teardown.
+
+---
+
+## Last Green CI Run Per Target
+
+| Target / Workflow Job | Operating System | Status | Duration | Job ID | Run Link |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| **Rust Core & 74k Parity** | Ubuntu Linux (`ubuntu-latest`) | **PASS** | 33s | `119794314580` | [Run 39769838793](https://github.com/BilolbekYoldoshxojayev/yangicha-alifbo/actions/runs/39769838793) |
+| **Rust Core & 74k Parity** | macOS (`macos-latest`) | **PASS** | 50s | `119794315054` | [Run 39769838793](https://github.com/BilolbekYoldoshxojayev/yangicha-alifbo/actions/runs/39769838793) |
+| **Rust Core & 74k Parity** | Windows (`windows-latest`) | **PASS** | 1m 1s | `119794315157` | [Run 39769838793](https://github.com/BilolbekYoldoshxojayev/yangicha-alifbo/actions/runs/39769838793) |
+| **WebAssembly & Extension** | Ubuntu Linux (`ubuntu-latest`) | **PASS** | 33s | `119794315107` | [Run 39769838793](https://github.com/BilolbekYoldoshxojayev/yangicha-alifbo/actions/runs/39769838793) |
+| **Windows .NET Engine** | Windows (`windows-latest`) | **PASS** | 48s | `119794315141` | [Run 39769838793](https://github.com/BilolbekYoldoshxojayev/yangicha-alifbo/actions/runs/39769838793) |
+| **Privacy & Security Lint** | Ubuntu Linux (`ubuntu-latest`) | **PASS** | 10s | `119794314904` | [Run 39769838793](https://github.com/BilolbekYoldoshxojayev/yangicha-alifbo/actions/runs/39769838793) |
+| **Overall CI Matrix** | Multi-OS Matrix | **SUCCESS** | 1m 4s | — | [Run 39769838793](https://github.com/BilolbekYoldoshxojayev/yangicha-alifbo/actions/runs/39769838793) |
