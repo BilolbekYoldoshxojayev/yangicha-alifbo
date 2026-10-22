@@ -9,7 +9,7 @@
 | **C. Unknown-word model** | Char n-gram quantized classifier (int8) | **COMPLETE** | `multiplatform` | `7c927cd` | [Run 39769838793](https://github.com/BilolbekYoldoshxojayev/yangicha-alifbo/actions/runs/39769838793) | 16 KB int8 model, 0 English FP on validation & eval, +6.3% eval recall (87.5%->93.8%), default OFF |
 | **D. Browser extension** | Chrome/Edge/Firefox MV3 extension via wasm core | **COMPLETE** | `multiplatform` | `4dd27ea` | [Run 39769838793](https://github.com/BilolbekYoldoshxojayev/yangicha-alifbo/actions/runs/39769838793) | Manifest V3, zero network permissions, real-time input/textarea/contenteditable transliteration, caret preservation, password safety, popup with live sandbox, packaged zip (243 KB) |
 | **J. CI Workflows** | GitHub Actions multiplatform matrix | **COMPLETE** | `multiplatform` | `9d0e6a5` | [Run 39769838793](https://github.com/BilolbekYoldoshxojayev/yangicha-alifbo/actions/runs/39769838793) | Multi-OS Rust core + 74k parity, Wasm & browser tests, .NET tests, Android tests, strict privacy/security lint |
-| **E. Android keyboard** | Kotlin InputMethodService + JNI | **COMPLETE** | `multiplatform` | Pending commit | Local & CI Configured | Purpose-built minimal IME, JNI bridge calling `yangi-ffi`, QWERTY layout with long-press diacritics (`ş`, `ç`, `ö`, `ğ`), single-tap backspace undo, strict password bypass, zero network permissions |
+| **E. Android keyboard** | Kotlin InputMethodService + JNI | **COMPLETE** | `multiplatform` | `3803067` | [Run 39772066211](https://github.com/BilolbekYoldoshxojayev/yangicha-alifbo/actions/runs/39772066211) | Purpose-built minimal IME, JNI bridge calling `yangi-ffi`, QWERTY layout with long-press diacritics (`ş`, `ç`, `ö`, `ğ`), single-tap backspace undo, strict password bypass, zero network permissions |
 | **F. macOS input method** | Swift InputMethodKit + menu bar app | **Next** | `multiplatform` | — | — | Depends on B (FFI) |
 | **G. Linux IME** | IBus engine + Fcitx5 addon via C ABI | **Queued** | `multiplatform` | — | — | Depends on B (FFI) |
 | **H. Windows app follow-ups** | Update notices, compact data reader, testhost hang fix, v1.6.1 | **Queued** | `windows-1.6.1` | — | — | Branch `windows-1.6.1` only |
@@ -92,10 +92,11 @@ Every metric recorded below comes directly from commands executed in this enviro
 
 | Target / Workflow Job | Operating System | Status | Duration | Job ID | Run Link |
 | :--- | :--- | :--- | :--- | :--- | :--- |
-| **Rust Core & 74k Parity** | Ubuntu Linux (`ubuntu-latest`) | **PASS** | 33s | `119794314580` | [Run 39769838793](https://github.com/BilolbekYoldoshxojayev/yangicha-alifbo/actions/runs/39769838793) |
-| **Rust Core & 74k Parity** | macOS (`macos-latest`) | **PASS** | 50s | `119794315054` | [Run 39769838793](https://github.com/BilolbekYoldoshxojayev/yangicha-alifbo/actions/runs/39769838793) |
-| **Rust Core & 74k Parity** | Windows (`windows-latest`) | **PASS** | 1m 1s | `119794315157` | [Run 39769838793](https://github.com/BilolbekYoldoshxojayev/yangicha-alifbo/actions/runs/39769838793) |
-| **WebAssembly & Extension** | Ubuntu Linux (`ubuntu-latest`) | **PASS** | 33s | `119794315107` | [Run 39769838793](https://github.com/BilolbekYoldoshxojayev/yangicha-alifbo/actions/runs/39769838793) |
-| **Windows .NET Engine** | Windows (`windows-latest`) | **PASS** | 48s | `119794315141` | [Run 39769838793](https://github.com/BilolbekYoldoshxojayev/yangicha-alifbo/actions/runs/39769838793) |
-| **Privacy & Security Lint** | Ubuntu Linux (`ubuntu-latest`) | **PASS** | 10s | `119794314904` | [Run 39769838793](https://github.com/BilolbekYoldoshxojayev/yangicha-alifbo/actions/runs/39769838793) |
-| **Overall CI Matrix** | Multi-OS Matrix | **SUCCESS** | 1m 4s | — | [Run 39769838793](https://github.com/BilolbekYoldoshxojayev/yangicha-alifbo/actions/runs/39769838793) |
+| **Rust Core & 74k Parity** | Ubuntu Linux (`ubuntu-latest`) | **PASS** | 1m 5s | `119801790293` | [Run 39772066211](https://github.com/BilolbekYoldoshxojayev/yangicha-alifbo/actions/runs/39772066211) |
+| **Rust Core & 74k Parity** | macOS (`macos-latest`) | **PASS** | 35s | `119801790217` | [Run 39772066211](https://github.com/BilolbekYoldoshxojayev/yangicha-alifbo/actions/runs/39772066211) |
+| **Rust Core & 74k Parity** | Windows (`windows-latest`) | **PASS** | 1m 18s | `119801790328` | [Run 39772066211](https://github.com/BilolbekYoldoshxojayev/yangicha-alifbo/actions/runs/39772066211) |
+| **WebAssembly & Extension** | Ubuntu Linux (`ubuntu-latest`) | **PASS** | 34s | `119801790224` | [Run 39772066211](https://github.com/BilolbekYoldoshxojayev/yangicha-alifbo/actions/runs/39772066211) |
+| **Windows .NET Engine** | Windows (`windows-latest`) | **PASS** | 1m 10s | `119801789751` | [Run 39772066211](https://github.com/BilolbekYoldoshxojayev/yangicha-alifbo/actions/runs/39772066211) |
+| **Android Keyboard & Tests** | Ubuntu Linux (`ubuntu-latest`) | **PASS** | 2m 18s | `119801790150` | [Run 39772066211](https://github.com/BilolbekYoldoshxojayev/yangicha-alifbo/actions/runs/39772066211) |
+| **Privacy & Security Lint** | Ubuntu Linux (`ubuntu-latest`) | **PASS** | 7s | `119801790259` | [Run 39772066211](https://github.com/BilolbekYoldoshxojayev/yangicha-alifbo/actions/runs/39772066211) |
+| **Overall CI Matrix** | Multi-OS Matrix | **SUCCESS** | 2m 18s | — | [Run 39772066211](https://github.com/BilolbekYoldoshxojayev/yangicha-alifbo/actions/runs/39772066211) |

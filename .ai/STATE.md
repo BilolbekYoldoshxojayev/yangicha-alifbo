@@ -1,13 +1,14 @@
 # PROJECT STATE — YangiAlifbo Multiplatform
 
-## Status: IN PROGRESS (Milestone 5: Desktop Native IMEs & Maintenance)
+## Status: IN PROGRESS (Milestone 9: macOS Input Method & Native IMEs)
 - Branch: `multiplatform`
 - Rust Core (`yangi-core`): 100% Vector Parity verified on 74,100 vectors (0 mismatches).
 - C ABI (`yangi-ffi`): Static and dynamic C libraries compiled and verified, JNI bindings implemented for Android.
 - WebAssembly (`yangi-wasm`): Optimized binary (353 KB) with embedded FST lexicon & int8 ML classifier.
 - Browser Extension (`platforms/browser/`): 100% complete (52/52 automated tests pass, 243.5 KB distribution zip).
-- Android Keyboard (`platforms/android/`): 100% complete (purpose-built minimal IME, JNI bridge, QWERTY layout with long-press diacritics, backspace undo, password safety, zero network permissions).
-- CI Matrix (`.github/workflows/ci.yml`): Configured across Linux, macOS, and Windows.
+- Android Keyboard (`platforms/android/`): 100% complete (purpose-built minimal IME, JNI bridge, QWERTY layout with long-press diacritics, backspace undo, password safety, zero network permissions, CI run 39772066211 green).
+- CI Matrix (`.github/workflows/ci.yml`): All 7 jobs passing green across Linux, macOS, and Windows.
+- Active Workstream: Workstream F (macOS Input Method).
 
 ## Workstream Progress Summary
 - **Workstream A (Ground Truth)**: COMPLETE (74,100 test vectors, eval set, benchmarks).

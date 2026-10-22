@@ -40,3 +40,15 @@
   2. *Security & Privacy*: A minimal IME cleanly guarantees zero network permissions (`no android.permission.INTERNET`) without complex multi-lingual network telemetry risks.
   3. *Native Parity*: Seamless JNI integration with `yangi-ffi` C ABI ensures 100% vector parity with desktop and browser builds.
   4. *Targeted UX*: Purpose-built diacritic hints (`ş`, `ç`, `ö`, `ğ` in Saffron `#F0B23A`) and instant single-tap backspace undo without fighting generic autocorrect algorithms.
+
+## ADR-008: macOS Input Method Architecture (InputMethodKit Server + C ABI)
+- **Context**: Workstream F requires a native macOS Input Method supporting Uzbek 2024 Reformed Latin, real-time delimiter transliteration, backspace undo, secure password bypass, and menu bar control.
+- **Alternatives**:
+  1. Low-level `CGEventTap` accessibility hook.
+  2. Native `InputMethodKit` (`IMKServer` + `IMKInputController`) app bundle.
+- **Decision**: Native `InputMethodKit` architecture with Swift Package Manager (SPM) structure.
+- **Rationale**:
+  1. *System Integration*: `InputMethodKit` is the official Apple architecture for macOS input methods. It does not require cumbersome Accessibility / Privacy permissions like `CGEventTap`, and works seamlessly across Cocoa, Catalyst, WebKit, and Electron text clients.
+  2. *Password Protection (Hard Rule 7)*: `IsSecureEventInputEnabled()` directly detects macOS secure event input (password fields, Keychain, sudo) and bypasses keystrokes 100%.
+  3. *C ABI Interop*: Swift cleanly bridges to `yangi-ffi` C ABI (`yangi_core.h`), providing microsecond lookup speeds and identical vector parity.
+  4. *SPM Buildability*: Swift Package Manager enables rapid, clean CI builds on `macos-latest` without heavyweight Xcode project file merge conflicts.
