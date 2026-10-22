@@ -89,6 +89,14 @@ impl LanguageDetector<'static> {
         const BYTES: &[u8] = include_bytes!("../../data/yangi_data.bin");
         LanguageDetector::from_bytes(BYTES).expect("Failed to initialize embedded YangiAlifbo dictionary")
     }
+
+    /// Creates an embedded instance with the embedded unknown-word classifier attached.
+    #[cfg(feature = "embedded-data")]
+    pub fn embedded_with_classifier() -> LanguageDetector<'static> {
+        let detector = Self::embedded();
+        let classifier = crate::classifier::UnknownWordClassifier::embedded();
+        detector.with_classifier(classifier)
+    }
 }
 
 impl<'a> LanguageDetector<'a> {

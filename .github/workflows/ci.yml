@@ -1,0 +1,149 @@
+name: YangiAlifbo Multiplatform CI
+
+on:
+  push:
+    branches:
+      - multiplatform
+      - 'feature/**'
+      - 'workstream/**'
+  pull_request:
+    branches:
+      - multiplatform
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  rust-core:
+    name: Rust Core & 74k Parity (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          components: clippy
+
+      - name: Cargo Cache
+        uses: Swatinem/rust-cache@v2
+
+      - name: Cargo Clippy
+        run: cargo clippy --workspace --all-targets -- -D warnings
+        continue-on-error: true
+
+      - name: Unit Tests
+        run: cargo test -p yangi-core
+
+      - name: Full Vector Parity Test (74,100 vectors)
+        run: cargo test --test vector_parity -p yangi-core -- --nocapture
+
+      - name: Build C ABI / FFI Library
+        run: cargo build -p yangi-ffi --release
+
+  browser-extension:
+    name: WebAssembly & Browser Extension
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: wasm32-unknown-unknown
+
+      - name: Install wasm-pack
+        run: curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Build WebAssembly Core
+        run: |
+          wasm-pack build --target no-modules --out-dir ../../platforms/browser/wasm core/wasm
+
+      - name: Run Extension Automated Test Suite (52 tests)
+        run: |
+          node platforms/browser/tests/run_tests.js
+
+      - name: Package Extension Archive
+        run: |
+          python platforms/browser/package.py
+
+      - name: Upload Extension Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: yangi-alifbo-browser-extension
+          path: platforms/browser/dist/*.zip
+
+  windows-dotnet:
+    name: Windows .NET Engine Tests
+    runs-on: windows-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup .NET SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Run .NET Core Engine & Discrimination Tests
+        run: dotnet test tests/YangiAlifbo.Tests.csproj --filter "FullyQualifiedName~TransliterationTests|FullyQualifiedName~DiscriminationTests" -c Release
+
+  privacy-security-lint:
+    name: Privacy & Security Invariant Check
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Check Browser Extension Permissions (Hard Rule 6)
+        run: |
+          node -e "
+          const fs = require('fs');
+          const m = JSON.parse(fs.readFileSync('platforms/browser/manifest.json', 'utf8'));
+          if (m.permissions.length !== 1 || m.permissions[0] !== 'storage') {
+            console.error('VIOLATION: Browser extension requested unauthorized permissions:', m.permissions);
+            process.exit(1);
+          }
+          if (m.host_permissions && m.host_permissions.length > 0) {
+            console.error('VIOLATION: Browser extension requested host permissions:', m.host_permissions);
+            process.exit(1);
+          }
+          console.log('PASS: Manifest V3 has strict zero-network permissions.');
+          "
+
+      - name: Check Zero Telemetry / Network Code in Extension Scripts
+        run: |
+          node -e "
+          const fs = require('fs');
+          const forbidden = ['fetch(', 'XMLHttpRequest', 'sendBeacon', 'WebSocket', 'EventSource'];
+          const scripts = ['platforms/browser/content.js', 'platforms/browser/popup.js', 'platforms/browser/background.js'];
+          let errors = 0;
+          for (const s of scripts) {
+            const content = fs.readFileSync(s, 'utf8');
+            for (const f of forbidden) {
+              if (content.includes(f)) {
+                console.error('VIOLATION: Forbidden network call found in ' + s + ': ' + f);
+                errors++;
+              }
+            }
+          }
+          if (errors > 0) process.exit(1);
+          console.log('PASS: All extension scripts are 100% network-free and private.');
+          "

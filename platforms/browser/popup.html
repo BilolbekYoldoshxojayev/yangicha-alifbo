@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>YangiAlifbo</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="popup-container">
+    <!-- Header -->
+    <header class="header">
+      <div class="brand">
+        <div class="logo-badge">
+          <span class="logo-y">Y</span><span class="logo-diacritic">ş</span>
+        </div>
+        <div class="brand-text">
+          <h1 class="title">YangiAlifbo</h1>
+          <span class="version">v1.0.0</span>
+        </div>
+      </div>
+      <div class="master-switch-wrap">
+        <label class="switch" title="YangiAlifboni yoqish yoki o'chirish">
+          <input type="checkbox" id="master-toggle" checked>
+          <span class="slider round"></span>
+        </label>
+      </div>
+    </header>
+
+    <!-- Current Site Card -->
+    <section class="card site-card">
+      <div class="site-info">
+        <span class="site-label">Joriy sayt:</span>
+        <span class="site-domain" id="site-domain">Yuklanmoqda...</span>
+      </div>
+      <div class="site-toggle-wrap">
+        <span class="status-indicator" id="site-status-text">Faol</span>
+        <button type="button" class="btn-toggle-site" id="btn-toggle-site">Ushbu saytda to'xtatish</button>
+      </div>
+    </section>
+
+    <!-- Options Section -->
+    <section class="card options-card">
+      <h2 class="section-title">Sozlamalar</h2>
+      
+      <!-- Mode selection -->
+      <div class="option-row">
+        <div class="option-label">
+          <span class="opt-name">Rejim</span>
+          <span class="opt-desc">O'girish darajasi</span>
+        </div>
+        <div class="segmented-control">
+          <button type="button" class="seg-btn active" data-mode="strict" id="btn-mode-strict" title="Faqat tasdiqlangan o'zbek so'zlarini o'giradi">Qat'iy</button>
+          <button type="button" class="seg-btn" data-mode="aggressive" id="btn-mode-aggressive" title="Kengaytirilgan morfologik tahlil">Erkin</button>
+        </div>
+      </div>
+
+      <!-- Slang Normalization -->
+      <div class="option-row">
+        <div class="option-label">
+          <span class="opt-name">So'zlashuv tili</span>
+          <span class="opt-desc">bovot &rarr; bo'lyapti</span>
+        </div>
+        <label class="switch sm">
+          <input type="checkbox" id="toggle-slang">
+          <span class="slider round"></span>
+        </label>
+      </div>
+
+      <!-- ML Classifier -->
+      <div class="option-row">
+        <div class="option-label">
+          <span class="opt-name">AI/ML Klassifikator</span>
+          <span class="opt-desc">Yangi va chet so'zlarni ajratish</span>
+        </div>
+        <label class="switch sm">
+          <input type="checkbox" id="toggle-ml">
+          <span class="slider round"></span>
+        </label>
+      </div>
+    </section>
+
+    <!-- Live Test Sandbox -->
+    <section class="card sandbox-card">
+      <div class="sandbox-header">
+        <h2 class="section-title">Sinov maydoni</h2>
+        <button type="button" class="btn-copy" id="btn-copy" title="Nusxa olish">Nusxa olish</button>
+      </div>
+      <div class="sandbox-input-wrap">
+        <textarea id="sandbox-input" placeholder="Shu yerga yozib ko'ring (masalan: O'zbekiston, shahar chiroqlari, g'alaba)..." rows="2"></textarea>
+      </div>
+      <div class="sandbox-output-wrap">
+        <div class="output-label">Natija (2024 isloh qilingan alifboda):</div>
+        <div class="sandbox-output" id="sandbox-output">Özbekiston, şahar çiroqlari, ğalaba...</div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <div class="privacy-badge">
+        <span class="lock-icon">🔒</span>
+        <span>100% Maxfiy: Matnlar qurilmadan tashqariga chiqmaydi.</span>
+      </div>
+    </footer>
+  </div>
+
+  <script src="wasm/yangi_wasm.js"></script>
+  <script src="popup.js"></script>
+</body>
+</html>

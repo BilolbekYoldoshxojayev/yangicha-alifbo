@@ -1,0 +1,44 @@
+{
+  "manifest_version": 3,
+  "name": "YangiAlifbo — O'zbek Alifbosi Konvertori",
+  "version": "1.0.0",
+  "description": "Eski o'zbek lotin alifbosini (sh, ch, o', g') yangi isloh qilingan alifboga (ş, ç, ö, ğ) real vaqtda o'giradi.",
+  "icons": {
+    "16": "icons/icon-16.png",
+    "32": "icons/icon-32.png",
+    "48": "icons/icon-48.png",
+    "128": "icons/icon-128.png"
+  },
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "YangiAlifbo Sozlamalari",
+    "default_icon": {
+      "16": "icons/icon-16.png",
+      "32": "icons/icon-32.png",
+      "48": "icons/icon-48.png",
+      "128": "icons/icon-128.png"
+    }
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "permissions": [
+    "storage"
+  ],
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["wasm/yangi_wasm.js", "content.js"],
+      "run_at": "document_idle"
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "wasm/yangi_wasm.js",
+        "wasm/yangi_wasm_bg.wasm"
+      ],
+      "matches": ["<all_urls>"]
+    }
+  ]
+}

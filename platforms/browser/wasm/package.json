@@ -1,0 +1,11 @@
+{
+  "name": "yangi-wasm",
+  "version": "0.1.0",
+  "files": [
+    "yangi_wasm_bg.wasm",
+    "yangi_wasm.js",
+    "yangi_wasm.d.ts"
+  ],
+  "browser": "yangi_wasm.js",
+  "types": "yangi_wasm.d.ts"
+}

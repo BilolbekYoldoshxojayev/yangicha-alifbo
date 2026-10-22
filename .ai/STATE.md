@@ -1,20 +1,26 @@
-# PROJECT STATE — YangiAlifbo
+# PROJECT STATE — YangiAlifbo Multiplatform
 
-## Status: COMPLETE
-- All 93 automated unit tests compiled and passed 100%.
-- Single-file self-contained executable published: `c:\dev\Projects\alphabet\YangiAlifbo\publish\YangiAlifbo.exe` (51.8 MB).
+## Status: IN PROGRESS (Milestone 4: Native Mobile & Desktop Engines)
+- Branch: `multiplatform`
+- Rust Core (`yangi-core`): 100% Vector Parity verified on 74,100 vectors (0 mismatches).
+- C ABI (`yangi-ffi`): Static and dynamic C libraries compiled and verified.
+- WebAssembly (`yangi-wasm`): Optimized binary (353 KB) with embedded FST lexicon & int8 ML classifier.
+- Browser Extension (`platforms/browser/`): 100% complete (52/52 automated tests pass, 243.5 KB distribution zip).
+- CI Matrix (`.github/workflows/ci.yml`): Configured across Linux, macOS, and Windows.
 
-## Verification Summary
-- **Transliteration Tests**: 100% passed (`sh->ş`, `ch->ç`, `o'->ö`, `g'->ğ`, all casing forms: lower, Title, ALL CAPS).
-- **Apostrophe Boundary Protection**: 100% passed (`Is'hoq`, `mus'haf`, `as-hob`, `mas'ul`).
-- **Apostrophe Variants**: 100% passed (`'`, `‘`, `’`, `ʻ`, `ʼ`, `` ` ``).
-- **Linguistic Discrimination**: 100% passed (23 English `sh` words rejected, 20 English `ch` words rejected, 10 programming keywords rejected).
-- **Uzbek Word Acceptance**: 100% passed (14 base Uzbek words + 7 inflected/morphological words accepted).
-- **Embedded Dictionaries**:
-  - `uzbek_words.txt`: 33,654 words.
-  - `english_reject.txt`: 10,034 words.
-- **Safety Mechanisms**:
-  - `0x59414E47` ("YANG") magic marker in `dwExtraInfo` + `_isSelfInjecting` guard.
-  - Named mutex `Global\YangiAlifbo_SingleInstance_Mutex`.
-  - Process blacklist (`cmd.exe`, `powershell.exe`, `wt.exe`, `code.exe`, `devenv.exe`, etc.).
-  - User whitelist / blacklist in `%AppData%\YangiAlifbo\`.
+## Workstream Progress Summary
+- **Workstream A (Ground Truth)**: COMPLETE (74,100 test vectors, eval set, benchmarks).
+- **Workstream B (Rust Core + Compact Data)**: COMPLETE (239 KB dictionary, 59x size reduction, 409x RAM reduction, 100% parity).
+- **Workstream C (Unknown-Word Model)**: COMPLETE (16 KB int8 char n-gram classifier, 0 English false positives, +6.3% eval recall).
+- **Workstream D (Browser Extension)**: COMPLETE (MV3 extension, zero network permissions, real-time input/textarea/contenteditable transliteration, caret preservation, password safety, popup with live sandbox).
+- **Workstream J (CI Workflows)**: COMPLETE (Multi-OS Rust core + 74k parity, Wasm & browser tests, .NET tests, strict privacy lint).
+- **Workstream E (Android Keyboard)**: NEXT IN QUEUE.
+- **Workstream F (macOS Input Method)**: QUEUED.
+- **Workstream G (Linux IME)**: QUEUED.
+- **Workstream H (Windows 1.6.1 Maintenance)**: QUEUED on branch `windows-1.6.1`.
+
+## Security & Privacy Invariants
+- Zero typed text transmission over network on any platform.
+- Zero disk logging of keystrokes.
+- Password/secure fields strictly bypassed.
+- No release publishing or tag pushes on `multiplatform`.

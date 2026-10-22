@@ -46,12 +46,18 @@ impl<'a> UnknownWordClassifier<'a> {
         })
     }
 
+}
+
+impl UnknownWordClassifier<'static> {
     /// Creates an embedded instance using the bundled model binary.
     #[cfg(feature = "embedded-data")]
     pub fn embedded() -> UnknownWordClassifier<'static> {
         const BYTES: &[u8] = include_bytes!("../../data/unknown_model.bin");
-        Self::from_bytes(BYTES).expect("Failed to initialize embedded unknown-word model")
+        UnknownWordClassifier::from_bytes(BYTES).expect("Failed to initialize embedded unknown-word model")
     }
+}
+
+impl<'a> UnknownWordClassifier<'a> {
 
     /// Computes the integer score for an input word.
     pub fn score(&self, word: &str) -> i32 {
