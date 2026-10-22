@@ -28,6 +28,7 @@ pub struct LanguageDetector<'a> {
     roots: Set<&'a [u8]>,
     exceptions: Set<&'a [u8]>,
     rejects: Set<&'a [u8]>,
+    classifier: Option<crate::classifier::UnknownWordClassifier<'a>>,
 }
 
 impl<'a> LanguageDetector<'a> {
@@ -69,7 +70,14 @@ impl<'a> LanguageDetector<'a> {
             roots,
             exceptions,
             rejects,
+            classifier: None,
         })
+    }
+
+    /// Attaches an unknown-word classifier (default is OFF/None).
+    pub fn with_classifier(mut self, classifier: crate::classifier::UnknownWordClassifier<'a>) -> Self {
+        self.classifier = Some(classifier);
+        self
     }
 
 }
@@ -190,6 +198,11 @@ impl<'a> LanguageDetector<'a> {
 
         if converted != normalized && self.try_morphological_match(&converted) {
             return true;
+        }
+
+        // Tier 4: Unknown-word ML classifier (if enabled, default OFF)
+        if let Some(ref classifier) = self.classifier {
+            return classifier.predict(normalized);
         }
 
         false
