@@ -110,3 +110,47 @@ Every metric recorded below comes directly from commands executed in this enviro
 | **Windows .NET Engine** | Windows (`windows-latest`) | **PASS** | 48s | `119794315141` | [Run 39769838793](https://github.com/BilolbekYoldoshxojayev/yangicha-alifbo/actions/runs/39769838793) |
 | **Privacy & Security Lint** | Ubuntu Linux (`ubuntu-latest`) | **PASS** | 10s | `119794314904` | [Run 39769838793](https://github.com/BilolbekYoldoshxojayev/yangicha-alifbo/actions/runs/39769838793) |
 | **Overall CI Matrix** | Multi-OS Matrix | **SUCCESS** | 1m 4s | — | [Run 39769838793](https://github.com/BilolbekYoldoshxojayev/yangicha-alifbo/actions/runs/39769838793) |
+
+---
+
+## Claude review (2026-10-22), read this before continuing
+
+Independently re-checked on the user's machine (Windows 11, rustc via cargo 1.99.1,
+MSVC 14.44 linker):
+
+**Confirmed**
+- `cargo test --release` in core/: all tests pass, incl. `test_vector_parity_full`.
+- Browser extension tests: `node platforms/browser/tests/run_tests.js` → 52/52 passed.
+- **Full-lexicon parity (not the 74,100 sample):** every line of
+  src/Core/Dictionaries/uzbek_words.txt + english_reject.txt + 1/50 capitalised +
+  1/97 upper-case variants = 986,657 words, run through C# `ShouldConvert` and Rust
+  `should_convert` (yangi_data.bin). Strict: 986,656/986,657 agree. Aggressive:
+  986,657/986,657 agree.
+- src/, tests/, e2e_tests/, docs/ unchanged vs. main. CI triggers only on
+  multiplatform/feature/workstream branches and uses no secrets. Extension asks only
+  for `storage`; no network calls in extension scripts.
+
+**Corrections / bugs (fix these)**
+1. BUG: `abadiylash` (present in uzbek_words.txt). C# Strict = convert, Rust = don't.
+   Probably the verb-infinitive rule (stem + "moq" → abadiylashmoq is in roots.txt)
+   differs. Find the rule difference and fix it; add the word to the vectors.
+2. Vectors sample the lexicon (every Nth word, ~30K of ~474K old-spelling entries).
+   Add a full-lexicon parity job (both modes, all 948K entries + reject list) to CI
+   or as tools/fullcheck, since it takes only seconds in Rust.
+3. "RAM 0.24 MB / 409x less RAM" is the data file size, not memory use. Measured
+   instead: a Rust process that loads yangi_data.bin and checks all 986,657 words
+   has a working set of 4.3 MB (private 0.9 MB), against ~96–157 MB for the C# app.
+   Fix the table: report measured working set, not file size.
+4. The eval set has 24 entries, so "+6.3% recall" is one sentence. Expand it to at
+   least 300 real Uzbek sentences + 150 English/code sentences from a licensed public
+   source before any accuracy claim; keep the classifier default OFF until then.
+5. Extension: `web_accessible_resources` exposes the wasm to `<all_urls>`, which lets
+   any site detect the extension. Prefer loading the wasm from the content script via
+   `chrome.runtime.getURL` with `use_dynamic_url: true`, or restrict matches. Logged in
+   REVIEW-QUEUE.
+6. Don't commit built artifacts (platforms/browser/dist/*.zip); upload them from CI.
+
+**Next steps (priority order)**
+1. Fix items 1–2 above, then continue with E (Android), H (Windows 1.6.1), F, G, I.
+2. Claude takes over: design pass on the extension popup and the future keyboard UIs
+   (DESIGN-REQUESTS.md), and release decisions.

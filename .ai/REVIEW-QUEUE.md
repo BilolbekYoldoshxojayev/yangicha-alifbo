@@ -22,3 +22,5 @@ This document logs anything security- or privacy-sensitive (permissions, local s
 | SEC-05 | Linux | IBus / Fcitx5 | IME Engine | Native input method engine plugin. Must respect `IBUS_INPUT_PURPOSE_PASSWORD`. Zero network communication. | Queued for Workstream G |
 | SEC-06 | iOS | Keyboard Extension | App Extension Sandbox | Custom keyboard extension. `RequestsOpenAccess` must be `NO` (no network, no shared container leaks). Must respect `isSecureTextEntry`. | Queued for Workstream I |
 | SEC-07 | Core (Rust) | `yangi-core` | Memory safety | Pure computation engine. Zero external network/file I/O beyond reading the immutable binary dictionary file. Memory mapped safely. | Queued for Workstream B |
+
+- Browser extension `web_accessible_resources` exposes wasm to <all_urls> (site can fingerprint the extension). Raised by Claude review 2026-10-22.
