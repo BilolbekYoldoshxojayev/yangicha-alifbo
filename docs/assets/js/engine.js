@@ -4,7 +4,7 @@
  * NormalizeApostrophes) and the delimiter set in src/Win32/KeyboardHook.cs.
  *
  * Scope: rules + the 10,055-word English/code reject filter. The desktop
- * app's 938,526-entry lexicon and morphology are NOT shipped to the browser,
+ * app's ~948,000-entry lexicon and morphology are NOT shipped to the browser,
  * so this behaves like the app's Aggressive mode with the reject filter.
  */
 (function (root) {
@@ -14,7 +14,7 @@
   var APOSTROPHES = "'‘’ʻʼ`´‛′";
 
   // Characters that end a word (KeyboardHook.Delimiters).
-  var DELIMITERS = " \t\r\n.,!?:;-\"()[]{}/\<>=+*&|^~@#%";
+  var DELIMITERS = " \t\r\n.,!?:;-\"()[]{}/\\<>=+*&|^~@#%";
 
   function isApostrophe(c) { return APOSTROPHES.indexOf(c) !== -1; }
   function isDelimiter(c) { return DELIMITERS.indexOf(c) !== -1; }
@@ -105,7 +105,9 @@
   function decide(word) {
     if (!word || word.trim().length < 2) return { convert: false, reason: 'short' };
     if (!hasConvertiblePatterns(word)) return { convert: false, reason: 'nopattern' };
-    if (isRejected(word)) return { convert: false, reason: 'rejected' };
+    // Hyphenated words (check-in, 5-chi): reject when any lettered part is filtered.
+    var rejected = isRejected(word) || word.split('-').some(function (p) { return /\D/.test(p) && p.length > 1 && isRejected(p) && p.toLowerCase() !== 'chi'; });
+    if (rejected) return { convert: false, reason: 'rejected' };
     return { convert: true, reason: 'rules' };
   }
 

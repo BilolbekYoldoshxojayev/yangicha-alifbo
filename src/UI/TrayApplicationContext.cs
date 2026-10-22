@@ -17,7 +17,7 @@ namespace YangiAlifbo.UI;
 /// keyboard hook, focus tracker, language detector, context menu,
 /// and global hotkey for toggling transliteration on/off.
 /// </summary>
-internal sealed class TrayApplicationContext : ApplicationContext
+internal sealed class TrayApplicationContext : ApplicationContext, IControlCenterHost
 {
     // ── Constants ──────────────────────────────────────────────────────
 
@@ -42,7 +42,7 @@ internal sealed class TrayApplicationContext : ApplicationContext
     private readonly ToolStripMenuItem _aggressiveModeItem;
     private readonly ToolStripMenuItem _startupItem;
     private readonly ToolStripMenuItem _chatSlangItem;
-    private DashboardForm? _dashboardForm;
+    private Form? _dashboardForm;
 
     // ── Hotkey Window ──────────────────────────────────────────────────
     private readonly HotkeyWindow _hotkeyWindow;
@@ -115,7 +115,7 @@ internal sealed class TrayApplicationContext : ApplicationContext
         contextMenu.Items.Add(new ToolStripSeparator());
         contextMenu.Items.Add(_startupItem);
         contextMenu.Items.Add(new ToolStripSeparator());
-        contextMenu.Items.Add($"ℹ️ Haqida (About) — v1.4.0 | Lug'at: {_detector.UzbekLexiconCount:N0} so'z", null, OnAbout);
+        contextMenu.Items.Add($"ℹ️ Haqida (About) — v1.5.0 | Lug'at: {_detector.UzbekLexiconCount:N0} so'z", null, OnAbout);
         contextMenu.Items.Add("❌ Chiqish (Exit)", null, OnExit);
 
         // ── Create tray icon ───────────────────────────────────────
@@ -167,7 +167,7 @@ internal sealed class TrayApplicationContext : ApplicationContext
             ? "YangiAlifbo — Faol ✓\n(Ctrl+Shift+U o'chirish)"
             : "YangiAlifbo — O'chirilgan ✗\n(Ctrl+Shift+U yoqish)";
 
-        _dashboardForm?.NotifyStateChanged();
+        (_dashboardForm as IStateView)?.NotifyStateChanged();
     }
 
     // ── Event Handlers ─────────────────────────────────────────────────
@@ -276,7 +276,11 @@ internal sealed class TrayApplicationContext : ApplicationContext
     {
         if (_dashboardForm == null || _dashboardForm.IsDisposed)
         {
-            _dashboardForm = new DashboardForm(this, _keyboardHook, _detector);
+            // The WebView2 control center matches the website; the WinForms
+            // dashboard remains for machines without the WebView2 runtime.
+            _dashboardForm = ControlCenterForm.IsRuntimeAvailable()
+                ? new ControlCenterForm(this, _keyboardHook, _detector, _iconActive)
+                : new DashboardForm(this, _keyboardHook, _detector);
         }
 
         if (!_dashboardForm.Visible)
@@ -323,7 +327,7 @@ internal sealed class TrayApplicationContext : ApplicationContext
     {
         MessageBox.Show(
             "YangiAlifbo — O'zbek Yozuvi Konvertori\n" +
-            "Versiya 1.4.0 (Telegram va Jonli Muloqot Nashri)\n\n" +
+            "Versiya 1.5.0 (Raqamli Tartib & Kengaytirilgan Lug'at)\n\n" +
             "1995 lotin alifbosidan 2024 yangi alifboga\n" +
             "real-vaqtda konvertatsiya qiladi.\n\n" +
             $"O'zbek lug'ati: {_detector.UzbekLexiconCount:N0} so'z\n" +

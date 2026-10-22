@@ -1,3 +1,4 @@
+using System.Runtime.CompilerServices;
 ﻿// ──────────────────────────────────────────────────────────────────────
 // YangiAlifbo — LanguageDetector.cs
 // 3-tier Uzbek/foreign word discrimination engine.
@@ -53,6 +54,30 @@ public sealed class LanguageDetector : ILanguageDetector, IDisposable
     private readonly object _fileLock = new();
     private bool _isDisposed;
     private readonly System.Collections.Concurrent.ConcurrentDictionary<string, bool> _lookupCache = new(StringComparer.OrdinalIgnoreCase);
+
+    /// <summary>
+    /// Uzbek ordinal and quantitative suffixes attached with hyphens to numbers (e.g. 5-chi, 1-inchi, 10-gacha).
+    /// </summary>
+    private static readonly HashSet<string> OrdinalSuffixes = new(StringComparer.OrdinalIgnoreCase)
+    {
+        "chi", "ci", "c", "chisi", "chisida", "chisidagi", "chidan", "chiga", "chini", "chisini", "chisiga", "chisidan",
+        "chilar", "chilari", "chilariga", "chilarida", "chilaridan", "chimiz", "chingiz",
+        "nchi", "nchisi", "nchisida", "nchidan", "nchiga", "nchini",
+        "inchi", "inchisi", "inchisida", "inchidan", "inchiga", "inchini",
+        "tacha", "gacha", "dagi", "lik", "talab", "tadan"
+    };
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private static bool IsAllDigits(ReadOnlySpan<char> span)
+    {
+        if (span.IsEmpty) return false;
+        for (int i = 0; i < span.Length; i++)
+        {
+            if (!char.IsDigit(span[i]))
+                return false;
+        }
+        return true;
+    }
 
     // ── 140+ Known Uzbek suffixes for morphological analysis ───────────
 
@@ -255,6 +280,29 @@ public sealed class LanguageDetector : ILanguageDetector, IDisposable
         if (_userWhitelist.Contains(normalized))
             return false;
 
+        int hyphenIdx = normalized.IndexOf('-');
+        if (hyphenIdx > 0)
+        {
+            // Digit prefix (e.g. 5-chi, 1-o'rin)
+            if (IsAllDigits(normalized.AsSpan(0, hyphenIdx)))
+            {
+                string suffix = normalized[(hyphenIdx + 1)..];
+                if (OrdinalSuffixes.Contains(suffix))
+                    return false;
+
+                return _englishReject.Contains(suffix);
+            }
+
+            // Word compound (e.g. o'z-o'zidan, kel-chi)
+            string part1 = normalized[..hyphenIdx];
+            string part2 = normalized[(hyphenIdx + 1)..];
+            if (part2 == "chi") // e.g. kel-chi, ayt-chi
+                return _englishReject.Contains(part1);
+
+            if (_englishReject.Contains(part1) || _englishReject.Contains(part2))
+                return true;
+        }
+
         return _englishReject.Contains(normalized);
     }
 
@@ -293,6 +341,39 @@ public sealed class LanguageDetector : ILanguageDetector, IDisposable
         // ── Tier 1: English/foreign reject (fast path) ─────────────
         if (_englishReject.Contains(normalized))
             return false;
+
+        // ── Compound & Ordinal Number Handling (e.g. 5-chi, 1-o'rin, kel-chi) ──
+        int hyphen = normalized.IndexOf('-');
+        if (hyphen > 0)
+        {
+            if (IsAllDigits(normalized.AsSpan(0, hyphen)))
+            {
+                string suffix = normalized[(hyphen + 1)..];
+                if (OrdinalSuffixes.Contains(suffix))
+                    return true;
+
+                if (ComputeIsUzbek(suffix, mode))
+                    return true;
+            }
+            else
+            {
+                // Verb particle: kel-chi, ayt-chi, ko'r-chi
+                if (normalized.EndsWith("-chi", StringComparison.OrdinalIgnoreCase))
+                {
+                    string stem = normalized[..^4];
+                    if (stem.Length >= 2 && ComputeIsUzbek(stem, mode))
+                        return true;
+                }
+
+                string part1 = normalized[..hyphen];
+                string part2 = normalized[(hyphen + 1)..];
+                if (!_englishReject.Contains(part1) && !_englishReject.Contains(part2))
+                {
+                    if (ComputeIsUzbek(part1, mode) || ComputeIsUzbek(part2, mode))
+                        return true;
+                }
+            }
+        }
 
         // ── Tier 2: Uzbek lexicon exact match (dual orthography) ───
         if (_uzbekLexicon.Contains(normalized))

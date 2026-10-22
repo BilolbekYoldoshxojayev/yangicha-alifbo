@@ -72,6 +72,27 @@ public class ChatNormalizerTests
     [DataRow("chotki", "çotki")]
     [DataRow("gaplashvotti", "gaplaşvotti")]
     [DataRow("chiqvotti", "çiqvotti")]
+
+    // ── Ordinal & compound numbers (5-chi -> 5-çi, 1-o'rin -> 1-örin) ──
+    [DataRow("5-chi", "5-çi")]
+    [DataRow("5-CHI", "5-ÇI")]
+    [DataRow("5-Chi", "5-Çi")]
+    [DataRow("10-chi", "10-çi")]
+    [DataRow("1-chi", "1-çi")]
+    [DataRow("2-chi", "2-çi")]
+    [DataRow("3-chi", "3-çi")]
+    [DataRow("4-chi", "4-çi")]
+    [DataRow("1-o'rin", "1-örin")]
+    [DataRow("2-o'rinda", "2-örinda")]
+    [DataRow("1-g'alaba", "1-ğalaba")]
+    [DataRow("5-tacha", "5-taça")]
+    [DataRow("5-gacha", "5-gaça")]
+    [DataRow("5-chisida", "5-çisida")]
+    [DataRow("1-bosqich", "1-bosqiç")]
+    [DataRow("kel-chi", "kel-çi")]
+    [DataRow("o'z-o'zidan", "öz-özidan")]
+    [DataRow("5-ci", "5-çi")]
+    [DataRow("1-orinda", "1-örinda")]
     public void TestChatConversion(string input, string expected)
     {
         // 1. Should not be rejected as foreign
@@ -117,6 +138,9 @@ public class ChatNormalizerTests
     [DataRow("candidate")]
     [DataRow("test")]
     [DataRow("idk")]
+    [DataRow("chi")]
+    [DataRow("64-bit")]
+    [DataRow("check-in")]
     public void TestEnglishWordsAreRejected(string englishWord)
     {
         Assert.IsTrue(_detector.IsForeignOrReject(englishWord),

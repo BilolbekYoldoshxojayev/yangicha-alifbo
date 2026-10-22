@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="uz">
+<head>
+  <meta charset="utf-8">
+  <title>YangiAlifbo</title>
+  <link rel="stylesheet" href="fonts.css">
+  <link rel="stylesheet" href="app.css">
+</head>
+<body>
+  <aside class="rail">
+    <div class="brand">
+      <span class="brand__mark" aria-hidden="true">Ö</span>
+      <span class="brand__name">YangiAlifbo</span>
+    </div>
+    <nav class="nav" aria-label="Bo‘limlar">
+      <button class="nav__item is-active" data-page="sinash" type="button">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7V5h16v2M12 5v14M9 19h6"/></svg>Sinash
+      </button>
+      <button class="nav__item" data-page="sozlamalar" type="button">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"/><circle cx="16" cy="7" r="2"/><circle cx="10" cy="17" r="2"/></svg>Sozlamalar
+      </button>
+      <button class="nav__item" data-page="lugat" type="button">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h11a3 3 0 0 1 3 3v13H8a3 3 0 0 1-3-3z"/><path d="M5 17a3 3 0 0 1 3-3h11"/></svg>Lug‘at
+      </button>
+      <button class="nav__item" data-page="harflar" type="button">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 19 10 5h1l5 14M7 14h7M18 9v10"/></svg>Harflar
+      </button>
+    </nav>
+    <div class="rail__foot">
+      <button class="link" data-cmd="hide" type="button">Patnisga yashirish</button>
+      <button class="link link--danger" data-cmd="exit" type="button">Dasturdan chiqish</button>
+      <p class="rail__ver" data-bind="version">v1.5.0</p>
+    </div>
+  </aside>
+
+  <main class="main">
+    <header class="status" data-status>
+      <div class="status__text">
+        <p class="status__label" data-bind="statusLabel">Konvertatsiya yoqilgan</p>
+        <p class="status__hint">Yozganingiz so‘z tugashi bilan yangi alifboga o‘tadi.
+          <span class="keys"><kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>U</kbd></span></p>
+      </div>
+      <div class="status__count">
+        <strong data-bind="words">0</strong>
+        <span>so‘z o‘girildi<br>shu sessiyada</span>
+      </div>
+      <button class="switch switch--big" role="switch" aria-checked="true" data-cmd="toggleEnabled" aria-label="Konvertatsiyani yoqish yoki o‘chirish">
+        <span class="switch__knob"></span>
+      </button>
+    </header>
+
+    <!-- Sinash -->
+    <section class="page is-active" id="sinash" aria-labelledby="t-sinash">
+      <h1 id="t-sinash" class="h1">Sinab ko‘ring</h1>
+      <p class="lede">Bu yerda dasturning to‘liq dvigateli ishlaydi: lug‘at, morfologiya va chat qisqartmalari bilan.</p>
+      <div class="pair">
+        <div class="sheet">
+          <label class="sheet__label" for="input">Eski imlo</label>
+          <textarea id="input" class="sheet__input" spellcheck="false" placeholder="o‘zbekcha gaplashsak ham bo‘laveradi"></textarea>
+          <div class="sheet__bar">
+            <button class="chip" data-cmd="sample" type="button">Namuna</button>
+            <button class="chip" data-cmd="clear" type="button">Tozalash</button>
+            <span class="sheet__meta" data-bind="inputMeta"></span>
+          </div>
+        </div>
+        <div class="sheet sheet--out">
+          <p class="sheet__label">Yangi alifbo</p>
+          <div class="sheet__output" data-output aria-live="polite"></div>
+          <div class="sheet__bar">
+            <button class="chip chip--gold" data-cmd="copy" type="button"><span data-copy-label>Nusxalash</span></button>
+            <span class="sheet__meta" data-bind="outputMeta"></span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Sozlamalar -->
+    <section class="page" id="sozlamalar" aria-labelledby="t-soz">
+      <h1 id="t-soz" class="h1">Sozlamalar</h1>
+      <div class="rows">
+        <div class="row">
+          <div><b>Konvertatsiya</b><span>Barcha dasturlarda yozuvni yangi alifboga o‘girish.</span></div>
+          <button class="switch" role="switch" aria-checked="true" data-cmd="toggleEnabled" data-bind-switch="enabled" aria-label="Konvertatsiya"><span class="switch__knob"></span></button>
+        </div>
+        <div class="row">
+          <div><b>Chat qisqartmalari</b><span>“yaxwi” → yaxşi, “korishamz” → körişamiz kabi tez yozilgan shakllarni tuzatish.</span></div>
+          <button class="switch" role="switch" aria-checked="true" data-cmd="toggleSlang" data-bind-switch="slang" aria-label="Chat qisqartmalari"><span class="switch__knob"></span></button>
+        </div>
+        <div class="row">
+          <div><b>Windows bilan ishga tushirish</b><span>Kompyuter yoqilganda dastur patnisda o‘zi paydo bo‘ladi.</span></div>
+          <button class="switch" role="switch" aria-checked="true" data-cmd="toggleStartup" data-bind-switch="startup" aria-label="Windows bilan ishga tushirish"><span class="switch__knob"></span></button>
+        </div>
+        <div class="row row--stack">
+          <div><b>Rejim</b><span>Qat’iy rejim faqat lug‘at tasdiqlagan so‘zlarni o‘zgartiradi. Agressiv rejim inglizcha filtrdan o‘tgan har qanday so‘zni o‘zgartiradi.</span></div>
+          <div class="seg" role="radiogroup" aria-label="Rejim">
+            <button role="radio" data-mode="Strict" type="button">Qat’iy</button>
+            <button role="radio" data-mode="Aggressive" type="button">Agressiv</button>
+          </div>
+        </div>
+        <div class="row row--stack">
+          <div><b>Shaxsiy ro‘yxatlar</b><span>Har qatorga bitta so‘z. Saqlashingiz bilan qayta yuklanadi.</span></div>
+          <div class="btns">
+            <button class="btn" data-cmd="open" data-target="whitelist" type="button">Oq ro‘yxat — doim o‘girish</button>
+            <button class="btn" data-cmd="open" data-target="blacklist" type="button">Qora ro‘yxat — hech qachon</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Lug'at -->
+    <section class="page" id="lugat" aria-labelledby="t-lug">
+      <h1 id="t-lug" class="h1">Lug‘at va dvigatel</h1>
+      <div class="stats">
+        <div class="stat"><strong data-bind="lexicon">—</strong><span>yozuvli o‘zbek lug‘ati</span></div>
+        <div class="stat"><strong data-bind="reject">—</strong><span>inglizcha va dasturlash so‘zlari filtri</span></div>
+        <div class="stat"><strong data-bind="memory">—</strong><span>MB xotira</span></div>
+      </div>
+      <ol class="flow">
+        <li><b>Naqsh</b><span>sh, ch, o‘, g‘ bormi? Is’hoq kabi tutuqli so‘zlar chetlab o‘tiladi.</span></li>
+        <li><b>Filtr</b><span>show, push, switch… tegilmaydi.</span></li>
+        <li><b>Lug‘at</b><span>So‘z yoki o‘zak eski va yangi imloda qidiriladi.</span></li>
+        <li><b>Morfologiya</b><span>-lar, -imiz, -dan, -gan, 5-chi… qo‘shimchalari ajratiladi.</span></li>
+      </ol>
+      <div class="btns">
+        <button class="btn" data-cmd="reload" type="button" data-reload-label>Ro‘yxatlarni qayta yuklash</button>
+        <button class="btn" data-cmd="open" data-target="logs" type="button">Dastur papkasini ochish</button>
+      </div>
+    </section>
+
+    <!-- Harflar -->
+    <section class="page" id="harflar" aria-labelledby="t-har">
+      <h1 id="t-har" class="h1">To‘rt harf</h1>
+      <table class="letters">
+        <tbody>
+          <tr><td class="old">sh</td><td class="new"><span class="g g--down"><span class="g__acc">ş</span><span class="g__base">s</span></span></td><td>shahar → şahar</td></tr>
+          <tr><td class="old">ch</td><td class="new"><span class="g g--down"><span class="g__acc">ç</span><span class="g__base">c</span></span></td><td>choyxona → çoyxona</td></tr>
+          <tr><td class="old">o‘</td><td class="new"><span class="g g--up"><span class="g__acc">ö</span><span class="g__base">o</span></span></td><td>o‘rtoq → örtoq</td></tr>
+          <tr><td class="old">g‘</td><td class="new"><span class="g g--up"><span class="g__acc">ğ</span><span class="g__base">g</span></span></td><td>g‘alaba → ğalaba</td></tr>
+        </tbody>
+      </table>
+      <p class="lede">Katta-kichik harf saqlanadi (SHAHAR → ŞAHAR). Is’hoq, mus’haf kabi tutuqli so‘zlar o‘zgarmaydi. Raqamli tartib ham ishlaydi: 5-chi → 5-çi.</p>
+      <div class="btns">
+        <button class="btn" data-cmd="open" data-target="site" type="button">Veb-sayt</button>
+        <button class="btn" data-cmd="open" data-target="github" type="button">GitHub va xato haqida xabar</button>
+      </div>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>

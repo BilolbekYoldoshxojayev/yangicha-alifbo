@@ -32,6 +32,7 @@ Get-FileHash .\YangiAlifbo.exe -Algorithm SHA256
 ## Foydalanish
 
 - **`Ctrl + Shift + U`** — konvertorni yoqish / o‘chirish.
+- **Boshqaruv paneli:** patnisdagi belgini bosing. Panel saytdagi dizaynda (WebView2): jonli sinash maydoni to‘liq dvigatel bilan, sozlamalar, lug‘at statistikasi. WebView2 runtime bo‘lmagan kompyuterda oddiy oyna ochiladi.
 - Patnisdagi belgi: yashil — faol, kulrang — to‘xtatilgan. O‘ng tugma menyusida: yoqish/o‘chirish, rejim (Qat’iy / Agressiv), oq va qora ro‘yxatni tahrirlash, Windows bilan birga ishga tushirish, dastur haqida, chiqish.
 - **Avtomatik ishga tushirish** sukut bo‘yicha yoqilgan (v1.1.0 dan). Menyudan o‘chirsangiz, tanlov saqlanadi.
 - **Qat’iy rejim** (standart): faqat lug‘at yoki morfologiya tasdiqlagan so‘zlar o‘zgaradi. **Agressiv rejim**: filtrdan o‘tgan har qanday so‘z o‘zgaradi.
@@ -40,17 +41,17 @@ Get-FileHash .\YangiAlifbo.exe -Algorithm SHA256
 ## Qanday ishlaydi
 
 1. **Naqsh.** So‘zda `sh`, `ch`, `o‘`, `g‘` bo‘lmasa, unga tegilmaydi. Tutuq belgisi ajratgan `s'h` / `c'h` (Is’hoq, mus’haf, as’hob) hisobga olinmaydi.
-2. **Filtr.** 10 055 ta inglizcha va dasturlash so‘zi (`show`, `push`, `switch`, `catch`…) o‘zgartirilmaydi.
-3. **Lug‘at.** 938 526 yozuvli o‘zbek lug‘ati (so‘z va o‘zaklar, eski va yangi imloda).
+2. **Filtr.** 10 057 ta inglizcha va dasturlash so‘zi (`show`, `push`, `switch`, `catch`…) o‘zgartirilmaydi.
+3. **Lug‘at.** 948 288 yozuvli o‘zbek lug‘ati (so‘z va o‘zaklar, eski va yangi imloda).
 4. **Morfologiya.** 400+ qo‘shimchani (`-lar`, `-imiz`, `-dan`, `-gan`, `-yapti`…) va nisbat qo‘shimchalarini (`-n`, `-il`, `-t`, `-tir`) ajratib, o‘zak qidiriladi.
 
-Katta-kichik harf saqlanadi (`Shahar → Şahar`, `SHAHAR → ŞAHAR`), apostrofning 9 xil ko‘rinishi (`' ‘ ’ ʻ ʼ ` ´ ‛ ′`) taniladi.
+Katta-kichik harf saqlanadi (`Shahar → Şahar`, `SHAHAR → ŞAHAR`), raqamli tartib ham ishlaydi (`5-chi → 5-çi`), apostrofning 9 xil ko‘rinishi (`' ‘ ’ ʻ ʼ ` ´ ‛ ′`) taniladi.
 
 **Xavfsizlik:** terminal va IDE jarayonlarida (cmd, PowerShell, Windows Terminal, VS Code, Visual Studio, Git Bash, WSL va b.) va Windows parol maydoni deb belgilagan joylarda (ES_PASSWORD, UI Automation IsPassword) konvertatsiya o‘chadi. `SendInput` orqali kiritilgan belgilar `dwExtraInfo = 0x59414E47` bilan belgilanadi, shuning uchun hook o‘z kiritishini qayta ishlamaydi. Ilova tarmoqqa ulanmaydi.
 
 **Ma’lum cheklovlar:**
 - Administrator huquqi bilan ishlayotgan dasturlarda ishlamaydi (Windows UIPI chegarasi).
-- Qat’iy rejimda lug‘atda yo‘q so‘zlar o‘zgarmaydi — masalan, ba’zi atoqli otlar (`Toshkent`). Ularni oq ro‘yxatga qo‘shing yoki xato sifatida xabar bering.
+- Qat’iy rejimda lug‘atda yo‘q so‘zlar o‘zgarmaydi. v1.5.0 da viloyat, shahar, tuman va keng tarqalgan ismlar qo‘shildi; yo‘q bo‘lganlarini oq ro‘yxatga qo‘shing yoki xato sifatida xabar bering.
 
 ## Loyihani yig‘ish
 

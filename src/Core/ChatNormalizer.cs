@@ -116,6 +116,38 @@ public static class ChatNormalizer
         string lower = word.ToLowerInvariant();
         string norm = lower;
 
+        // ── 0. Hyphenated numbers (e.g. 5-ci -> 5-chi, 1-orin -> 1-o'rin) ──
+        int numHyphen = norm.IndexOf('-');
+        if (numHyphen > 0)
+        {
+            bool allDigits = true;
+            for (int i = 0; i < numHyphen; i++)
+            {
+                if (!char.IsDigit(norm[i]))
+                {
+                    allDigits = false;
+                    break;
+                }
+            }
+            if (allDigits)
+            {
+                string prefix = norm[..(numHyphen + 1)];
+                string suffix = norm[(numHyphen + 1)..];
+                if (suffix is "ci" or "c")
+                {
+                    norm = prefix + "chi";
+                }
+                else
+                {
+                    string normSuffix = Normalize(suffix);
+                    if (normSuffix != suffix)
+                    {
+                        norm = prefix + normSuffix;
+                    }
+                }
+            }
+        }
+
         // ── 1. Russian keyboard 'w' substitutions ───────────────────
         if (norm == "wu")
         {

@@ -253,6 +253,13 @@ public sealed class KeyboardHook : IDisposable
 
         char ch = typedChar.Value;
 
+        // ── Check if it's a hyphen in an ordinal number or compound word (e.g. 5-chi, 1-o'rin, kel-chi) ──
+        if (ch == '-' && _wordBuffer.Length > 0 && char.IsLetterOrDigit(_wordBuffer[_wordBuffer.Length - 1]) && _wordBuffer[_wordBuffer.Length - 1] != '-')
+        {
+            _wordBuffer.Append('-');
+            return NativeMethods.CallNextHookEx(_hookId, nCode, wParam, lParam);
+        }
+
         // ── Check if it's a delimiter ─────────────────────────────
         if (IsDelimiter(ch, vk))
         {

@@ -16,7 +16,7 @@
   var resetBtn = document.querySelector('[data-demo-reset]');
   var reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
 
-  var SAMPLE = "O'zbekcha gaplashsak ham bo'laveradi. Bog'chada choy ichib, show va chat haqida gapirdik. Is'hoq akam g'alaba qozondi!";
+  var SAMPLE = "O'zbekcha gaplashsak ham bo'laveradi. 5-chi sinfda choy ichib, show va chat haqida gapirdik. Is'hoq akam g'alaba qozondi!";
   var converted = 0, kept = 0, typingTimer = null;
 
   // ── Reject filter ────────────────────────────────────────────────
@@ -53,9 +53,17 @@
   }
 
   // ── Conversion at the caret ──────────────────────────────────────
+  // A hyphen right after a letter or digit joins the word (5-chi, kel-chi),
+  // as in KeyboardHook; anywhere else it ends the word.
+  var WORDCHAR = /[\p{L}\p{N}]/u;
+  function isBoundary(text, i) {
+    if (text[i] === '-' && i > 0 && WORDCHAR.test(text[i - 1])) return false;
+    return E.isDelimiter(text[i]);
+  }
+
   function wordBefore(text, end) {
     var start = end;
-    while (start > 0 && !E.isDelimiter(text[start - 1])) start--;
+    while (start > 0 && !isBoundary(text, start - 1)) start--;
     return { start: start, word: text.slice(start, end) };
   }
 
@@ -63,7 +71,7 @@
     var caret = input.selectionStart;
     if (caret !== input.selectionEnd || caret < 2) return;
     var text = input.value;
-    if (!E.isDelimiter(text[caret - 1])) return;
+    if (!isBoundary(text, caret - 1)) return;
     var wb = wordBefore(text, caret - 1);
     if (!wb.word) return;
     var d = E.decide(wb.word);
@@ -112,7 +120,7 @@
         input.setRangeText(c, input.value.length, input.value.length, 'end');
         input.dispatchEvent(new InputEvent('input', { inputType: 'insertText', data: c, bubbles: true }));
         input.scrollTop = input.scrollHeight;
-        typingTimer = setTimeout(step, E.isDelimiter(c) ? 140 : 38 + Math.random() * 40);
+        typingTimer = setTimeout(step, isBoundary(input.value, input.value.length - 1) ? 140 : 38 + Math.random() * 40);
       })();
     });
   }

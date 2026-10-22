@@ -18,7 +18,7 @@ using YangiAlifbo.Win32;
 
 namespace YangiAlifbo.UI;
 
-public sealed class DashboardForm : Form
+public sealed class DashboardForm : Form, IStateView
 {
     private readonly TrayApplicationContext? _context;
     private readonly KeyboardHook _keyboardHook;
@@ -239,7 +239,7 @@ public sealed class DashboardForm : Form
 
         var versionBadge = new Label
         {
-            Text = " v1.4.0 ",
+            Text = " v1.5.0 ",
             Font = new Font("Segoe UI", 8.5f, FontStyle.Bold),
             BackColor = ColorTurq,
             ForeColor = ColorInk,
@@ -1464,55 +1464,9 @@ public sealed class DashboardForm : Form
         int wordsCount = input.Split(new[] { ' ', '\t', '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries).Length;
         _charCountLabel.Text = $"Belgilar: {input.Length}  |  So'zlar: {wordsCount}";
 
-        // Process through exact engine logic
-        var tokens = Regex.Split(input, @"(\s+|[.,!?:;""\(\)\[\]\{\}\/\\])");
-        var sb = new StringBuilder(input.Length);
-
         bool slangEnabled = _context != null ? _context.IsChatSlangNormalizerEnabled : _keyboardHook.IsChatSlangNormalizerEnabled;
         var mode = _context != null ? _context.Mode : _keyboardHook.Mode;
-
-        foreach (string token in tokens)
-        {
-            if (string.IsNullOrEmpty(token)) continue;
-
-            if (token.Length >= 2 && char.IsLetter(token[0]))
-            {
-                // Protected English
-                if (_detector.IsForeignOrReject(token))
-                {
-                    sb.Append(token);
-                    continue;
-                }
-
-                string work = token;
-                if (slangEnabled)
-                {
-                    work = ChatNormalizer.Normalize(token);
-                }
-
-                if (UzbekPhonetics.HasConvertiblePatterns(work))
-                {
-                    if (mode == TransliterationMode.Aggressive || _detector.IsUzbek(work))
-                    {
-                        sb.Append(UzbekPhonetics.Convert(work));
-                        continue;
-                    }
-                }
-                else if (work != token && _detector.IsUzbek(work))
-                {
-                    sb.Append(work);
-                    continue;
-                }
-
-                sb.Append(token);
-            }
-            else
-            {
-                sb.Append(token);
-            }
-        }
-
-        _outputBox.Text = sb.ToString();
+        _outputBox.Text = TextConverter.Convert(input, _detector, mode, slangEnabled, out _);
     }
 
     private void UpdateStatsTicker()
