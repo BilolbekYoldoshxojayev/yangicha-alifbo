@@ -7,4 +7,5 @@ edition = "2021"
 crate-type = ["cdylib", "staticlib"]
 
 [dependencies]
-yangi-core = { path = ".." }
+jni = "0.21.1"
+yangi-core = { path = "..", features = ["embedded-data"] }

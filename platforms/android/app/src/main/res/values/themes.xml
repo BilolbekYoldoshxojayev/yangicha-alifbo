@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.YangiAlifbo" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/color_lapis</item>
+        <item name="colorPrimaryVariant">@color/color_deep</item>
+        <item name="colorSecondary">@color/color_turquoise</item>
+        <item name="android:statusBarColor">@color/color_deep</item>
+    </style>
+</resources>

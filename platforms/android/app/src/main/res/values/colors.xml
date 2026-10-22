@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- YangiAlifbo Mandatory Design Tokens -->
+    <color name="color_lapis">#13205C</color>
+    <color name="color_deep">#0E1846</color>
+    <color name="color_porcelain">#EEF1EC</color>
+    <color name="color_ink">#0F1530</color>
+    <color name="color_turquoise">#2FB3A6</color>
+    <color name="color_saffron">#F0B23A</color>
+
+    <!-- Keyboard Semantic Colors -->
+    <color name="keyboard_bg">#0E1846</color>
+    <color name="key_normal_bg">#13205C</color>
+    <color name="key_pressed_bg">#1E328A</color>
+    <color name="key_action_bg">#2FB3A6</color>
+    <color name="key_action_pressed_bg">#269186</color>
+    <color name="key_text_color">#EEF1EC</color>
+    <color name="key_diacritic_hint">#F0B23A</color>
+    <color name="candidate_strip_bg">#090F2C</color>
+    <color name="candidate_text">#EEF1EC</color>
+    <color name="candidate_highlight">#F0B23A</color>
+</resources>

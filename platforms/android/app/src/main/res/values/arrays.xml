@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="pref_mode_entries">
+        <item>@string/pref_mode_strict</item>
+        <item>@string/pref_mode_aggressive</item>
+    </string-array>
+
+    <string-array name="pref_mode_values">
+        <item>strict</item>
+        <item>aggressive</item>
+    </string-array>
+</resources>

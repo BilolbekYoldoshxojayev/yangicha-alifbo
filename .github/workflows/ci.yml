@@ -105,6 +105,32 @@ jobs:
       - name: Run .NET Core Engine & Discrimination Tests
         run: dotnet test tests/YangiAlifbo.Tests.csproj --filter "FullyQualifiedName~TransliterationTests|FullyQualifiedName~DiscriminationTests" -c Release
 
+  android-keyboard:
+    name: Android Keyboard Build & Tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v3
+
+      - name: Build Android App & Run Unit Tests
+        working-directory: platforms/android
+        run: gradle testDebugUnitTest assembleDebug
+
+      - name: Upload Debug APK Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: yangi-alifbo-android-debug-apk
+          path: platforms/android/app/build/outputs/apk/debug/*.apk
+
   privacy-security-lint:
     name: Privacy & Security Invariant Check
     runs-on: ubuntu-latest
@@ -126,6 +152,18 @@ jobs:
             process.exit(1);
           }
           console.log('PASS: Manifest V3 has strict zero-network permissions.');
+          "
+
+      - name: Check Android Zero Network Permissions (Hard Rule 6)
+        run: |
+          node -e "
+          const fs = require('fs');
+          const manifest = fs.readFileSync('platforms/android/app/src/main/AndroidManifest.xml', 'utf8');
+          if (manifest.includes('android.permission.INTERNET') || manifest.includes('ACCESS_NETWORK_STATE')) {
+            console.error('VIOLATION: Android manifest contains unauthorized network permissions!');
+            process.exit(1);
+          }
+          console.log('PASS: AndroidManifest.xml enforces strict zero-network privacy.');
           "
 
       - name: Check Zero Telemetry / Network Code in Extension Scripts

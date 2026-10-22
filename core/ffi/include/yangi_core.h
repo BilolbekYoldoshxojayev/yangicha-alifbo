@@ -30,6 +30,12 @@ typedef struct YangiDetector YangiDetector;
 YangiDetector* yangi_detector_create(const uint8_t* data_bytes, size_t data_len);
 
 /**
+ * Creates a YangiDetector using the embedded dictionary data.
+ * Zero-configuration constructor that requires no external file loading.
+ */
+YangiDetector* yangi_detector_create_embedded(void);
+
+/**
  * Frees a previously created YangiDetector.
  */
 void yangi_detector_free(YangiDetector* detector);

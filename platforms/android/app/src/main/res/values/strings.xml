@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">YangiAlifbo</string>
+    <string name="ime_name">YangiAlifbo Klaviaturasi</string>
+    <string name="subtype_uzbek">Oʻzbekcha (Yangi Alifbo)</string>
+    <string name="settings_title">YangiAlifbo Sozlamalari</string>
+    <string name="pref_enabled_title">Avtomatik oʻgirish</string>
+    <string name="pref_enabled_summary">Soʻz tugaganda yangi alifboga oʻgirish (sh→ş, ch→ç, oʻ→ö, gʻ→ğ)</string>
+    <string name="pref_mode_title">Oʻgirish rejimi</string>
+    <string name="pref_mode_strict">Qatʻiy (Faqat tasdiqlangan oʻzbek soʻzlari)</string>
+    <string name="pref_mode_aggressive">Kengaytirilgan (Erkin tahlil)</string>
+    <string name="pref_slang_title">Soʻzlashuv tili (Slang)</string>
+    <string name="pref_slang_summary">Masalan: bovot → bölyapti</string>
+    <string name="pref_ml_title">AI/ML Klassifikator</string>
+    <string name="pref_ml_summary">Nomaʻlum soʻzlarni int8 modeli orqali aniqlash</string>
+    <string name="privacy_notice">🔒 100% Maxfiylik: Klaviaturaga internetga ulanish ruxsati berilmagan.</string>
+</resources>

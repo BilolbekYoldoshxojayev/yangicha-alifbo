@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <PreferenceCategory app:title="Oʻgirish qoidalari">
+        <SwitchPreferenceCompat
+            app:key="pref_enabled"
+            app:title="@string/pref_enabled_title"
+            app:summary="@string/pref_enabled_summary"
+            app:defaultValue="true" />
+
+        <ListPreference
+            app:key="pref_mode"
+            app:title="@string/pref_mode_title"
+            app:entries="@array/pref_mode_entries"
+            app:entryValues="@array/pref_mode_values"
+            app:defaultValue="strict"
+            app:dependency="pref_enabled" />
+
+        <SwitchPreferenceCompat
+            app:key="pref_slang"
+            app:title="@string/pref_slang_title"
+            app:summary="@string/pref_slang_summary"
+            app:defaultValue="false"
+            app:dependency="pref_enabled" />
+
+        <SwitchPreferenceCompat
+            app:key="pref_ml"
+            app:title="@string/pref_ml_title"
+            app:summary="@string/pref_ml_summary"
+            app:defaultValue="false"
+            app:dependency="pref_enabled" />
+    </PreferenceCategory>
+
+    <PreferenceCategory app:title="Xavfsizlik va Maxfiylik">
+        <Preference
+            app:key="pref_privacy"
+            app:title="Maxfiylik kafolati"
+            app:summary="@string/privacy_notice"
+            app:selectable="false" />
+    </PreferenceCategory>
+
+</PreferenceScreen>
