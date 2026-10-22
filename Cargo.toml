@@ -1,0 +1,8 @@
+[workspace]
+members = [
+    "data",
+    "core",
+    "core/ffi",
+    "core/wasm",
+]
+resolver = "2"

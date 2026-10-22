@@ -260,7 +260,7 @@ public static class Program
             // Known bug in v1.6.0: ChatNormalizer crashes on "bovot" (length 5 with norm[6..])
             // Documented in .ai/HANDOFF.md for Workstream H.
             if (input.StartsWith("bovot", StringComparison.OrdinalIgnoreCase))
-                return "bo'votti";
+                return ChatNormalizer.MatchCasing(input, "bo'votti");
             return input;
         }
     }

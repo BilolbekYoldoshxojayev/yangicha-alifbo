@@ -6,6 +6,10 @@ obj/
 *.suo
 *.rsuser
 
+# Rust build output
+target/
+Cargo.lock
+
 # Test output
 TestResults/
 *.trx
