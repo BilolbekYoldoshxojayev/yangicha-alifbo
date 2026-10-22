@@ -1,0 +1,14 @@
+{
+  "LexiconFileSizeBytes": 14117721,
+  "RejectFileSizeBytes": 86354,
+  "LoadTimeMilliseconds": 413.9062,
+  "RamDeltaMegabytes": 95.65625,
+  "TotalWorkingSetMegabytes": 122.96875,
+  "ExactMatchLatencyMicros": 0.797046,
+  "MorphologyMatchLatencyMicros": 1.66448,
+  "EnglishRejectLatencyMicros": 0.6110059999999999,
+  "UnknownWordLatencyMicros": 0.640504,
+  "PhoneticsConvertLatencyMicros": 0.81981,
+  "SentenceConvertLatencyMicros": 17.458815,
+  "ThroughputWordsPerSecond": 572776.5601502736
+}

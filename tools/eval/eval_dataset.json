@@ -1,0 +1,170 @@
+[
+  {
+    "id": "uz-konstitutsiya-01",
+    "type": "uzbek",
+    "source": "Constitution of the Republic of Uzbekistan, Preamble (Official legal text, Public Domain under Art. 8 Law on Copyright)",
+    "input": "Biz, O'zbekistonning yagona xalqi, inson huquq va erkinliklariga, milliy va umuminsoniy qadriyatlarga sodiqligimizni tantanali ravishda e'lon qilib, ushbu Konstitutsiyani qabul qilamiz.",
+    "expected": "Biz, Özbekistonning yagona xalqi, inson huquq va erkinliklariga, milliy va umuminsoniy qadriyatlarga sodiqligimizni tantanali ravişda e'lon qilib, uşbu Konstitutsiyani qabul qilamiz."
+  },
+  {
+    "id": "uz-konstitutsiya-02",
+    "type": "uzbek",
+    "source": "Constitution of the Republic of Uzbekistan, Article 1 (Public Domain)",
+    "input": "O'zbekiston — boshqaruvning respublika shakliga ega bo'lgan suveren, demokratik, huquqiy, ijtimoiy va dunyoviy davlat.",
+    "expected": "Özbekiston — boşqaruvning respublika şakliga ega bölgan suveren, demokratik, huquqiy, ijtimoiy va dunyoviy davlat."
+  },
+  {
+    "id": "uz-konstitutsiya-03",
+    "type": "uzbek",
+    "source": "Constitution of the Republic of Uzbekistan, Article 4 (Public Domain)",
+    "input": "O'zbekiston Respublikasining davlat tili o'zbek tilidir. O'zbekiston Respublikasi o'z hududida istiqomat qiluvchi barcha millat va elatlarning tillari, urf-odatlari va an'analari hurmat qilinishini ta'minlaydi.",
+    "expected": "Özbekiston Respublikasining davlat tili özbek tilidir. Özbekiston Respublikasi öz hududida istiqomat qiluvçi barça millat va elatlarning tillari, urf-odatlari va an'analari hurmat qilinişini ta'minlaydi."
+  },
+  {
+    "id": "uz-konstitutsiya-04",
+    "type": "uzbek",
+    "source": "Constitution of the Republic of Uzbekistan, Article 13 (Public Domain)",
+    "input": "O'zbekiston Respublikasida demokratiya umuminsoniy prinsiplarga asoslanadi, ularga ko'ra inson, uning hayoti, erkinligi, sha'ni, qadr-qimmati va boshqa ajralmas huquqlari oliy qadriyat hisoblanadi.",
+    "expected": "Özbekiston Respublikasida demokratiya umuminsoniy prinsiplarga asoslanadi, ularga köra inson, uning hayoti, erkinligi, şa'ni, qadr-qimmati va boşqa ajralmas huquqlari oliy qadriyat hisoblanadi."
+  },
+  {
+    "id": "uz-konstitutsiya-05",
+    "type": "uzbek",
+    "source": "Constitution of the Republic of Uzbekistan, Article 20 (Public Domain)",
+    "input": "Insonning Konstitutsiya va qonunlarda mustahkamlab qo'yilgan huquq va erkinliklari daxlsizdir hamda ulardan sud qarorisiz mahrum etishga yoki ularni cheklab qo'yishga hech kim haqli emas.",
+    "expected": "Insonning Konstitutsiya va qonunlarda mustahkamlab qöyilgan huquq va erkinliklari daxlsizdir hamda ulardan sud qarorisiz mahrum etişga yoki ularni çeklab qöyişga heç kim haqli emas."
+  },
+  {
+    "id": "uz-qodiriy-01",
+    "type": "uzbek",
+    "source": "Abdulla Qodiriy, 'O'tkan kunlar' (1925, Public Domain)",
+    "input": "1264-nchi hijriy, dalv oyining o'n yettinchisi, qishki kunlarning biri, quyosh botqan, tevarakdan oqshom qorong'usi ko'tarila boshlagan edi.",
+    "expected": "1264-nçi hijriy, dalv oyining ön yettinçisi, qişki kunlarning biri, quyoş botqan, tevarakdan oqşom qorong'usi kötarila boşlagan edi."
+  },
+  {
+    "id": "uz-qodiriy-02",
+    "type": "uzbek",
+    "source": "Abdulla Qodiriy, 'O'tkan kunlar' (1925, Public Domain)",
+    "input": "Hasanali o'rnidan turib, chiroqni yoqdi va Otabekning oldiga qo'ydi. Tashqarida esa qor shivirlab yog'ar edi.",
+    "expected": "Hasanali örnidan turib, çiroqni yoqdi va Otabekning oldiga qöydi. Taşqarida esa qor şivirlab yoğar edi."
+  },
+  {
+    "id": "uz-qodiriy-03",
+    "type": "uzbek",
+    "source": "Abdulla Qodiriy, 'O'tkan kunlar' (1925, Public Domain)",
+    "input": "Kumushbibi sekingina boshini ko'tardi, uning qoshlari chimirildi, ko'zlaridan esa yosh oqib tushdi.",
+    "expected": "Kumuşbibi sekingina boşini kötardi, uning qoşlari çimirildi, közlaridan esa yoş oqib tuşdi."
+  },
+  {
+    "id": "uz-cholpon-01",
+    "type": "uzbek",
+    "source": "Cho'lpon, 'Kecha va kunduz' (1936, Public Domain)",
+    "input": "Zebi derazadan boqib, bahor shamoli daraxt shoxlarini ohista silkitishini tomosha qilar edi.",
+    "expected": "Zebi derazadan boqib, bahor şamoli daraxt şoxlarini ohista silkitişini tomoşa qilar edi."
+  },
+  {
+    "id": "uz-cholpon-02",
+    "type": "uzbek",
+    "source": "Cho'lpon, 'Kecha va kunduz' (1936, Public Domain)",
+    "input": "Qishloq ko'chalarida shovqin bosildi, hamma o'z uyiga chekindi, faqat qorovulning sharpasi ko'rinar edi.",
+    "expected": "Qişloq köçalarida şovqin bosildi, hamma öz uyiga çekindi, faqat qorovulning şarpasi körinar edi."
+  },
+  {
+    "id": "uz-wiki-01",
+    "type": "uzbek",
+    "source": "Uzbek Wikipedia: Toshkent (CC BY-SA 4.0)",
+    "input": "Toshkent — O'zbekistonning poytaxti va eng yirik shahri bo'lib, Markaziy Osiyodagi eng qadimgi madaniy markazlardan biridir.",
+    "expected": "Toşkent — Özbekistonning poytaxti va eng yirik şahri bölib, Markaziy Osiyodagi eng qadimgi madaniy markazlardan biridir."
+  },
+  {
+    "id": "uz-wiki-02",
+    "type": "uzbek",
+    "source": "Uzbek Wikipedia: Alisher Navoiy (CC BY-SA 4.0)",
+    "input": "Alisher Navoiy o'zbek adabiyotining buyuk namoyandasi, shoir, mutafakkir va davlat arbobi bo'lgan.",
+    "expected": "Alişer Navoiy özbek adabiyotining buyuk namoyandasi, şoir, mutafakkir va davlat arbobi bölgan."
+  },
+  {
+    "id": "uz-tutuq-01",
+    "type": "uzbek",
+    "source": "Linguistic Tutuq & Syllable Break Test Corpus (Public Domain)",
+    "input": "Is'hoq va mus'haf so'zlarida s va h harflari alohida talaffuz qilinadi, mas'ul shaxs esa buni yaxshi bilishi kerak.",
+    "expected": "Is'hoq va mus'haf sözlarida s va h harflari alohida talaffuz qilinadi, mas'ul şaxs esa buni yaxşi bilişi kerak."
+  },
+  {
+    "id": "uz-tutuq-02",
+    "type": "uzbek",
+    "source": "Linguistic Tutuq & Syllable Break Test Corpus (Public Domain)",
+    "input": "San'at va madaniyat saroyida yangi e'lonlar va ma'lumotlar doskasi o'rnatildi.",
+    "expected": "San'at va madaniyat saroyida yangi e'lonlar va ma'lumotlar doskasi örnatildi."
+  },
+  {
+    "id": "uz-ordinal-01",
+    "type": "uzbek",
+    "source": "Grammar Corpus: Ordinal and Quantitative Numbers (Public Domain)",
+    "input": "Biz 5-chi xonada uchrashamiz, 1-o'rin sohibi esa 10-gacha sanab chiqib ketdi.",
+    "expected": "Biz 5-çi xonada uçraşamiz, 1-örin sohibi esa 10-gaça sanab çiqib ketdi."
+  },
+  {
+    "id": "uz-ordinal-02",
+    "type": "uzbek",
+    "source": "Grammar Corpus: Verb Particle Compounds (Public Domain)",
+    "input": "Iltimos, kel-chi va ayt-chi, nima gap bo'layotganini ko'r-chi!",
+    "expected": "Iltimos, kel-çi va ayt-çi, nima gap bölayotganini kör-çi!"
+  },
+  {
+    "id": "en-code-01",
+    "type": "english_code",
+    "source": "Python Standard Library / argparse.py (PSF License, English/Code)",
+    "input": "def show_help(parser, action, choice, schema):\n    if choice in parser.choices:\n        return parser.format_help()\n    return None",
+    "expected": "def show_help(parser, action, choice, schema):\n    if choice in parser.choices:\n        return parser.format_help()\n    return None"
+  },
+  {
+    "id": "en-code-02",
+    "type": "english_code",
+    "source": "Rust Standard Library / slice.rs (MIT/Apache-2.0, English/Code)",
+    "input": "pub fn split_at_mut(&mut self, mid: usize) -> (&mut [T], &mut [T]) {\n    assert!(mid <= self.len());\n    let len = self.len();\n    let ptr = self.as_mut_ptr();\n}",
+    "expected": "pub fn split_at_mut(&mut self, mid: usize) -> (&mut [T], &mut [T]) {\n    assert!(mid <= self.len());\n    let len = self.len();\n    let ptr = self.as_mut_ptr();\n}"
+  },
+  {
+    "id": "en-prose-01",
+    "type": "english_code",
+    "source": "Project Gutenberg / Alice's Adventures in Wonderland (Public Domain)",
+    "input": "The Cheshire Cat was sitting on a bough of a tree a few yards off, and looking very pleasant indeed.",
+    "expected": "The Cheshire Cat was sitting on a bough of a tree a few yards off, and looking very pleasant indeed."
+  },
+  {
+    "id": "en-prose-02",
+    "type": "english_code",
+    "source": "Project Gutenberg / Pride and Prejudice (Public Domain)",
+    "input": "She had never seen a place where natural beauty was so little counteracted by an awkward taste.",
+    "expected": "She had never seen a place where natural beauty was so little counteracted by an awkward taste."
+  },
+  {
+    "id": "en-prose-03",
+    "type": "english_code",
+    "source": "Technical English Prose (Common False-Positive Triggers)",
+    "input": "We should check the schedule, push the branch changes, and switch to the new architecture without shocking the team.",
+    "expected": "We should check the schedule, push the branch changes, and switch to the new architecture without shocking the team."
+  },
+  {
+    "id": "en-prose-04",
+    "type": "english_code",
+    "source": "Technical English Prose (Common False-Positive Triggers)",
+    "input": "The child watched the fish swim near the ship while eating cheese and chips by the seashore.",
+    "expected": "The child watched the fish swim near the ship while eating cheese and chips by the seashore."
+  },
+  {
+    "id": "en-code-03",
+    "type": "english_code",
+    "source": "JavaScript / Web API (MIT License)",
+    "input": "const element = document.querySelector('.search-input');\nelement.addEventListener('change', (event) => {\n    console.log(event.target.value);\n});",
+    "expected": "const element = document.querySelector('.search-input');\nelement.addEventListener('change', (event) => {\n    console.log(event.target.value);\n});"
+  },
+  {
+    "id": "en-code-04",
+    "type": "english_code",
+    "source": "Bash / Shell Scripting (Public Domain)",
+    "input": "for file in *.sh; do\n    chmod +x \"$file\"\n    echo \"Processing: $file\"\n    bash \"$file\" --check\ndone",
+    "expected": "for file in *.sh; do\n    chmod +x \"$file\"\n    echo \"Processing: $file\"\n    bash \"$file\" --check\ndone"
+  }
+]
