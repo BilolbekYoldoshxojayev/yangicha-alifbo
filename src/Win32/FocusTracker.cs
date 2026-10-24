@@ -330,6 +330,10 @@ public sealed class FocusTracker : IFocusTracker, IDisposable
         }
         finally
         {
+            if (_uiAutomation != null && Marshal.IsComObject(_uiAutomation))
+            {
+                try { Marshal.FinalReleaseComObject(_uiAutomation); } catch { }
+            }
             _uiAutomation = null;
             _uiaFocusHandler = null;
         }

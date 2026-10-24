@@ -103,7 +103,7 @@ public class EmpiricalChallengeM3FocusAndSafetyTests
         foreach (var procName in blacklistedProcessesWithVariations)
         {
             var mock = new MockProcessInfoProvider(_ => procName);
-            var tracker = new FocusTracker(mock);
+            using var tracker = new FocusTracker(mock);
             tracker.UpdateProcess(4096);
 
             Assert.IsFalse(tracker.IsCurrentProcessAllowed,
@@ -128,7 +128,7 @@ public class EmpiricalChallengeM3FocusAndSafetyTests
         foreach (var procName in allowedProcesses)
         {
             var mock = new MockProcessInfoProvider(_ => procName);
-            var tracker = new FocusTracker(mock);
+            using var tracker = new FocusTracker(mock);
             tracker.UpdateProcess(2048);
 
             Assert.IsTrue(tracker.IsCurrentProcessAllowed,
@@ -146,7 +146,7 @@ public class EmpiricalChallengeM3FocusAndSafetyTests
     {
         // Simulates OpenProcess or QueryFullProcessImageName returning access denied (null)
         var mock = new MockProcessInfoProvider(_ => null);
-        var tracker = new FocusTracker(mock);
+        using var tracker = new FocusTracker(mock);
 
         tracker.UpdateProcess(8888);
 
@@ -160,7 +160,7 @@ public class EmpiricalChallengeM3FocusAndSafetyTests
     {
         // Simulates an access-denied Win32Exception(5) (ERROR_ACCESS_DENIED)
         var mock = new MockProcessInfoProvider(_ => throw new Win32Exception(5, "Access is denied"));
-        var tracker = new FocusTracker(mock);
+        using var tracker = new FocusTracker(mock);
 
         try
         {
@@ -187,7 +187,7 @@ public class EmpiricalChallengeM3FocusAndSafetyTests
     public void ProcessExclusion_FailClosed_UpdateCurrentState_MustNotFailOpenOnException()
     {
         var mock = new MockProcessInfoProvider(_ => throw new Win32Exception(5, "Access is denied"));
-        var tracker = new FocusTracker(mock);
+        using var tracker = new FocusTracker(mock);
 
         var updateMethod = typeof(FocusTracker).GetMethod("UpdateCurrentState", BindingFlags.NonPublic | BindingFlags.Instance);
         Assert.IsNotNull(updateMethod);
@@ -202,7 +202,7 @@ public class EmpiricalChallengeM3FocusAndSafetyTests
     public void ProcessExclusion_ZeroProcessId_HandledGracefully()
     {
         var mock = new MockProcessInfoProvider(_ => "notepad.exe");
-        var tracker = new FocusTracker(mock);
+        using var tracker = new FocusTracker(mock);
 
         tracker.UpdateProcess(0);
 
@@ -313,7 +313,7 @@ public class EmpiricalChallengeM3FocusAndSafetyTests
     [TestMethod]
     public void KeyboardHook_WhenPasswordFieldFocused_BypassesTransliterationAndClearsBuffer()
     {
-        var detector = new LanguageDetector();
+        using var detector = new LanguageDetector();
         var mockFocus = new MockFocusTracker
         {
             IsCurrentProcessAllowed = true,
@@ -368,7 +368,7 @@ public class EmpiricalChallengeM3FocusAndSafetyTests
     [TestMethod]
     public void KeyboardHook_WhenProcessDisallowed_BypassesTransliterationAndClearsBuffer()
     {
-        var detector = new LanguageDetector();
+        using var detector = new LanguageDetector();
         var mockFocus = new MockFocusTracker
         {
             IsCurrentProcessAllowed = false, // TERMINAL / BLACKLISTED!
@@ -464,7 +464,7 @@ public class EmpiricalChallengeM3FocusAndSafetyTests
     {
         const int iterations = 100_000;
         var mock = new MockProcessInfoProvider(_ => "notepad.exe");
-        var tracker = new FocusTracker(mock);
+        using var tracker = new FocusTracker(mock);
         tracker.UpdateProcess(1234);
 
         // Warmup

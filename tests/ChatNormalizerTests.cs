@@ -68,6 +68,7 @@ public class ChatNormalizerTests
     [DataRow("osha", "öşa")]
     [DataRow("oshani", "öşani")]
     [DataRow("bopti", "böpti")]
+    [DataRow("bovot", "bövotti")]
     [DataRow("bovotti", "bövotti")]
     [DataRow("chotki", "çotki")]
     [DataRow("gaplashvotti", "gaplaşvotti")]

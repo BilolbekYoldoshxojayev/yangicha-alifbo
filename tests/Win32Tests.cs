@@ -195,7 +195,7 @@ public class Win32Tests
     [TestMethod]
     public void FocusTracker_DefaultBlacklist_ContainsBashAndWsl()
     {
-        var tracker = new FocusTracker();
+        using var tracker = new FocusTracker();
         var list = tracker.GetBlacklist();
 
         Assert.IsTrue(list.Contains("bash.exe", StringComparer.OrdinalIgnoreCase));
@@ -216,7 +216,7 @@ public class Win32Tests
         foreach (var proc in blacklisted)
         {
             var mock = new MockProcessInfoProvider(_ => proc);
-            var tracker = new FocusTracker(mock);
+            using var tracker = new FocusTracker(mock);
             tracker.UpdateProcess(5555);
 
             Assert.IsFalse(tracker.IsCurrentProcessAllowed, $"Process {proc} should be disallowed.");
@@ -231,7 +231,7 @@ public class Win32Tests
         foreach (var proc in allowed)
         {
             var mock = new MockProcessInfoProvider(_ => proc);
-            var tracker = new FocusTracker(mock);
+            using var tracker = new FocusTracker(mock);
             tracker.UpdateProcess(1234);
 
             Assert.IsTrue(tracker.IsCurrentProcessAllowed, $"Process {proc} should be allowed.");
@@ -244,7 +244,7 @@ public class Win32Tests
     {
         // Simulating OpenProcess returning ERROR_ACCESS_DENIED (null returned by provider)
         var mock = new MockProcessInfoProvider(_ => null);
-        var tracker = new FocusTracker(mock);
+        using var tracker = new FocusTracker(mock);
 
         tracker.UpdateProcess(9999); // Non-zero PID where query failed
 
@@ -257,7 +257,7 @@ public class Win32Tests
     {
         // Simulated elevated powershell.exe with PID 4321
         var mock = new MockProcessInfoProvider(pid => pid == 4321 ? "powershell.exe" : "notepad.exe");
-        var tracker = new FocusTracker(mock);
+        using var tracker = new FocusTracker(mock);
 
         tracker.UpdateProcess(4321);
         Assert.IsFalse(tracker.IsCurrentProcessAllowed);
@@ -272,7 +272,7 @@ public class Win32Tests
     public void FocusTracker_AddAndRemoveBlacklist_StripsDirectoryPaths()
     {
         var mock = new MockProcessInfoProvider(_ => "myterm.exe");
-        var tracker = new FocusTracker(mock);
+        using var tracker = new FocusTracker(mock);
 
         tracker.UpdateProcess(100);
         Assert.IsTrue(tracker.IsCurrentProcessAllowed);
@@ -348,7 +348,7 @@ public class Win32Tests
     [TestMethod]
     public void KeyboardHook_ClearBuffer_IsCallable()
     {
-        var detector = new LanguageDetector();
+        using var detector = new LanguageDetector();
         var focus = new MockFocusTracker();
         using var hook = new KeyboardHook(detector, focus);
 

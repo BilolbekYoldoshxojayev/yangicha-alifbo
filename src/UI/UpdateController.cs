@@ -23,6 +23,7 @@ public sealed class UpdateController : IDisposable
     private readonly Action _exitForRestart;
     private readonly System.Windows.Forms.Timer _timer = new();
     private int _busy;
+    private Version? _announced;
 
     public UpdateStatus Status { get; private set; } = UpdateStatus.Idle;
     public ReleaseInfo? Latest { get; private set; }
@@ -70,7 +71,7 @@ public sealed class UpdateController : IDisposable
         _timer.Tick += async (_, _) =>
         {
             _timer.Interval = (int)TimeSpan.FromHours(6).TotalMilliseconds;
-            if (AutoUpdate) await CheckAsync(install: true);
+            await CheckAsync(install: AutoUpdate);
         };
         _timer.Start();
     }
@@ -92,18 +93,30 @@ public sealed class UpdateController : IDisposable
 
             if (latest.Version <= CurrentVersion) { Set(UpdateStatus.UpToDate); return; }
             Set(UpdateStatus.Available);
-            if (!install || !CanSelfUpdate) return;
+            if (!install || !CanSelfUpdate)
+            {
+                if (_announced != latest.Version)   // once per version, not every 6 hours
+                {
+                    _announced = latest.Version;
+                    Notify($"Yangi versiya v{latest.Version} chiqdi", "O‘rnatish uchun bosing.");
+                }
+                return;
+            }
+
+            Notify($"YangiAlifbo v{latest.Version} topildi", "Yuklab olinmoqda, so‘ng o‘rnatiladi.");
 
             Set(UpdateStatus.Downloading);
             var progress = new Progress<int>(p => { Progress = p; Raise(); });
             string file = await _updater.DownloadAsync(latest, progress).ConfigureAwait(false);
 
+            // Give the user time to read the notice before the app restarts.
             Set(UpdateStatus.Installing);
+            Notify($"v{latest.Version} o‘rnatilmoqda", "YangiAlifbo bir necha soniyada qayta ishga tushadi.");
+            await Task.Delay(TimeSpan.FromSeconds(8)).ConfigureAwait(false);
             _ui.Post(_ =>
             {
                 if (Updater.TryInstall(file, latest, out string error))
                 {
-                    _notify("YangiAlifbo yangilanmoqda", $"v{latest.Version} o‘rnatildi, dastur qayta ishga tushmoqda.");
                     _exitForRestart();
                 }
                 else
@@ -121,6 +134,8 @@ public sealed class UpdateController : IDisposable
             Interlocked.Exchange(ref _busy, 0);
         }
     }
+
+    private void Notify(string title, string text) => _ui.Post(_ => _notify(title, text), null);
 
     private void Set(UpdateStatus s) { Status = s; if (s != UpdateStatus.Failed) Error = null; Raise(); }
     private void Fail(string message) { Error = message; Status = UpdateStatus.Failed; Raise(); }

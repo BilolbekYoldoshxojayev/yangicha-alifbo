@@ -10,6 +10,7 @@ using System.Diagnostics;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text.Json;
+using System.Text.Json.Nodes;
 using Microsoft.Web.WebView2.Core;
 using Microsoft.Web.WebView2.WinForms;
 using YangiAlifbo.Core;
@@ -170,7 +171,7 @@ public sealed class ControlCenterForm : Form, IStateView
             case "ready":
                 _ready = true;
                 PostState();
-                if (_pendingPage != null) { Post(new { type = "page", page = _pendingPage }); _pendingPage = null; }
+                if (_pendingPage != null) { Post(new JsonObject { ["type"] = "page", ["page"] = _pendingPage }); _pendingPage = null; }
                 break;
             case "checkUpdate":
                 _ = _context.Updates.CheckAsync(install: true);
@@ -194,7 +195,7 @@ public sealed class ControlCenterForm : Form, IStateView
             case "convert":
                 string text = msg.GetProperty("text").GetString() ?? "";
                 string result = TextConverter.Convert(text, _detector, _context.Mode, _context.IsChatSlangNormalizerEnabled, out int changed);
-                Post(new { type = "converted", id = msg.GetProperty("id").GetInt32(), text = result, changed });
+                Post(new JsonObject { ["type"] = "converted", ["id"] = msg.GetProperty("id").GetInt32(), ["text"] = result, ["changed"] = changed });
                 break;
             case "copy":
                 try { Clipboard.SetText(msg.GetProperty("text").GetString() ?? ""); } catch { }
@@ -240,10 +241,16 @@ public sealed class ControlCenterForm : Form, IStateView
 
     // ── State to the page ──────────────────────────────────────────
 
+    // ── Self-test hooks (YangiAlifbo.exe --selftest) ─────────────────
+    internal bool IsWebReady => _ready;
+    internal Task<string> RunScriptAsync(string js) => _web.ExecuteScriptAsync(js);
+    internal Task CaptureAsync(Stream png) =>
+        _web.CoreWebView2.CapturePreviewAsync(CoreWebView2CapturePreviewImageFormat.Png, png);
+
     /// <summary>Switches the page to one of the sections in index.html.</summary>
     public void ShowPage(string page)
     {
-        if (_ready) Post(new { type = "page", page });
+        if (_ready) Post(new JsonObject { ["type"] = "page", ["page"] = page });
         else _pendingPage = page;
     }
 
@@ -254,51 +261,52 @@ public sealed class ControlCenterForm : Form, IStateView
         PostState();
     }
 
+    // Messages are built as JsonObject (not anonymous types) so they survive trimming.
     private void PostState()
     {
         if (!_ready) return;
         var v = Asm.GetName().Version;
-        Post(new
+        Post(new JsonObject
         {
-            type = "state",
-            version = v == null ? "" : $"{v.Major}.{v.Minor}.{v.Build}",
-            enabled = _context.IsEnabled,
-            slang = _context.IsChatSlangNormalizerEnabled,
-            startup = _context.GetIsStartupEnabled(),
-            mode = _context.Mode.ToString(),
-            words = _keyboardHook.WordsConverted,
-            lexicon = _detector.UzbekLexiconCount,
-            reject = _detector.EnglishRejectCount,
-            memoryMb = Environment.WorkingSet / (1024 * 1024),
-            update = UpdatePayload()
+            ["type"] = "state",
+            ["version"] = v == null ? "" : $"{v.Major}.{v.Minor}.{v.Build}",
+            ["enabled"] = _context.IsEnabled,
+            ["slang"] = _context.IsChatSlangNormalizerEnabled,
+            ["startup"] = _context.GetIsStartupEnabled(),
+            ["mode"] = _context.Mode.ToString(),
+            ["words"] = _keyboardHook.WordsConverted,
+            ["lexicon"] = _detector.UzbekLexiconCount,
+            ["reject"] = _detector.EnglishRejectCount,
+            ["memoryMb"] = Environment.WorkingSet / (1024 * 1024),
+            ["update"] = UpdatePayload()
         });
     }
 
-    private object UpdatePayload()
+    private JsonObject UpdatePayload()
     {
         var u = _context.Updates;
         // Notes: the update that just happened, else the latest release seen.
-        var shown = u.JustUpdated is { } w
-            ? new { version = w.Version, name = w.Name, notes = w.Notes, from = w.From }
-            : u.Latest is { } l ? new { version = l.Version.ToString(), name = l.Name, notes = l.Notes, from = "" } : null;
-        return new
+        JsonObject? shown = u.JustUpdated is { } w
+            ? new JsonObject { ["version"] = w.Version, ["name"] = w.Name, ["notes"] = w.Notes, ["from"] = w.From }
+            : u.Latest is { } l ? new JsonObject { ["version"] = l.Version.ToString(), ["name"] = l.Name, ["notes"] = l.Notes, ["from"] = "" } : null;
+        return new JsonObject
         {
-            status = u.Status.ToString(),
-            auto = u.AutoUpdate,
-            canSelfUpdate = UpdateController.CanSelfUpdate,
-            latest = u.Latest?.Version.ToString(),
-            progress = u.Progress,
-            error = u.Error,
-            lastChecked = u.LastChecked?.ToString("HH:mm"),
-            justUpdated = u.JustUpdated != null,
-            shown
+            ["status"] = u.Status.ToString(),
+            ["auto"] = u.AutoUpdate,
+            ["canSelfUpdate"] = UpdateController.CanSelfUpdate,
+            ["latest"] = u.Latest?.Version.ToString(),
+            ["progress"] = u.Progress,
+            ["error"] = u.Error,
+            ["lastChecked"] = u.LastChecked?.ToString("HH:mm"),
+            ["justUpdated"] = u.JustUpdated != null,
+            ["shown"] = shown
         };
     }
 
-    private void Post(object payload)
+    private void Post(JsonObject payload)
     {
         if (_web.CoreWebView2 == null) return;
-        _web.CoreWebView2.PostWebMessageAsJson(JsonSerializer.Serialize(payload));
+        _web.CoreWebView2.PostWebMessageAsJson(payload.ToJsonString());
     }
 
     protected override void OnFormClosing(FormClosingEventArgs e)

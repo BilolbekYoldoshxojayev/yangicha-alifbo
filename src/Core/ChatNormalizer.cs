@@ -215,13 +215,13 @@ public static class ChatNormalizer
         {
             norm = "bo'lsa";
         }
+        else if (norm.StartsWith("bovotti"))
+        {
+            norm = "bo'votti" + norm[7..];
+        }
         else if (norm.StartsWith("bovot"))
         {
-            norm = "bo'vott" + norm[6..];
-        }
-        else if (norm == "bovotti")
-        {
-            norm = "bo'votti";
+            norm = "bo'votti" + norm[5..];
         }
         else if (norm == "lekn")
         {

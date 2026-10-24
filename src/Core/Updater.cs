@@ -12,6 +12,7 @@ using System.Diagnostics;
 using System.Net.Http;
 using System.Security.Cryptography;
 using System.Text.Json;
+using System.Text.Json.Nodes;
 
 namespace YangiAlifbo.Core;
 
@@ -183,8 +184,11 @@ public sealed class Updater : IDisposable
             catch { File.Move(old, exe); throw; }
 
             Directory.CreateDirectory(Dir);
-            File.WriteAllText(WhatsNewPath, JsonSerializer.Serialize(new WhatsNew(
-                release.Version.ToString(), CurrentVersion.ToString(), release.Name, release.Notes, release.HtmlUrl)));
+            File.WriteAllText(WhatsNewPath, new JsonObject
+            {
+                ["Version"] = release.Version.ToString(), ["From"] = CurrentVersion.ToString(),
+                ["Name"] = release.Name, ["Notes"] = release.Notes, ["HtmlUrl"] = release.HtmlUrl
+            }.ToJsonString());
 
             if (start)
                 Process.Start(new ProcessStartInfo(exe, $"--updated-from {CurrentVersion}") { UseShellExecute = false });
@@ -219,7 +223,9 @@ public sealed class Updater : IDisposable
         try
         {
             if (!File.Exists(WhatsNewPath)) return null;
-            var w = JsonSerializer.Deserialize<WhatsNew>(File.ReadAllText(WhatsNewPath));
+            var o = JsonNode.Parse(File.ReadAllText(WhatsNewPath))!.AsObject();
+            string Str(string k) => o[k]?.GetValue<string>() ?? "";
+            var w = new WhatsNew(Str("Version"), Str("From"), Str("Name"), Str("Notes"), Str("HtmlUrl"));
             File.Delete(WhatsNewPath);
             return w;
         }

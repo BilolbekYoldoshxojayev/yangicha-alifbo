@@ -23,6 +23,12 @@ internal static class Program
     [STAThread]
     static void Main(string[] args)
     {
+        if (args.Length > 0 && args[0] == "--selftest")
+        {
+            ApplicationConfiguration.Initialize();
+            Environment.Exit(SelfTest.Run(args));
+        }
+
         string logDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "YangiAlifbo");
         Directory.CreateDirectory(logDir);
         string logFile = Path.Combine(logDir, "launch.log");
