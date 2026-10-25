@@ -1853,7 +1853,6 @@ achomlayman
 achomlaymiz
 achomlaysan
 achomlaysiz
-activate
 ad'yunkt
 ad'yunktura
 ada
@@ -12409,7 +12408,6 @@ anbarafşon
 anbiyo
 anbuh
 anca
-ancestor
 ancha
 ancha-muncha
 anchadan
@@ -20932,7 +20930,6 @@ asbob
 asbob-anjom
 asbob-uskuna
 asbobsozlik
-asdiscussiongroup
 aseptika
 asfalasofilin
 asfalt
@@ -57042,7 +57039,6 @@ bitaylik
 bitayliklar
 bitbildiq
 bitbozlik
-bitcoin
 bitdi
 bitdik
 bitdilar
@@ -80551,7 +80547,6 @@ brus
 brutsellyoz
 brutto
 btasi
-btw
 bu
 bub
 bublik
@@ -98892,25 +98887,6 @@ böşliq
 böşoq
 böştob
 böştoblik
-campda
-campdagi
-campdagilar
-campdan
-campga
-campgami
-camplarda
-campni
-campning
-camppi
-canceled
-cannot
-canva
-caption
-cashback
-catda
-cauz
-cefr
-certificat
 cetga
 cha
 chachvon
@@ -130724,25 +130700,7 @@ chuyymiz
 chuyysan
 chuyysiz
 ciqib
-classroomda
-coder
-comeback
-competency
-congrats
-congratulation
-consalting
-consultating
-consultingdan
-couldn
-covid
-coz
-crypto
 cunki
-cvda
-cvdi
-cveditor
-cvmaker
-cvni
 da'vat
 da'vatkor
 da'vatnoma
@@ -139203,7 +139161,6 @@ desantçi
 desat
 desatina
 desaylik
-describtion
 desert
 desez
 deshifrovka
@@ -160426,7 +160383,6 @@ e'zozlaysan
 e'zozlaysiz
 e'zozli
 e-voh
-eace
 eashkvoy
 eaşkvoy
 eb
@@ -173616,13 +173572,10 @@ evrilysiz
 evro
 evtanaziya
 examiner
-excelreader
-excelviewer
 exe
 exinokokk
 exinokokkoz
 extiyoji
-extracurricular
 extremism
 exx
 exxx
@@ -177467,7 +177420,6 @@ feldşer
 feleton
 feletonchi
 feletonçi
-fellows
 fen
 fenol
 fenolog
@@ -179106,8 +179058,6 @@ ftor
 ftorli
 ftuziatr
 fu
-fuck
-fucking
 fudbol
 fudbolchila
 fudbolchilar
@@ -202442,7 +202392,6 @@ gong
 goniometr
 gonorar
 goo
-goodluck
 googleda
 gorchichnik
 gorchitsa
@@ -232472,7 +232421,6 @@ iboratki
 ibosiz
 ibot
 ibrat
-ibratcamp
 ibratga
 ibratli
 ibratni
@@ -246971,7 +246919,6 @@ inspektor
 inspektorlik
 inspektsiya
 inst
-instadowbot
 instagramda
 instartsiya
 instda
@@ -301610,7 +301557,6 @@ kitobçilikni
 kitobçilikning
 kitobşunos
 kitobşunoslik
-kiwi
 kiy
 kiya
 kiyadi
@@ -334529,7 +334475,6 @@ lya
 lyabdi
 lyapis
 lyapti
-lyceum
 lyuboy
 lyuizit
 lyuk
@@ -349271,7 +349216,6 @@ mindilar
 mindim
 minding
 mindingiz
-minecraft
 mineral
 mineralizatsiya
 minerallanish
@@ -353411,8 +353355,6 @@ mocha
 mochag'ar
 mochalka
 mochaxar
-mock
-mockda
 moda
 modal
 modallik
@@ -430122,7 +430064,6 @@ pand
 pand-nasihat
 pandavoqi
 pandavoqilik
-pandemic
 pandemiya
 pandnoma
 panel
@@ -435372,7 +435313,6 @@ patentlanyman
 patentlanymiz
 patentlanysan
 patentlanysiz
-patience
 patila
 patila-patila
 patilla
@@ -451367,7 +451307,6 @@ ppa
 ppi
 ppt
 pqyohllai
-practise
 pragmatik
 pragmatika
 pragmatizm
@@ -451779,7 +451718,6 @@ professionalizm
 professor
 professorlar
 proffesirlar
-proficiency
 profil
 profilaktik
 profilaktika
@@ -451815,7 +451753,6 @@ prolog
 prolongatsiya
 prometiy
 promille
-pronunciation
 propaganda
 propagandist
 propeller
@@ -452930,7 +452867,6 @@ pulsizlik
 pult
 pulverizator
 puma
-punctuality
 punkt
 punktir
 punktsiya
@@ -529328,7 +529264,6 @@ qu
 qu-qu
 quadi
 quadilar
-quadratics
 quaman
 quamiz
 quasan
@@ -557774,7 +557709,6 @@ reanimatologiya
 reanimatsiya
 rebus
 rechitativ
-recycle
 redaktor
 redaktorlik
 redaktsion
@@ -574078,8 +574012,6 @@ sağir
 sağirxona
 sağri
 sağriçi
-scaner
-scholarshipscorner
 schyot
 schyotchik
 seans
@@ -578302,8 +578234,6 @@ sertarysiz
 sertashvish
 sertavoze
 sertaşviş
-sertificat
-sertificati
 sertifikat
 sertifikatda
 sertifikatga
@@ -628048,7 +627978,6 @@ sperma
 spetsifik
 spetsifika
 spetsifikatsiya
-sphtctz
 spidometr
 spidvey
 spiker
@@ -628870,7 +628799,6 @@ sub'idam
 subhon
 subhoni
 submitni
-subscribing
 subsidiya
 subsidiyaga
 subsidiyalar
@@ -629041,7 +628969,6 @@ suchuktoyman
 suchuktoymiz
 suchuktoysan
 suchuktoysiz
-suck
 sud
 sudboz
 sudbozlik
@@ -712833,7 +712760,6 @@ topgin
 topguncha
 topgunça
 topib
-topical
 topik
 topil
 topiladi
@@ -737083,8 +737009,6 @@ tuşymiz
 tuşysan
 tuşysiz
 tvda
-twitter
-tws
 tyagach
 tyagaç
 tyaptimi
@@ -746450,7 +746374,6 @@ udmurt
 udmurtlar
 udum
 uf
-ufc
 uff
 ufff
 ufla
@@ -763239,7 +763162,6 @@ uzdim
 uzding
 uzdingiz
 uzel
-uzforumnew
 uzgach
 uzgan
 uzgancha
@@ -764516,7 +764438,6 @@ uzsangiz
 uzsaylik
 uzsin
 uzsinlar
-uzswlutextbooks
 uzual
 uzuk
 uzukli
@@ -766645,7 +766566,6 @@ vaaleykum
 vaay
 vabarokotuhu
 vabo
-vacancy
 vada
 vadam
 vadavang
@@ -771619,7 +771539,6 @@ vidolaşymiz
 vidolaşysan
 vidolaşysiz
 vidyo
-viewform
 vigovor
 vij-vij
 vijdon
@@ -772814,7 +772733,6 @@ vohid
 vohidov
 voht
 vohtida
-voicechat
 voiz
 voizlik
 vojak
@@ -773730,29 +773648,13 @@ vxjyq
 vyorstka
 vznos
 vzvod
-waiter
-wallahi
 wart
 wartmas
 wartmi
 wartnoma
-wasn
-wasn't
-wbu
-wdym
 wekili
 wekilli
 wekl
-wgftfh
-whoever
-wiut
-wordda
-worddami
-worldwilde
-wouldn
-wps
-wrld
-wtf
 wukur
 wunaqa
 wuncha
@@ -783210,7 +783112,6 @@ xlsfilereader
 xlsfiles
 xlspreadsheets
 xlsreader
-xlsviewer
 xlsx
 xo'b
 xo'ja
@@ -858626,7 +858527,6 @@ zbeklar
 zbekmiz
 zbekstan
 zda
-zdcy
 zeb
 zeb-ziynat
 zebigardon

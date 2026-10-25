@@ -59,6 +59,7 @@ public class NeuralFallbackTests
     [DataRow("teacher")] [DataRow("search")] [DataRow("children")] [DataRow("approach")]
     [DataRow("photo's")] [DataRow("bishop's")] [DataRow("o'brien")] [DataRow("shapefile")]
     [DataRow("hashmap")] [DataRow("dashboard")] [DataRow("refresh")] [DataRow("kuzushiji")]
+    [DataRow("cashback")] [DataRow("voicechat")] [DataRow("scholarshipscorner")]   // were in the lexicon until v1.8.1
     public void ForeignWordsStayUnchangedThroughFullDetector(string word)
     {
         Assert.IsFalse(Full.Value.IsUzbekOrLikely(word), word);
