@@ -207,6 +207,7 @@ public sealed class LanguageDetector : ILanguageDetector, IDisposable
         EnsureUserFilesExist();
         _userWhitelist = LoadUserFile(WhitelistPath);
         _userBlacklist = LoadUserFile(BlacklistPath);
+        Neural = NeuralFallback.LoadEmbedded();
 
         _debounceTimer = new System.Threading.Timer(DebounceTimerCallback, null, Timeout.Infinite, Timeout.Infinite);
         _watcher = InitializeWatcher();
@@ -326,6 +327,42 @@ public sealed class LanguageDetector : ILanguageDetector, IDisposable
         }
 
         return _englishReject.Contains(normalized);
+    }
+
+    // ── Tier 4: neural fallback for words no other tier knows ──────────
+
+    private readonly System.Collections.Concurrent.ConcurrentDictionary<string, bool> _neuralCache = new(StringComparer.Ordinal);
+
+    /// <summary>The model consulted by <see cref="IsUzbekOrLikely"/>; null turns tier 4 off.</summary>
+    public NeuralFallback? Neural { get; set; }
+
+    /// <summary>Switches tier 4 on or off (the model stays loaded).</summary>
+    public bool NeuralEnabled { get; set; } = true;
+
+    /// <summary>Words tier 4 accepted so far (shown in the control center).</summary>
+    public int NeuralAccepted => _neuralAccepted;
+    private int _neuralAccepted;
+
+    /// <summary>
+    /// Strict-mode check for a word exactly as the user typed it: <see cref="IsUzbek(string)"/>,
+    /// then the neural model for words that are not rejected and not known. Callers must not
+    /// pass words rewritten by <see cref="ChatNormalizer"/>.
+    /// </summary>
+    public bool IsUzbekOrLikely(string word)
+    {
+        if (IsUzbek(word)) return true;
+        var neural = Neural;
+        if (!NeuralEnabled || neural == null || string.IsNullOrWhiteSpace(word)) return false;
+
+        string normalized = NormalizeForLookup(word);
+        if (_userBlacklist.Contains(normalized) || IsForeignOrReject(normalized)) return false;
+        if (!NeuralFallback.IsEligible(normalized)) return false;
+
+        if (_neuralCache.TryGetValue(normalized, out bool cached)) return cached;
+        bool result = neural.Accepts(normalized);
+        if (_neuralCache.Count < 10000) _neuralCache.TryAdd(normalized, result);
+        if (result) Interlocked.Increment(ref _neuralAccepted);
+        return result;
     }
 
     public bool IsUzbek(string word, ConversionMode mode)

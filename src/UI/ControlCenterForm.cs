@@ -30,9 +30,11 @@ public interface IControlCenterHost
     bool IsEnabled { get; }
     TransliterationMode Mode { get; }
     bool IsChatSlangNormalizerEnabled { get; }
+    bool IsNeuralEnabled { get; }
     void ToggleEnabled();
     void SetMode(TransliterationMode mode);
     void SetChatSlang(bool enabled);
+    void SetNeural(bool enabled);
     bool GetIsStartupEnabled();
     void SetStartup(bool enabled);
     void OpenWhitelist();
@@ -185,6 +187,9 @@ public sealed class ControlCenterForm : Form, IStateView
             case "setSlang":
                 _context.SetChatSlang(msg.GetProperty("value").GetBoolean());
                 break;
+            case "setNeural":
+                _context.SetNeural(msg.GetProperty("value").GetBoolean());
+                break;
             case "setStartup":
                 _context.SetStartup(msg.GetProperty("value").GetBoolean());
                 break;
@@ -272,6 +277,9 @@ public sealed class ControlCenterForm : Form, IStateView
             ["version"] = v == null ? "" : $"{v.Major}.{v.Minor}.{v.Build}",
             ["enabled"] = _context.IsEnabled,
             ["slang"] = _context.IsChatSlangNormalizerEnabled,
+            ["neural"] = _context.IsNeuralEnabled && _detector.Neural != null,
+            ["neuralLoaded"] = _detector.Neural != null,
+            ["neuralAccepted"] = _detector.NeuralAccepted,
             ["startup"] = _context.GetIsStartupEnabled(),
             ["mode"] = _context.Mode.ToString(),
             ["words"] = _keyboardHook.WordsConverted,

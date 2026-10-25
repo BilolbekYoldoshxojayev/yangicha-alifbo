@@ -3,9 +3,10 @@
 // Self-update from GitHub Releases:
 //   1. Ask the releases API for the latest release.
 //   2. Download its YangiAlifbo.exe and check the SHA-256 GitHub reports.
-//   3. Rename the running exe to *.old, put the new one in its place,
-//      start it with --updated-from <old version>, and let the caller exit.
-// The new process deletes *.old and shows the release notes it was given.
+//   3. Start the download as an installer (--install) and let the caller exit.
+//      The installer waits for the old process, copies itself over the old
+//      exe and starts it with --updated-from <old version>.
+// The new process deletes leftovers and shows the release notes it was given.
 // ──────────────────────────────────────────────────────────────────────
 
 using System.Diagnostics;
@@ -25,7 +26,11 @@ public sealed record WhatsNew(string Version, string From, string Name, string N
 
 public sealed class Updater : IDisposable
 {
-    public const string ReleasesApi = "https://api.github.com/repos/BilolbekYoldoshxojayev/yangicha-alifbo/releases/latest";
+    public const string GitHubReleasesApi = "https://api.github.com/repos/BilolbekYoldoshxojayev/yangicha-alifbo/releases/latest";
+
+    /// <summary>GitHub's latest-release URL; YANGIALIFBO_RELEASES_API replaces it for update tests.</summary>
+    public static string ReleasesApi =>
+        Environment.GetEnvironmentVariable("YANGIALIFBO_RELEASES_API") is { Length: > 0 } url ? url : GitHubReleasesApi;
     public const string AssetName = "YangiAlifbo.exe";
 
     private static readonly string Dir = Path.Combine(
@@ -164,25 +169,26 @@ public sealed class Updater : IDisposable
 
     // ── Install and hand-over ───────────────────────────────────────
 
+    // The running exe is never renamed or touched: a single-file build loads parts of
+    // .NET from its own file on demand, and after a rename those loads fail (this broke
+    // the restart in v1.6–v1.7). Instead the downloaded exe is started as an installer;
+    // it waits for this process to exit, copies itself over the old exe and starts it.
+
+    public const string InstallArg = "--install";
+
     /// <summary>
-    /// Puts <paramref name="downloaded"/> in place of the running exe and starts it.
+    /// Saves the release notes and starts <paramref name="downloaded"/> as the installer.
     /// The caller exits right after a true result.
     /// </summary>
     public static bool TryInstall(string downloaded, ReleaseInfo release, out string error) =>
         TryInstall(downloaded, release, Environment.ProcessPath!, start: true, out error);
 
-    /// <summary>Swaps <paramref name="exe"/> for the download; starts it when <paramref name="start"/> is set.</summary>
+    /// <summary>Saves the notes; starts the installer for <paramref name="exe"/> when <paramref name="start"/> is set.</summary>
     public static bool TryInstall(string downloaded, ReleaseInfo release, string exe, bool start, out string error)
     {
         error = "";
-        string old = exe + ".old";
         try
         {
-            if (File.Exists(old)) File.Delete(old);
-            File.Move(exe, old);                 // a running exe can be renamed, not overwritten
-            try { File.Copy(downloaded, exe); }
-            catch { File.Move(old, exe); throw; }
-
             Directory.CreateDirectory(Dir);
             File.WriteAllText(WhatsNewPath, new JsonObject
             {
@@ -191,28 +197,95 @@ public sealed class Updater : IDisposable
             }.ToJsonString());
 
             if (start)
-                Process.Start(new ProcessStartInfo(exe, $"--updated-from {CurrentVersion}") { UseShellExecute = false });
-            try { File.Delete(downloaded); } catch { }
+            {
+                var psi = new ProcessStartInfo(downloaded) { UseShellExecute = false };
+                psi.ArgumentList.Add(InstallArg);
+                psi.ArgumentList.Add(exe);
+                psi.ArgumentList.Add(Environment.ProcessId.ToString());
+                psi.ArgumentList.Add(CurrentVersion.ToString());
+                Process.Start(psi);
+            }
             return true;
         }
         catch (Exception ex)
         {
+            AppLog.Write("TryInstall: " + ex);
             error = ex.Message;
             return false;
         }
     }
 
-    /// <summary>Removes the previous exe left by an update (retrying while it exits).</summary>
+    /// <summary>
+    /// Installer mode (<c>--install &lt;exe&gt; &lt;pid&gt; &lt;from-version&gt;</c>), run by the new exe:
+    /// waits for the old process, replaces its exe with this one and starts it.
+    /// The old exe is started again if the replacement fails, so the app never ends up gone.
+    /// </summary>
+    public static int RunInstaller(string[] args)
+    {
+        if (args.Length < 4 || !int.TryParse(args[2], out int pid)) return 2;
+        string target = args[1], from = args[3], self = Environment.ProcessPath!;
+        AppLog.Write($"Installer: v{CurrentVersion} replacing {target} (old pid {pid})");
+
+        try
+        {
+            using var old = Process.GetProcessById(pid);
+            if (!old.WaitForExit(30_000)) { old.Kill(); old.WaitForExit(5_000); }
+        }
+        catch (ArgumentException) { }   // already gone
+
+        bool replaced = false;
+        for (int i = 0; i < 40 && !replaced; i++)   // the file can stay locked for a moment after exit
+        {
+            try { Replace(self, target); replaced = true; }
+            catch (Exception ex) { if (i == 39) AppLog.Write("Installer: replace failed: " + ex.Message); else Thread.Sleep(250); }
+        }
+
+        try
+        {
+            var psi = new ProcessStartInfo(target) { UseShellExecute = false };
+            if (replaced) { psi.ArgumentList.Add("--updated-from"); psi.ArgumentList.Add(from); }
+            Process.Start(psi);
+            AppLog.Write(replaced ? "Installer: done, new version started" : "Installer: old version started again");
+        }
+        catch (Exception ex)
+        {
+            AppLog.Write("Installer: could not start " + target + ": " + ex.Message);
+            return 1;
+        }
+        return replaced ? 0 : 1;
+    }
+
+    /// <summary>Puts a copy of <paramref name="source"/> at <paramref name="target"/>, keeping the old file until the copy is complete.</summary>
+    public static void Replace(string source, string target)
+    {
+        string old = target + ".old", fresh = target + ".new";
+        File.Copy(source, fresh, overwrite: true);
+        if (File.Exists(target)) File.Move(target, old, overwrite: true);
+        try { File.Move(fresh, target); }
+        catch { File.Move(old, target); throw; }
+        try { File.Delete(old); } catch { }
+    }
+
+    /// <summary>
+    /// Removes what an update leaves behind: the previous exe (*.old, from v1.6–v1.7 updates)
+    /// and downloaded installers, retrying while the installer exits.
+    /// </summary>
     public static void CleanupOldExe()
     {
         string? exe = Environment.ProcessPath;
         if (exe == null) return;
-        string old = exe + ".old";
         _ = Task.Run(async () =>
         {
-            for (int i = 0; i < 20 && File.Exists(old); i++)
+            for (int i = 0; i < 20; i++)
             {
-                try { File.Delete(old); } catch { await Task.Delay(500).ConfigureAwait(false); }
+                var left = new List<string>();
+                if (File.Exists(exe + ".old")) left.Add(exe + ".old");
+                if (Directory.Exists(Dir))
+                    left.AddRange(Directory.GetFiles(Dir, "YangiAlifbo-*.exe").Where(f =>
+                        !string.Equals(f, exe, StringComparison.OrdinalIgnoreCase)));
+                if (left.Count == 0) return;
+                foreach (var f in left) { try { File.Delete(f); } catch { } }
+                await Task.Delay(500).ConfigureAwait(false);
             }
         });
     }

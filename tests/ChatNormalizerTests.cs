@@ -177,10 +177,20 @@ public class ChatNormalizerTests
     [TestMethod]
     public void TestDashboardForm_InstantiationAndLivePreview()
     {
-        using var hook = new YangiAlifbo.Win32.KeyboardHook(_detector, new YangiAlifbo.Win32.FocusTracker());
-        using var form = new YangiAlifbo.UI.DashboardForm(hook, _detector, _ => { }, () => true);
+        // Creating a form installs a WinForms SynchronizationContext on this test thread.
+        // With no message loop, later async tests on the same thread would never resume.
+        var previous = SynchronizationContext.Current;
+        try
+        {
+            using var hook = new YangiAlifbo.Win32.KeyboardHook(_detector, new YangiAlifbo.Win32.FocusTracker());
+            using var form = new YangiAlifbo.UI.DashboardForm(hook, _detector, _ => { }, () => true);
 
-        Assert.IsNotNull(form);
-        Assert.AreEqual("YangiAlifbo — Boshqaruv Paneli (Control Center)", form.Text);
+            Assert.IsNotNull(form);
+            Assert.AreEqual("YangiAlifbo — Boshqaruv Paneli (Control Center)", form.Text);
+        }
+        finally
+        {
+            SynchronizationContext.SetSynchronizationContext(previous);
+        }
     }
 }

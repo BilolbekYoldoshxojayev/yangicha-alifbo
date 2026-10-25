@@ -21,12 +21,14 @@ internal static class SelfTest
         public bool IsEnabled { get; set; } = true;
         public TransliterationMode Mode { get; set; } = TransliterationMode.Strict;
         public bool IsChatSlangNormalizerEnabled { get; set; } = true;
+        public bool IsNeuralEnabled { get; set; } = true;
         public UpdateController Updates { get; } = new((_, _) => { }, () => { });
         private bool _startup = true;
         public Action? Changed;
         public void ToggleEnabled() { IsEnabled = !IsEnabled; Changed?.Invoke(); }
         public void SetMode(TransliterationMode m) { Mode = m; Changed?.Invoke(); }
         public void SetChatSlang(bool e) { IsChatSlangNormalizerEnabled = e; Changed?.Invoke(); }
+        public void SetNeural(bool e) { IsNeuralEnabled = e; Changed?.Invoke(); }
         public bool GetIsStartupEnabled() => _startup;
         public void SetStartup(bool e) { _startup = e; Changed?.Invoke(); }
         public void OpenWhitelist() { }
@@ -87,6 +89,20 @@ internal static class SelfTest
             return got == expected ? null : got;
         });
 
+        Check("neural fallback loads and scores", () =>
+        {
+            var n = detector.Neural;
+            if (n == null) return "model not embedded";
+            var sw = Stopwatch.StartNew();
+            const int reps = 200;
+            for (int i = 0; i < reps; i++) n.Score("sho'rvaxonalarimizdagilar");
+            Add($"      {n.Models} models, threshold {n.Threshold:F6}, {sw.Elapsed.TotalMilliseconds / reps:F2} ms per word");
+            if (!detector.IsUzbekOrLikely("sho'rvaxonalarimizdagilar")) return "unknown Uzbek word not accepted";
+            foreach (string w in new[] { "fresh", "bishop's", "kuzushiji", "dashboard" })
+                if (detector.IsUzbekOrLikely(w)) return "foreign word accepted: " + w;
+            return null;
+        });
+
         if (args.Length > 2)
         {
             Check("engine dump", () =>
@@ -100,7 +116,8 @@ internal static class SelfTest
                     o.Write(detector.IsUzbek(w, ConversionMode.Strict) ? '1' : '0');
                     o.Write(detector.IsForeignOrReject(w) ? '1' : '0'); o.Write('\t');
                     o.Write(ChatNormalizer.Normalize(w)); o.Write('\t');
-                    o.WriteLine(UzbekPhonetics.Convert(w));
+                    o.Write(UzbekPhonetics.Convert(w)); o.Write('\t');
+                    o.WriteLine(detector.IsUzbekOrLikely(w) ? '1' : '0');   // with the neural fallback (v1.8)
                 }
                 return null;
             });

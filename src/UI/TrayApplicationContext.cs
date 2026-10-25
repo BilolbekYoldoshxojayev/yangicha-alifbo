@@ -42,6 +42,7 @@ internal sealed class TrayApplicationContext : ApplicationContext, IControlCente
     private readonly ToolStripMenuItem _aggressiveModeItem;
     private readonly ToolStripMenuItem _startupItem;
     private readonly ToolStripMenuItem _chatSlangItem;
+    private readonly ToolStripMenuItem _neuralItem;
     private Form? _dashboardForm;
 
     // ── Hotkey Window ──────────────────────────────────────────────────
@@ -92,6 +93,13 @@ internal sealed class TrayApplicationContext : ApplicationContext, IControlCente
             Checked = _keyboardHook.IsChatSlangNormalizerEnabled
         };
 
+        _detector.NeuralEnabled = !File.Exists(NeuralDisabledFlagPath);
+        _neuralItem = new ToolStripMenuItem("🧠 Neyron model: lug‘atda yo‘q so‘zlar (Neural fallback)", null, (_, _) => SetNeural(!IsNeuralEnabled))
+        {
+            Checked = IsNeuralEnabled,
+            Enabled = _detector.Neural != null
+        };
+
         _startupItem = new ToolStripMenuItem("Windows bilan ishga tushirish (Run on Startup)", null, OnToggleStartup)
         {
             Checked = IsStartupEnabled()
@@ -109,6 +117,7 @@ internal sealed class TrayApplicationContext : ApplicationContext, IControlCente
         contextMenu.Items.Add(new ToolStripSeparator());
         contextMenu.Items.Add(modeMenu);
         contextMenu.Items.Add(_chatSlangItem);
+        contextMenu.Items.Add(_neuralItem);
         contextMenu.Items.Add(new ToolStripSeparator());
         contextMenu.Items.Add("Oq ro'yxatni tahrirlash (Edit Whitelist)...", null, OnEditWhitelist);
         contextMenu.Items.Add("Qora ro'yxatni tahrirlash (Edit Blacklist)...", null, OnEditBlacklist);
@@ -183,6 +192,7 @@ internal sealed class TrayApplicationContext : ApplicationContext, IControlCente
         _strictModeItem.Checked = _keyboardHook.Mode == TransliterationMode.Strict;
         _aggressiveModeItem.Checked = _keyboardHook.Mode == TransliterationMode.Aggressive;
         _chatSlangItem.Checked = _keyboardHook.IsChatSlangNormalizerEnabled;
+        _neuralItem.Checked = IsNeuralEnabled;
         _startupItem.Checked = IsStartupEnabled();
         _trayIcon.Text = enabled
             ? "YangiAlifbo — Faol ✓\n(Ctrl+Shift+U o'chirish)"
@@ -232,6 +242,11 @@ internal sealed class TrayApplicationContext : ApplicationContext, IControlCente
         "YangiAlifbo",
         "startup_disabled.flag");
 
+    private static readonly string NeuralDisabledFlagPath = Path.Combine(
+        Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+        "YangiAlifbo",
+        "neural_disabled.flag");
+
     private void OnToggleChatSlang(object? sender, EventArgs e)
     {
         _keyboardHook.IsChatSlangNormalizerEnabled = !_keyboardHook.IsChatSlangNormalizerEnabled;
@@ -278,6 +293,21 @@ internal sealed class TrayApplicationContext : ApplicationContext, IControlCente
     public void SetChatSlang(bool enabled)
     {
         _keyboardHook.IsChatSlangNormalizerEnabled = enabled;
+        UpdateUI();
+    }
+
+    public bool IsNeuralEnabled => _detector.NeuralEnabled;
+
+    /// <summary>Switches the neural fallback; the choice is kept as neural_disabled.flag.</summary>
+    public void SetNeural(bool enabled)
+    {
+        _detector.NeuralEnabled = enabled;
+        try
+        {
+            if (enabled) File.Delete(NeuralDisabledFlagPath);
+            else { Directory.CreateDirectory(Path.GetDirectoryName(NeuralDisabledFlagPath)!); File.WriteAllText(NeuralDisabledFlagPath, "disabled"); }
+        }
+        catch { }
         UpdateUI();
     }
 

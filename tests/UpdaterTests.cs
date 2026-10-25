@@ -102,7 +102,7 @@ public class UpdaterTests
     }
 
     [TestMethod]
-    public void TryInstall_SwapsExeKeepsOldAndSavesNotes()
+    public void TryInstall_LeavesRunningExeAloneAndSavesNotes()
     {
         string dir = Path.Combine(Path.GetTempPath(), "ya-update-test-" + Guid.NewGuid().ToString("N"));
         Directory.CreateDirectory(dir);
@@ -118,9 +118,8 @@ public class UpdaterTests
             bool ok = Updater.TryInstall(downloaded, r, exe, start: false, out string error);
 
             Assert.IsTrue(ok, error);
-            Assert.AreEqual("new build", File.ReadAllText(exe));
-            Assert.AreEqual("old build", File.ReadAllText(exe + ".old"));
-            Assert.IsFalse(File.Exists(downloaded));
+            Assert.AreEqual("old build", File.ReadAllText(exe), "the running exe is replaced by the installer, not here");
+            Assert.IsFalse(File.Exists(exe + ".old"));
 
             var notes = Updater.TakeWhatsNew();
             Assert.IsNotNull(notes);
@@ -135,7 +134,31 @@ public class UpdaterTests
     }
 
     [TestMethod]
-    public void TryInstall_RestoresOriginalWhenCopyFails()
+    public void Replace_SwapsExeAndRemovesOld()
+    {
+        string dir = Path.Combine(Path.GetTempPath(), "ya-update-test-" + Guid.NewGuid().ToString("N"));
+        Directory.CreateDirectory(dir);
+        try
+        {
+            string exe = Path.Combine(dir, "YangiAlifbo.exe");
+            string downloaded = Path.Combine(dir, "YangiAlifbo-1.6.0.exe");
+            File.WriteAllText(exe, "old build");
+            File.WriteAllText(downloaded, "new build");
+
+            Updater.Replace(downloaded, exe);
+
+            Assert.AreEqual("new build", File.ReadAllText(exe));
+            Assert.IsFalse(File.Exists(exe + ".old"));
+            Assert.IsFalse(File.Exists(exe + ".new"));
+        }
+        finally
+        {
+            Directory.Delete(dir, recursive: true);
+        }
+    }
+
+    [TestMethod]
+    public void Replace_KeepsOriginalWhenSourceMissing()
     {
         string dir = Path.Combine(Path.GetTempPath(), "ya-update-test-" + Guid.NewGuid().ToString("N"));
         Directory.CreateDirectory(dir);
@@ -143,12 +166,9 @@ public class UpdaterTests
         {
             string exe = Path.Combine(dir, "YangiAlifbo.exe");
             File.WriteAllText(exe, "old build");
-            var r = Updater.ParseRelease(ReleaseJson("v1.6.0"))!;
 
-            bool ok = Updater.TryInstall(Path.Combine(dir, "missing.exe"), r, exe, start: false, out string error);
+            Assert.ThrowsException<FileNotFoundException>(() => Updater.Replace(Path.Combine(dir, "missing.exe"), exe));
 
-            Assert.IsFalse(ok);
-            Assert.IsFalse(string.IsNullOrEmpty(error));
             Assert.AreEqual("old build", File.ReadAllText(exe));
             Assert.IsFalse(File.Exists(exe + ".old"));
         }

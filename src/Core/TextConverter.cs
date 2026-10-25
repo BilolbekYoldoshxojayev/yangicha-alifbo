@@ -44,7 +44,8 @@ public static class TextConverter
 
         if (UzbekPhonetics.HasConvertiblePatterns(work))
         {
-            if (mode == TransliterationMode.Aggressive || detector.IsUzbek(work))
+            if (mode == TransliterationMode.Aggressive ||
+                (work == token ? detector.IsUzbekOrLikely(work) : detector.IsUzbek(work)))
                 return UzbekPhonetics.Convert(work);
         }
         else if (work != token && detector.IsUzbek(work))

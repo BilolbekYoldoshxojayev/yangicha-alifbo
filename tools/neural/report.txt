@@ -1,0 +1,6 @@
+models: 5 x 124641 parameters, 20 epochs, foreign weight 12.0
+threshold (max foreign ensemble score on validation): 0.998221099
+validation: 8747 foreign, 0 above threshold; Uzbek recall 84.63% of 33501
+test: 7967 foreign, 0 above threshold; Uzbek recall 82.33% of 30106
+(one model without trigram check: 5 foreign above its threshold, recall 95.28%)
+shipped threshold (max foreign score on validation and test, 16714 words): 0.998221099; Uzbek recall at it 83.54%

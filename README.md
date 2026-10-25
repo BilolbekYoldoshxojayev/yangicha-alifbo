@@ -34,7 +34,7 @@ Get-FileHash .\YangiAlifbo.exe -Algorithm SHA256
 - **`Ctrl + Shift + U`** — konvertorni yoqish / o‘chirish.
 - **Boshqaruv paneli:** patnisdagi belgini bosing. Panel saytdagi dizaynda (WebView2): jonli sinash maydoni to‘liq dvigatel bilan, sozlamalar, lug‘at statistikasi. WebView2 runtime bo‘lmagan kompyuterda oddiy oyna ochiladi.
 - Patnisdagi belgi: yashil — faol, kulrang — to‘xtatilgan. O‘ng tugma menyusida: yoqish/o‘chirish, rejim (Qat’iy / Agressiv), oq va qora ro‘yxatni tahrirlash, Windows bilan birga ishga tushirish, dastur haqida, chiqish.
-- **Avtomatik yangilanish** (v1.6.0 dan): har 6 soatda so‘nggi reliz tekshiriladi; yangisi topilsa yuklab olinadi, GitHub e’lon qilgan SHA-256 bilan solishtiriladi, `.exe` almashtiriladi va dastur qayta ishga tushib, boshqaruv panelida nima o‘zgarganini ko‘rsatadi. Boshqaruv panelidagi “Yangilanish” bo‘limida o‘chirish yoki qo‘lda tekshirish mumkin. `.exe` joylashgan papkaga yozish huquqi bo‘lishi kerak.
+- **Avtomatik yangilanish** (v1.6.0 dan): har 6 soatda so‘nggi reliz tekshiriladi; yangisi topilsa yuklab olinadi, GitHub e’lon qilgan SHA-256 bilan solishtiriladi, yangi `.exe` o‘rnatuvchi sifatida ishga tushadi, eski jarayon yopilgach faylni almashtiradi va dastur qayta ishga tushib, boshqaruv panelida nima o‘zgarganini ko‘rsatadi. Boshqaruv panelidagi “Yangilanish” bo‘limida o‘chirish yoki qo‘lda tekshirish mumkin. `.exe` joylashgan papkaga yozish huquqi bo‘lishi kerak.
 - **Avtomatik ishga tushirish** sukut bo‘yicha yoqilgan (v1.1.0 dan). Menyudan o‘chirsangiz, tanlov saqlanadi.
 - **Qat’iy rejim** (standart): faqat lug‘at yoki morfologiya tasdiqlagan so‘zlar o‘zgaradi. **Agressiv rejim**: filtrdan o‘tgan har qanday so‘z o‘zgaradi.
 - Shaxsiy ro‘yxatlar: `%AppData%\YangiAlifbo\user_whitelist.txt` va `user_blacklist.txt` (har qatorda bitta so‘z, saqlanganda qayta yuklanadi).
@@ -45,6 +45,7 @@ Get-FileHash .\YangiAlifbo.exe -Algorithm SHA256
 2. **Filtr.** 10 057 ta inglizcha va dasturlash so‘zi (`show`, `push`, `switch`, `catch`…) o‘zgartirilmaydi.
 3. **Lug‘at.** 948 288 yozuvli o‘zbek lug‘ati (so‘z va o‘zaklar, eski va yangi imloda).
 4. **Morfologiya.** 400+ qo‘shimchani (`-lar`, `-imiz`, `-dan`, `-gan`, `-yapti`…) va nisbat qo‘shimchalarini (`-n`, `-il`, `-t`, `-tir`) ajratib, o‘zak qidiriladi.
+5. **Neyron model** (v1.8.0 dan). Lug‘at va morfologiya tanimagan so‘zni 5 ta kichik belgi darajasidagi CNN baholaydi; so‘z faqat o‘zbek lotin harflaridan iborat bo‘lsa, uning barcha 3 harfli birikmalari o‘zbek so‘zlarida uchrasa va eng ehtiyotkor model ham chegaradan yuqori ball bersa o‘giriladi. Chegara 16 714 ta xorijiy so‘zning birortasi ham o‘tmaydigan qilib tanlangan. Chat normalizatori o‘zgartirgan shakllar modelga berilmaydi. Batafsil: [`tools/neural/`](tools/neural/README.md). Sozlamalarda yoki patnis menyusida o‘chiriladi.
 
 Katta-kichik harf saqlanadi (`Shahar → Şahar`, `SHAHAR → ŞAHAR`), raqamli tartib ham ishlaydi (`5-chi → 5-çi`), apostrofning 9 xil ko‘rinishi (`' ‘ ’ ʻ ʼ ` ´ ‛ ′`) taniladi.
 
@@ -59,7 +60,7 @@ Katta-kichik harf saqlanadi (`Shahar → Şahar`, `SHAHAR → ŞAHAR`), raqamli 
 Talablar: Windows 10/11, [.NET 10 SDK](https://dotnet.microsoft.com/download).
 
 ```powershell
-dotnet test tests/YangiAlifbo.Tests.csproj -c Release        # 394 ta unit test
+dotnet test tests/YangiAlifbo.Tests.csproj -c Release        # 533 ta unit test
 dotnet test e2e_tests/YangiAlifbo.E2ETests.csproj -c Release  # 270 ta E2E test
 .\publish.ps1                                                # testlar + publish/YangiAlifbo.exe
 ```

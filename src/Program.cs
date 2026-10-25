@@ -28,6 +28,8 @@ internal static class Program
             ApplicationConfiguration.Initialize();
             Environment.Exit(SelfTest.Run(args));
         }
+        if (args.Length > 0 && args[0] == YangiAlifbo.Core.Updater.InstallArg)
+            Environment.Exit(YangiAlifbo.Core.Updater.RunInstaller(args));
 
         string logDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "YangiAlifbo");
         Directory.CreateDirectory(logDir);
@@ -35,7 +37,7 @@ internal static class Program
 
         try
         {
-            File.AppendAllText(logFile, $"[{DateTime.Now}] Starting YangiAlifbo v{YangiAlifbo.Core.Updater.CurrentVersion}...\n");
+            File.AppendAllText(logFile, $"[{DateTime.Now}] Starting YangiAlifbo v{YangiAlifbo.Core.Updater.CurrentVersion} (pid {Environment.ProcessId}, {Environment.ProcessPath} {string.Join(' ', args)})...\n");
 
             // ── Clean up any legacy or duplicate running instances ─────
             // Ensures new versions cleanly replace old versions without collision.

@@ -32,6 +32,9 @@
     $('.switch--big').setAttribute('aria-checked', String(s.enabled));
     $$('[data-bind-switch]').forEach(function (b) { b.setAttribute('aria-checked', String(!!s[b.dataset.bindSwitch])); });
     $$('[data-mode]').forEach(function (b) { b.setAttribute('aria-checked', String(b.dataset.mode === s.mode)); });
+    var nn = $('[data-bind="neuralNote"]');
+    if (nn) nn.textContent = !s.neuralLoaded ? ' Model bu versiyada yo‘q.'
+      : s.neuralAccepted ? ' Shu seansda ' + fmt(s.neuralAccepted) + ' ta so‘zni tanidi.' : '';
     if (s.update) renderUpdate(s.update, s.version);
   }
 
@@ -146,6 +149,7 @@
   var actions = {
     toggleEnabled: function () { send({ type: 'toggleEnabled' }); },
     toggleSlang: function () { send({ type: 'setSlang', value: !state.slang }); },
+    toggleNeural: function () { if (state.neuralLoaded) send({ type: 'setNeural', value: !state.neural }); },
     toggleStartup: function () { send({ type: 'setStartup', value: !state.startup }); },
     toggleAutoUpdate: function () { send({ type: 'setAutoUpdate', value: !(state.update && state.update.auto) }); },
     checkUpdate: function () { send({ type: 'checkUpdate' }); },

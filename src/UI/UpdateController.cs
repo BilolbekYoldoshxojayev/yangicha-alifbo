@@ -93,6 +93,7 @@ public sealed class UpdateController : IDisposable
 
             if (latest.Version <= CurrentVersion) { Set(UpdateStatus.UpToDate); return; }
             Set(UpdateStatus.Available);
+            AppLog.Write($"Update: v{latest.Version} available (running v{CurrentVersion}, install={install}, canSelfUpdate={CanSelfUpdate})");
             if (!install || !CanSelfUpdate)
             {
                 if (_announced != latest.Version)   // once per version, not every 6 hours
@@ -113,20 +114,24 @@ public sealed class UpdateController : IDisposable
             Set(UpdateStatus.Installing);
             Notify($"v{latest.Version} o‘rnatilmoqda", "YangiAlifbo bir necha soniyada qayta ishga tushadi.");
             await Task.Delay(TimeSpan.FromSeconds(8)).ConfigureAwait(false);
+            AppLog.Write($"Update: v{latest.Version} downloaded to {file}, installing");
             _ui.Post(_ =>
             {
                 if (Updater.TryInstall(file, latest, out string error))
                 {
+                    AppLog.Write("Update: new exe started, exiting");
                     _exitForRestart();
                 }
                 else
                 {
+                    AppLog.Write("Update: install failed: " + error);
                     Fail("Yangi versiyani o‘rnatib bo‘lmadi: " + error);
                 }
             }, null);
         }
         catch (Exception ex)
         {
+            AppLog.Write("Update: stopped: " + ex);
             Fail("Yangilash to‘xtadi: " + ex.Message);
         }
         finally

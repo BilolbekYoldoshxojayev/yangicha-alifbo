@@ -357,8 +357,9 @@ public sealed class KeyboardHook : IDisposable
             return UzbekPhonetics.Convert(workWord);
         }
 
-        // Strict mode: verify the word is Uzbek before converting
-        if (_detector.IsUzbek(workWord))
+        // Strict mode: verify the word is Uzbek before converting. The neural
+        // fallback only judges words as typed, never slang rewrites.
+        if (workWord == word ? _detector.IsUzbekOrLikely(workWord) : _detector.IsUzbek(workWord))
         {
             return UzbekPhonetics.Convert(workWord);
         }
