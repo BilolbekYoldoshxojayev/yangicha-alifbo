@@ -153,6 +153,13 @@ internal static class SelfTest
             return null;
         });
 
+        Check("tray app starts and stops", () =>
+        {
+            // Same construction as a real launch (menu, tray icon, hooks, updater timer).
+            using var tray = new TrayApplicationContext();
+            return null;
+        });
+
         RunControlCenter(detector, outDir);
 
         Add($"{(_failures == 0 ? "PASS" : "FAILED")}: {_failures} failure(s), {total.Elapsed.TotalSeconds:F1} s");

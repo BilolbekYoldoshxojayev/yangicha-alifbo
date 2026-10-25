@@ -10,13 +10,25 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <ApplicationManifest>app.manifest</ApplicationManifest>
-    <Version>1.6.0</Version>
-    <AssemblyVersion>1.6.0.0</AssemblyVersion>
-    <FileVersion>1.6.0.0</FileVersion>
+    <Version>1.7.0</Version>
+    <AssemblyVersion>1.7.0.0</AssemblyVersion>
+    <FileVersion>1.7.0.0</FileVersion>
     <Product>YangiAlifbo</Product>
     <Description>O'zbek yozuvi konvertori va jonli muloqot normalizatori</Description>
     <NuGetAudit>false</NuGetAudit>
+    <!-- Publish: trim unused .NET code (WebView2 kept whole, see TrimRoots.xml).
+         Verified with the exe self-test (selftest argument): identical engine output, all checks pass. -->
+    <PublishTrimmed>true</PublishTrimmed>
+    <TrimMode>full</TrimMode>
+    <_SuppressWinFormsTrimError>true</_SuppressWinFormsTrimError>
+    <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
+    <InvariantGlobalization>false</InvariantGlobalization>
+    <NoWarn>$(NoWarn);IL3000</NoWarn>
   </PropertyGroup>
+
+  <ItemGroup>
+    <TrimmerRootDescriptor Include="TrimRoots.xml" />
+  </ItemGroup>
 
   <ItemGroup>
     <EmbeddedResource Include="Core\Dictionaries\uzbek_forms.br" LogicalName="uzbek_forms.br" />

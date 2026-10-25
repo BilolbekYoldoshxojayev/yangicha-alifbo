@@ -1,0 +1,6 @@
+<!-- Assemblies the trimmer must keep whole: WebView2 talks to native code through
+     COM interfaces and reflection the trimmer cannot see. -->
+<linker>
+  <assembly fullname="Microsoft.Web.WebView2.Core" preserve="all" />
+  <assembly fullname="Microsoft.Web.WebView2.WinForms" preserve="all" />
+</linker>
