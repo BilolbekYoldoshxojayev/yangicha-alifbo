@@ -25,6 +25,7 @@ final class KeyWatcher {
     private let source = CGEventSource(stateID: .privateState)
     var onToggle: (() -> Void)?
     private(set) var wordsConverted = 0
+    private var diagnostics = 0
 
     init(engine: Engine, settings: Settings) {
         self.engine = engine
@@ -72,6 +73,10 @@ final class KeyWatcher {
         if code == kVK_ANSI_U && flags.contains(.maskControl) && flags.contains(.maskShift) && !flags.contains(.maskCommand) {
             DispatchQueue.main.async { self.onToggle?() }   // Control+Shift+U, as Ctrl+Shift+U on Windows
             return nil
+        }
+        if diagnostics < 3 {   // first keys after start, for support logs (no characters logged)
+            diagnostics += 1
+            Log.write("key: enabled=\(settings.enabled) skippedApp=\(skipped) secureInput=\(IsSecureEventInputEnabled()) user=\(event.getIntegerValueField(.eventSourceUserData))")
         }
         guard settings.enabled, !skipped, !IsSecureEventInputEnabled() else { buffer.reset(); return pass }
 
