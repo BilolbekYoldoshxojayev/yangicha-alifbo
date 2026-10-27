@@ -29,6 +29,16 @@ Fayl raqamli imzolanmagan, shuning uchun Windows SmartScreen ogohlantirish ko‘
 Get-FileHash .\YangiAlifbo.exe -Algorithm SHA256
 ```
 
+### Linux (v2.0.0 dan)
+
+```bash
+curl -fsSL https://github.com/BilolbekYoldoshxojayev/yangicha-alifbo/releases/latest/download/install.sh | sh
+```
+
+So‘ng: **Sozlamalar → Klaviatura → Kiritish manbalari → + → O‘zbek → YangiAlifbo** (KDE va boshqalarda: `ibus-setup` → Input Method → Add). Super+Space bilan almashtiriladi. O‘chirish: `… | sh -s -- --uninstall`.
+
+Linux’da Windows’dagidek ishlamaydi, chunki Wayland (va Linux xavfsizlik modeli) bir dasturga boshqa dasturlardagi tugmalarni kuzatish va o‘rniga tugma bosishga ruxsat bermaydi — bu aynan keylogger qiladigan ish. Shuning uchun YangiAlifbo IBus kiritish usuli sifatida ishlaydi: yozilayotgan so‘z tagiga chiziladi, probel yoki tinish belgisi bosilganda yangi alifboda qo‘yiladi. Dvigatel (lug‘at, morfologiya, neyron model) Windows’dagi bilan bir xil: 1 230 222 ta so‘zda natijalar baytma-bayt mos keladi. Parol maydonlari va terminallarda konvertatsiya o‘chadi. Talab: IBus va Python GObject (`python3-gi`); o‘rnatuvchi yo‘qlarini aytadi.
+
 ## Foydalanish
 
 - **`Ctrl + Shift + U`** — konvertorni yoqish / o‘chirish.
