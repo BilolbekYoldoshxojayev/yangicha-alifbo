@@ -29,6 +29,14 @@ Fayl raqamli imzolanmagan, shuning uchun Windows SmartScreen ogohlantirish ko‘
 Get-FileHash .\YangiAlifbo.exe -Algorithm SHA256
 ```
 
+### macOS (v2.1.0 dan)
+
+```bash
+curl -fsSL https://github.com/BilolbekYoldoshxojayev/yangicha-alifbo/releases/latest/download/install-mac.sh | sh
+```
+
+macOS 12+, Apple Silicon va Intel. Birinchi ishga tushganda **Tizim sozlamalari → Maxfiylik va xavfsizlik → Maxsus imkoniyatlar → YangiAlifbo** ni yoqing. Mac’da dastur Windows’dagidek ishlaydi (macOS boshqa dasturlardagi tugmalarni kuzatishga foydalanuvchi ruxsati bilan imkon beradi): so‘z probeldan keyin yangi alifboga o‘tadi; parol maydonlarida macOS o‘zi to‘sadi, terminal va kod muharrirlari o‘tkazib yuboriladi. Sozlamalar menyu satridagi “Ş” belgisida; dastur o‘zi yangilanadi. Ilova Apple tomonidan imzolanmagan (o‘z sertifikatimiz bilan imzolangan), shuning uchun yuqoridagi buyruq bilan o‘rnatish tavsiya etiladi. O‘chirish: `… | sh -s -- --uninstall`.
+
 ### Linux (v2.0.0 dan)
 
 ```bash
