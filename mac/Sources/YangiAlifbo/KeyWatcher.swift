@@ -22,6 +22,7 @@ final class KeyWatcher {
     private var buffer = WordBuffer()
     private var tap: CFMachPort?
     private var skipped = false
+    private var targetPid: pid_t = NSWorkspace.shared.frontmostApplication?.processIdentifier ?? 0
     private let source = CGEventSource(stateID: .privateState)
     var onToggle: (() -> Void)?
     private(set) var wordsConverted = 0
@@ -31,7 +32,9 @@ final class KeyWatcher {
         self.engine = engine
         self.settings = settings
         NSWorkspace.shared.notificationCenter.addObserver(forName: NSWorkspace.didActivateApplicationNotification, object: nil, queue: .main) { [weak self] n in
-            let id = (n.userInfo?[NSWorkspace.applicationUserInfoKey] as? NSRunningApplication)?.bundleIdentifier ?? ""
+            let app = n.userInfo?[NSWorkspace.applicationUserInfoKey] as? NSRunningApplication
+            let id = app?.bundleIdentifier ?? ""
+            self?.targetPid = app?.processIdentifier ?? 0
             self?.skipped = KeyWatcher.skippedApps.contains { id.hasPrefix($0) }
             self?.buffer.reset()
         }
@@ -99,13 +102,12 @@ final class KeyWatcher {
 
         // Hold this key, fix the word, then replay the key after it.
         for _ in 0..<count { post(key: CGKeyCode(kVK_Delete)) }
-        let units = Array(text.utf16)
-        for i in stride(from: 0, to: units.count, by: 20) {
-            let chunk = Array(units[i..<min(i + 20, units.count)])
+        for ch in text {   // one character per event, as if typed
+            let units = Array(String(ch).utf16)
             for down in [true, false] {
                 guard let e = CGEvent(keyboardEventSource: source, virtualKey: 0, keyDown: down) else { continue }
                 e.flags = []
-                e.keyboardSetUnicodeString(stringLength: chunk.count, unicodeString: chunk)
+                e.keyboardSetUnicodeString(stringLength: units.count, unicodeString: units)
                 mark(e)
             }
         }
@@ -123,9 +125,14 @@ final class KeyWatcher {
         }
     }
 
+    /// Sends a corrective event straight to the app being typed in. Posting into the
+    /// system-wide keyboard stream instead would let macOS treat a key the user is still
+    /// holding as long-pressed and open the accent picker (ß ş ș ś š).
     private func mark(_ e: CGEvent) {
         e.setIntegerValueField(.eventSourceUserData, value: KeyWatcher.magic)
-        e.post(tap: .cghidEventTap)
+        e.setIntegerValueField(.keyboardEventAutorepeat, value: 0)
+        let pid = NSWorkspace.shared.frontmostApplication?.processIdentifier ?? targetPid
+        if pid > 0 { e.postToPid(pid) } else { e.post(tap: .cghidEventTap) }
     }
 }
 
