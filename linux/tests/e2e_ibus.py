@@ -40,7 +40,7 @@ def session(text, purpose=None):
         ic.set_content_type(purpose, 0)
     passed = []
     for ch in text:
-        keyval = IBus.unicode_to_keyval(ord(ch))
+        keyval = IBus.unicode_to_keyval(ch)
         handled = ic.process_key_event(keyval, 0, 0)
         if not handled:
             passed.append(ch)   # the app would insert it itself
