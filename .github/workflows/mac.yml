@@ -79,7 +79,9 @@ jobs:
 
       - name: Real typing test (TextEdit, keys from System Events)
         run: |
-          open YangiAlifbo.app; sleep 5
+          # Started from the shell so it inherits the runner's Accessibility permission (a user grants it once).
+          YangiAlifbo.app/Contents/MacOS/YangiAlifbo &
+          sleep 5
           pgrep -x YangiAlifbo
           for k in NSAutomaticCapitalizationEnabled NSAutomaticSpellingCorrectionEnabled NSAutomaticPeriodSubstitutionEnabled NSAutomaticTextCompletionEnabled; do defaults write NSGlobalDomain $k -bool false; done
           : > typed.txt
