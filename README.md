@@ -42,8 +42,8 @@ Get-FileHash .\YangiAlifbo.exe -Algorithm SHA256
 ## Qanday ishlaydi
 
 1. **Naqsh.** So‘zda `sh`, `ch`, `o‘`, `g‘` bo‘lmasa, unga tegilmaydi. Tutuq belgisi ajratgan `s'h` / `c'h` (Is’hoq, mus’haf, as’hob) hisobga olinmaydi.
-2. **Filtr.** 10 057 ta inglizcha va dasturlash so‘zi (`show`, `push`, `switch`, `catch`…) o‘zgartirilmaydi.
-3. **Lug‘at.** 948 288 yozuvli o‘zbek lug‘ati (so‘z va o‘zaklar, eski va yangi imloda).
+2. **Filtr.** 112 447 ta xorijiy so‘z (inglizcha, ispancha, fransuzcha va dasturlash so‘zlari: `show`, `push`, `switch`, `catch`…) o‘zgartirilmaydi. Ro‘yxat LibreOffice imlo lug‘atlaridan yig‘ilgan va unda birorta o‘zbekcha so‘z yo‘q ([`tools/dict/`](tools/dict/)).
+3. **Lug‘at.** 959 740 yozuvli o‘zbek lug‘ati (so‘z va o‘zaklar, eski va yangi imloda), shu jumladan O‘zbek Vikipediyasidan olingan 11 619 ta so‘z. Morfologiya o‘zi topa oladigan shakllar faylda saqlanmaydi, shuning uchun lug‘at hajmi kichraydi.
 4. **Morfologiya.** 400+ qo‘shimchani (`-lar`, `-imiz`, `-dan`, `-gan`, `-yapti`…) va nisbat qo‘shimchalarini (`-n`, `-il`, `-t`, `-tir`) ajratib, o‘zak qidiriladi.
 5. **Neyron model** (v1.8.0 dan). Lug‘at va morfologiya tanimagan so‘zni 5 ta kichik belgi darajasidagi CNN baholaydi; so‘z faqat o‘zbek lotin harflaridan iborat bo‘lsa, uning barcha 3 harfli birikmalari o‘zbek so‘zlarida uchrasa va eng ehtiyotkor model ham chegaradan yuqori ball bersa o‘giriladi. Chegara 16 714 ta xorijiy so‘zning birortasi ham o‘tmaydigan qilib tanlangan. Chat normalizatori o‘zgartirgan shakllar modelga berilmaydi. Batafsil: [`tools/neural/`](tools/neural/README.md). Sozlamalarda yoki patnis menyusida o‘chiriladi.
 
@@ -60,7 +60,7 @@ Katta-kichik harf saqlanadi (`Shahar → Şahar`, `SHAHAR → ŞAHAR`), raqamli 
 Talablar: Windows 10/11, [.NET 10 SDK](https://dotnet.microsoft.com/download).
 
 ```powershell
-dotnet test tests/YangiAlifbo.Tests.csproj -c Release        # 533 ta unit test
+dotnet test tests/YangiAlifbo.Tests.csproj -c Release        # 558 ta unit test
 dotnet test e2e_tests/YangiAlifbo.E2ETests.csproj -c Release  # 270 ta E2E test
 .\publish.ps1                                                # testlar + publish/YangiAlifbo.exe
 ```

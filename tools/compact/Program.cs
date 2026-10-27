@@ -1,80 +1,191 @@
-// Builds src/Core/Dictionaries/uzbek_forms.br (every form of uzbek_words.txt, stored once
-// in old spelling, Brotli-compressed) and proves the compact engine answers exactly like
-// the full HashSet engine.
-//   dotnet run -c Release --project tools/compact            build + verify
-//   dotnet run -c Release --project tools/compact -- verify  verify only
+// Builds the embedded dictionaries in src/Core/Dictionaries and proves what they change.
+//
+//   dotnet run -c Release --project tools/compact -- wiki <wiki.tsv> <foreign_raw.txt> <out.tsv>
+//       Uzbek Wikipedia words (tools/dict/wiki_words.py) the engine does not know yet and no
+//       foreign list contains: candidates for uzbek_words.txt, for review.
+//
+//   dotnet run -c Release --project tools/compact -- build <foreign_raw.txt> <baseline_words.txt> [<extra_inputs.txt> ...]
+//       1. uzbek_forms.br: every form of uzbek_words.txt in old spelling, minus forms the
+//          morphology derives from other entries. A form is dropped only if every input
+//          accepted with the full list is still accepted (checked, add-back until stable).
+//       2. foreign_words.br: words of foreign_raw.txt (tools/dict/foreign_words.py) with
+//          sh/ch/o'/g' that the engine does not accept as Uzbek and the chat corpus lacks.
+//       3. english_reject.br: english_reject.txt, compressed.
+//       Then compares every decision against the baseline lexicon (the previous
+//       uzbek_words.txt) with the old reject list, and prints each kind of change.
 using System.Diagnostics;
 using System.IO.Compression;
 using System.Text;
 using YangiAlifbo.Core;
 
 string dir = Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, "../../../../../src/Core/Dictionaries"));
-HashSet<string> Read(string f) => new(File.ReadLines(Path.Combine(dir, f), Encoding.UTF8)
-    .Select(l => l.Trim().ToLowerInvariant()).Where(l => l.Length > 0 && !l.StartsWith('#')), StringComparer.OrdinalIgnoreCase);
+HashSet<string> ReadFile(string path) => new(File.ReadLines(path, Encoding.UTF8)
+    .Select(l => l.Split('\t')[0].Trim().ToLowerInvariant()).Where(l => l.Length > 0 && !l.StartsWith('#')), StringComparer.OrdinalIgnoreCase);
+HashSet<string> Read(string f) => ReadFile(Path.Combine(dir, f));
+HashSet<string> OldForms(IEnumerable<string> words) =>
+    new(words.Select(LanguageDetector.ToOldSpelling), StringComparer.OrdinalIgnoreCase);
+
+void WriteBrotli(string name, IEnumerable<string> words, string header = "")
+{
+    string text = header + string.Join('\n', words.OrderBy(w => w, StringComparer.Ordinal)) + "\n";
+    using (var fs = File.Create(Path.Combine(dir, name)))
+    using (var br = new BrotliStream(fs, new BrotliCompressionOptions { Quality = 11 }))
+        br.Write(Encoding.UTF8.GetBytes(text));
+    Console.WriteLine($"{name}: {Encoding.UTF8.GetByteCount(text):N0} bytes text, {new FileInfo(Path.Combine(dir, name)).Length:N0} bytes brotli");
+}
 
 var full = Read("uzbek_words.txt");
 var reject = Read("english_reject.txt");
-string brPath = Path.Combine(dir, "uzbek_forms.br");
+string mode = args.FirstOrDefault() ?? "";
 
-if (args.FirstOrDefault() != "verify")
+if (mode == "wiki")
 {
-    var forms = full.Select(LanguageDetector.ToOldSpelling).Distinct(StringComparer.OrdinalIgnoreCase).OrderBy(w => w, StringComparer.Ordinal);
-    string text = $"# forms: {full.Count}\n" + string.Join('\n', forms) + "\n";
-    byte[] utf8 = Encoding.UTF8.GetBytes(text);
-    using (var fs = File.Create(brPath))
-    using (var br = new BrotliStream(fs, new BrotliCompressionOptions { Quality = 11 }))
-        br.Write(utf8);
-    Console.WriteLine($"full entries {full.Count:N0}, stored forms {text.Count(c => c == '\n') - 1:N0}, text {utf8.Length:N0} bytes, brotli {new FileInfo(brPath).Length:N0} bytes");
+    var foreignRaw = ReadFile(args[2]);
+    var det = new LanguageDetector(reject, new HashWordSet(OldForms(full)), oldSpellingOnly: true);
+    int n = 0;
+    using var o = new StreamWriter(args[3], false, new UTF8Encoding(false)) { NewLine = "\n" };
+    foreach (string line in File.ReadLines(args[1]))
+    {
+        string w = line.Split('\t')[0];
+        if (w.Length < 3 || foreignRaw.Contains(w) || reject.Contains(w) || det.IsUzbek(w)) continue;
+        if (w.Contains('w') || w.Contains('-') || System.Text.RegularExpressions.Regex.IsMatch(w, "c(?!h)|[^a-z']|^'|'$|''")) continue;
+        o.WriteLine(line);
+        n++;
+    }
+    Console.WriteLine($"wiki candidates: {n:N0}");
+    return 0;
 }
 
-var swLoad = Stopwatch.StartNew();
-CompactWordSet compact;
-using (var fs = File.OpenRead(brPath))
-using (var br = new BrotliStream(fs, CompressionMode.Decompress))
-using (var rd = new StreamReader(br, Encoding.UTF8))
-    compact = new CompactWordSet(rd.ReadToEnd());
-Console.WriteLine($"compact load: {swLoad.ElapsedMilliseconds} ms ({compact.Count:N0} forms)");
+if (mode != "build") { Console.WriteLine("usage: wiki ... | build ..."); return 2; }
 
-var fullDet = new LanguageDetector(reject, full);
-var compactDet = new LanguageDetector(reject, compact, oldSpellingOnly: true);
+var foreignRawB = ReadFile(args[1]);
+var baseline = ReadFile(args[2]);
+// Chat words stay off the foreign list (they may be Uzbek chat spellings), except the
+// English ones removed from the lexicon by hand (tools/dict/removed_foreign.txt).
+var chat = Read("chat_corpus_extracted.txt");
+chat.ExceptWith(ReadFile(Path.Combine(dir, "../../../tools/dict/removed_foreign.txt")));
 
-// Inputs: every full entry (both spellings), the reject list, case variants, and words
-// NOT in the lexicon (entries plus extra endings) so the morphology is compared too.
+// ── 1. Prune forms the morphology derives ───────────────────────────
+var forms = OldForms(full);
+var sw = Stopwatch.StartNew();
+var mask = new MaskSet(forms);
+var maskDet = new LanguageDetector(reject, mask, oldSpellingOnly: true);
+var pruned = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+// Only leaves are candidates: a form that starts another form may be its stem. In ordinal
+// order every form starting with f directly follows f.
+var ordered = forms.OrderBy(f => f, StringComparer.Ordinal).ToArray();
+for (int j = 0; j < ordered.Length; j++)
+{
+    string f = ordered[j];
+    if (j + 1 < ordered.Length && ordered[j + 1].StartsWith(f, StringComparison.Ordinal)) continue;
+    mask.Hidden = f;
+    if (maskDet.IsUzbek(f)) pruned.Add(f);
+}
+mask.Hidden = null;
+Console.WriteLine($"forms {forms.Count:N0}; derivable without their own entry {pruned.Count:N0} ({sw.Elapsed.TotalSeconds:F0}s)");
+
+var fullDet = new LanguageDetector(reject, new HashWordSet(forms), oldSpellingOnly: true);
+
+// Inputs: every entry (both spellings), reject words, case variants, entries with extra
+// endings or cut short (so the morphology is exercised), and any extra word lists.
 string[] extra = { "lar", "ni", "da", "dan", "ga", "imiz", "ning", "lik", "chi", "dagi", "si", "mi", "ku", "u", "-chi", "lardan" };
 var inputs = new List<string>(full.Count * 3);
 inputs.AddRange(full); inputs.AddRange(reject);
-int i = 0;
+int k = 0;
 foreach (var w in full)
 {
-    if (i % 40 == 0) inputs.Add(char.ToUpperInvariant(w[0]) + w[1..]);
-    if (i % 90 == 0) inputs.Add(w.ToUpperInvariant());
-    if (i % 2 == 0) inputs.Add(w + extra[i / 2 % extra.Length]);
-    if (i % 50 == 0 && w.Length > 3) inputs.Add(w[..^1]);
-    i++;
+    if (k % 40 == 0) inputs.Add(char.ToUpperInvariant(w[0]) + w[1..]);
+    if (k % 90 == 0) inputs.Add(w.ToUpperInvariant());
+    if (k % 2 == 0) inputs.Add(w + extra[k / 2 % extra.Length]);
+    if (k % 50 == 0 && w.Length > 3) inputs.Add(w[..^1]);
+    k++;
 }
 foreach (var n in new[] { "5-chi", "1-o'rin", "kel-chi", "o'z-o'zidan", "check-in", "Is'hoq", "mus'haf", "toshkentda" }) inputs.Add(n);
+foreach (var f in args.Skip(3)) inputs.AddRange(ReadFile(f));
+var accepted = inputs.Where(w => fullDet.IsUzbek(w)).Distinct(StringComparer.OrdinalIgnoreCase).ToList();
+Console.WriteLine($"inputs {inputs.Count:N0}, accepted with the full list {accepted.Count:N0}");
 
-var sw = Stopwatch.StartNew();
-int count = 0, sStrict = 0, sAggr = 0, sUz = 0, sRej = 0;
-var examples = new List<string>();
-foreach (var w in inputs)
+int lastLost = -1;
+for (int round = 1; ; round++)
 {
-    count++;
-    bool a1 = fullDet.ShouldConvert(w, ConversionMode.Strict), b1 = compactDet.ShouldConvert(w, ConversionMode.Strict);
-    if (a1 != b1) { sStrict++; if (examples.Count < 15) examples.Add($"{w}: full={a1} compact={b1}"); }
-    if (fullDet.ShouldConvert(w, ConversionMode.Aggressive) != compactDet.ShouldConvert(w, ConversionMode.Aggressive)) sAggr++;
-    bool u1 = fullDet.IsUzbek(w, ConversionMode.Strict), u2 = compactDet.IsUzbek(w, ConversionMode.Strict);
-    if (u1 != u2) { sUz++; if (examples.Count < 15) examples.Add($"IsUzbek {w}: full={u1} compact={u2}"); }
-    if (fullDet.IsForeignOrReject(w) != compactDet.IsForeignOrReject(w)) sRej++;
+    var kept = new HashSet<string>(forms.Where(f => !pruned.Contains(f)), StringComparer.OrdinalIgnoreCase);
+    var det = new LanguageDetector(reject, new HashWordSet(kept), oldSpellingOnly: true);
+    var lost = accepted.Where(w => !det.IsUzbek(w)).ToList();
+    Console.WriteLine($"round {round}: stored {kept.Count:N0}, accepted inputs lost {lost.Count:N0}" +
+                      (lost.Count is > 0 and < 20 ? " (" + string.Join(", ", lost) + ")" : ""));
+    if (lost.Count == 0) break;
+    if (lost.Count == lastLost)   // no progress: give back everything with the same first three letters
+        foreach (var w in lost)
+        {
+            string o = LanguageDetector.ToOldSpelling(LanguageDetector.NormalizeForLookup(w));
+            string head = o[..Math.Min(3, o.Length)];
+            pruned.RemoveWhere(f => f.StartsWith(head, StringComparison.Ordinal));
+        }
+    lastLost = lost.Count;
+    // Give back the input itself and every pruned form it could stem from: prefixes, and
+    // forms that differ only in their last two letters (o'rtoq / o'rtog'i, boshlamoq / boshla).
+    var byKey = pruned.GroupBy(f => f.Length > 4 ? f[..^2] : f, StringComparer.Ordinal)
+                      .ToDictionary(g => g.Key, g => g.ToList(), StringComparer.Ordinal);
+    foreach (var w in lost)
+    {
+        string o = LanguageDetector.ToOldSpelling(LanguageDetector.NormalizeForLookup(w));
+        for (int len = 1; len <= o.Length; len++)
+            if (byKey.TryGetValue(o[..len], out var back)) foreach (var f in back) pruned.Remove(f);
+    }
+    if (round == 20) { Console.WriteLine("not stable after 20 rounds; keeping every form"); pruned.Clear(); }
 }
-Console.WriteLine($"compared {count:N0} inputs in {sw.Elapsed.TotalSeconds:F0}s");
-Console.WriteLine($"mismatches: ShouldConvert strict {sStrict}, aggressive {sAggr}, IsUzbek {sUz}, IsForeignOrReject {sRej}");
-examples.ForEach(Console.WriteLine);
+var stored = forms.Where(f => !pruned.Contains(f)).ToList();
+WriteBrotli("uzbek_forms.br", stored, $"# forms: {full.Count}\n");
 
-// Lookup speed on the same inputs (fresh detectors, no cache warm-up advantage).
-var f2 = new LanguageDetector(reject, full); var c2 = new LanguageDetector(reject, compact, oldSpellingOnly: true);
-var sample = inputs.Where((_, k) => k % 7 == 0).ToList();
-var t = Stopwatch.StartNew(); foreach (var w in sample) f2.ShouldConvert(w, ConversionMode.Strict); double tf = t.Elapsed.TotalMicroseconds / sample.Count;
-t.Restart(); foreach (var w in sample) c2.ShouldConvert(w, ConversionMode.Strict); double tc = t.Elapsed.TotalMicroseconds / sample.Count;
-Console.WriteLine($"ShouldConvert mean: full {tf:F2} µs, compact {tc:F2} µs ({sample.Count:N0} words)");
-return sStrict + sAggr + sUz + sRej == 0 ? 0 : 1;
+// ── 2. Foreign words ─────────────────────────────────────────────────
+var foreign = foreignRawB.Where(w => UzbekPhonetics.HasConvertiblePatterns(w) && !reject.Contains(w) && !chat.Contains(w)
+                                     && !fullDet.IsUzbek(w)).ToList();
+WriteBrotli("foreign_words.br", foreign);
+WriteBrotli("english_reject.br", reject);
+
+// ── 3. Shipped data vs the baseline ───────────────────────────────────
+CompactWordSet Load(string name)
+{
+    using var fs = File.OpenRead(Path.Combine(dir, name));
+    using var br = new BrotliStream(fs, CompressionMode.Decompress);
+    using var rd = new StreamReader(br, Encoding.UTF8);
+    return new CompactWordSet(rd.ReadToEnd());
+}
+var newDet = new LanguageDetector(reject, Load("uzbek_forms.br"), oldSpellingOnly: true, foreign: Load("foreign_words.br"));
+var oldDet = new LanguageDetector(reject, new HashSet<string>(baseline, StringComparer.OrdinalIgnoreCase));
+var foreignSet = new HashSet<string>(foreign, StringComparer.OrdinalIgnoreCase);
+var added = new HashSet<string>(OldForms(full.Except(baseline, StringComparer.OrdinalIgnoreCase)), StringComparer.OrdinalIgnoreCase);
+var removed = OldForms(baseline.Except(full, StringComparer.OrdinalIgnoreCase));
+
+inputs.AddRange(foreign.Where((_, j) => j % 10 == 0));
+inputs.AddRange(baseline.Except(full, StringComparer.OrdinalIgnoreCase));
+var kinds = new Dictionary<string, List<string>>();
+void Note(string kind, string w) { if (!kinds.TryGetValue(kind, out var l)) kinds[kind] = l = new(); l.Add(w); }
+sw.Restart();
+foreach (var w in inputs.Distinct(StringComparer.Ordinal))
+{
+    string o = LanguageDetector.ToOldSpelling(LanguageDetector.NormalizeForLookup(w));
+    bool s0 = oldDet.ShouldConvert(w, ConversionMode.Strict), s1 = newDet.ShouldConvert(w, ConversionMode.Strict);
+    bool a0 = oldDet.ShouldConvert(w, ConversionMode.Aggressive), a1 = newDet.ShouldConvert(w, ConversionMode.Aggressive);
+    if (s0 == s1 && a0 == a1) continue;
+    bool isForeign = foreignSet.Contains(LanguageDetector.NormalizeForLookup(w)) || w.Split('-').Any(p => foreignSet.Contains(p.ToLowerInvariant()));
+    string kind = s1 && !s0 ? (added.Any(a => o.StartsWith(a, StringComparison.Ordinal)) ? "strict: now converted (new word or its form)" : "strict: now converted (OTHER)")
+        : s0 && !s1 ? (removed.Any(r => o.StartsWith(r, StringComparison.Ordinal)) ? "strict: no longer converted (removed entry)" : isForeign ? "strict: no longer converted (foreign list)" : "strict: no longer converted (OTHER)")
+        : a0 && !a1 ? (isForeign ? "aggressive: foreign word now left alone" : "aggressive: now left alone (OTHER)")
+        : "aggressive: now converted (OTHER)";
+    Note(kind, w);
+}
+Console.WriteLine($"decision changes vs baseline ({sw.Elapsed.TotalSeconds:F0}s):");
+foreach (var (kind, list) in kinds.OrderBy(p => p.Key))
+    Console.WriteLine($"  {kind}: {list.Count:N0}  e.g. {string.Join(", ", list.Take(12))}");
+File.WriteAllLines(Path.Combine(Path.GetTempPath(), "yangialifbo-dict-changes.tsv"),
+    kinds.SelectMany(p => p.Value.Select(w => p.Key + "\t" + w)));
+return kinds.Keys.Any(x => x.Contains("OTHER")) ? 1 : 0;
+
+/// <summary>A word set with one word hidden, to ask "is it accepted without its own entry?"</summary>
+sealed class MaskSet(HashSet<string> set) : IWordSet
+{
+    public string? Hidden;
+    public bool Contains(string word) => set.Contains(word) && !string.Equals(word, Hidden, StringComparison.OrdinalIgnoreCase);
+    public int Count => set.Count;
+}

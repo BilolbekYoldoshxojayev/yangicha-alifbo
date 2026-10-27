@@ -4,3 +4,6 @@ validation: 8747 foreign, 0 above threshold; Uzbek recall 84.63% of 33501
 test: 7967 foreign, 0 above threshold; Uzbek recall 82.33% of 30106
 (one model without trigram check: 5 foreign above its threshold, recall 95.28%)
 shipped threshold (max foreign score on validation and test, 16714 words): 0.998221099; Uzbek recall at it 83.54%
+int8 quantization (tools/neural/quantize.py):
+fp16: threshold 0.998221053 (max foreign score of 16714), Uzbek recall 83.54% of 63607; at shipped threshold 0.998221: foreign above 0, recall 83.54%
+int8: threshold 0.998509767 (max foreign score of 16714), Uzbek recall 83.44% of 63607; at shipped threshold 0.998221: foreign above 1, recall 83.56%

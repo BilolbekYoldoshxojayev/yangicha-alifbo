@@ -10,9 +10,9 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <ApplicationManifest>app.manifest</ApplicationManifest>
-    <Version>1.8.1</Version>
-    <AssemblyVersion>1.8.1.0</AssemblyVersion>
-    <FileVersion>1.8.1.0</FileVersion>
+    <Version>1.9.0</Version>
+    <AssemblyVersion>1.9.0.0</AssemblyVersion>
+    <FileVersion>1.9.0.0</FileVersion>
     <Product>YangiAlifbo</Product>
     <Description>O'zbek yozuvi konvertori va jonli muloqot normalizatori</Description>
     <NuGetAudit>false</NuGetAudit>
@@ -32,7 +32,8 @@
 
   <ItemGroup>
     <EmbeddedResource Include="Core\Dictionaries\uzbek_forms.br" LogicalName="uzbek_forms.br" />
-    <EmbeddedResource Include="Core\Dictionaries\english_reject.txt" LogicalName="english_reject.txt" />
+    <EmbeddedResource Include="Core\Dictionaries\english_reject.br" LogicalName="english_reject.br" />
+    <EmbeddedResource Include="Core\Dictionaries\foreign_words.br" LogicalName="foreign_words.br" />
     <EmbeddedResource Include="Core\Dictionaries\uzbek_neural.bin.br" LogicalName="uzbek_neural.bin.br" WithCulture="false" />
     <EmbeddedResource Include="UI\Web\**\*" LogicalName="ui/%(RecursiveDir)%(Filename)%(Extension)" />
   </ItemGroup>

@@ -37,7 +37,7 @@ public sealed partial class NeuralFallback
     {
         var r = new Reader(data);
         if (r.Int() != 0x4E4E4159) throw new InvalidDataException("not a YangiAlifbo model");   // "YANN"
-        if (r.Int() != 3) throw new InvalidDataException("unknown model version");
+        if (r.Int() != 4) throw new InvalidDataException("unknown model version");
         int vocab = r.Int(); _maxLen = r.Int(); _emb = r.Int(); _ch = r.Int();
         int nk = r.Int(); _hid = r.Int(); int models = r.Int();
         _kernels = new int[nk];
@@ -51,10 +51,10 @@ public sealed partial class NeuralFallback
         _nets = new Net[models];
         for (int m = 0; m < models; m++)
         {
-            float[] emb = r.Floats(vocab * _emb);
+            float[] emb = r.Int8Rows(vocab, _emb);
             var convW = new float[nk][]; var convB = new float[nk][];
-            for (int i = 0; i < nk; i++) { convW[i] = WindowMajor(r.Floats(_ch * _emb * _kernels[i]), _kernels[i]); convB[i] = r.Floats(_ch); }
-            float[] fc1W = r.Floats(_hid * _ch * nk), fc1B = r.Floats(_hid), fc2W = r.Floats(_hid);
+            for (int i = 0; i < nk; i++) { convW[i] = WindowMajor(r.Int8Rows(_ch, _emb * _kernels[i]), _kernels[i]); convB[i] = r.Floats(_ch); }
+            float[] fc1W = r.Int8Rows(_hid, _ch * nk), fc1B = r.Floats(_hid), fc2W = r.Floats(_hid);
             _nets[m] = new Net(emb, convW, convB, fc1W, fc1B, fc2W, r.Floats(1)[0]);
         }
         if (!r.AtEnd) throw new InvalidDataException("model size mismatch");
@@ -228,12 +228,23 @@ public sealed partial class NeuralFallback
         public double Double() { double v = BinaryPrimitives.ReadDoubleLittleEndian(_d[_p..]); _p += 8; return v; }
         public string Ascii(int n) { string s = System.Text.Encoding.ASCII.GetString(_d.Slice(_p, n)); _p += n; return s; }
         public string CString() { int e = _d[_p..].IndexOf((byte)0); string s = System.Text.Encoding.ASCII.GetString(_d.Slice(_p, e)); _p += e + 1; return s; }
-        /// <summary>Reads <paramref name="n"/> half-precision weights as floats.</summary>
         public float[] Floats(int n)
         {
             var a = new float[n];
-            for (int i = 0; i < n; i++) a[i] = (float)BinaryPrimitives.ReadHalfLittleEndian(_d[(_p + 2 * i)..]);
-            _p += 2 * n;
+            for (int i = 0; i < n; i++) a[i] = BinaryPrimitives.ReadSingleLittleEndian(_d[(_p + 4 * i)..]);
+            _p += 4 * n;
+            return a;
+        }
+
+        /// <summary>Reads a weight matrix stored as one float scale per row, then int8 values.</summary>
+        public float[] Int8Rows(int rows, int cols)
+        {
+            float[] scale = Floats(rows);
+            var a = new float[rows * cols];
+            for (int r = 0; r < rows; r++)
+                for (int c = 0; c < cols; c++)
+                    a[r * cols + c] = (sbyte)_d[_p + r * cols + c] * scale[r];
+            _p += rows * cols;
             return a;
         }
     }
