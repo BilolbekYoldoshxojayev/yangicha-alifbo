@@ -77,6 +77,18 @@ jobs:
           YangiAlifbo.app/Contents/MacOS/YangiAlifbo --selftest
           if arch -x86_64 /usr/bin/true 2>/dev/null; then arch -x86_64 YangiAlifbo.app/Contents/MacOS/YangiAlifbo --selftest; else echo "Rosetta not available: Intel self-test skipped"; fi
 
+      - name: Real typing test (TextEdit, keys from System Events)
+        run: |
+          open YangiAlifbo.app; sleep 5
+          pgrep -x YangiAlifbo
+          osascript -e 'tell application "TextEdit" to activate' -e 'tell application "TextEdit" to make new document' -e 'delay 2' \
+            -e 'tell application "System Events" to keystroke "shahar choyxona fresh 5-chi "' -e 'delay 2' \
+            -e 'tell application "TextEdit" to get text of document 1' | tee typed.txt
+          osascript -e 'tell application "TextEdit" to quit saving no' || true
+          pkill -x YangiAlifbo || true
+          cat ~/Library/Logs/YangiAlifbo.log 2>/dev/null || true
+          test "$(cat typed.txt)" = "şahar çoyxona fresh 5-çi "
+
       - name: Package
         run: |
           ditto -c -k --keepParent YangiAlifbo.app YangiAlifbo-mac.zip
