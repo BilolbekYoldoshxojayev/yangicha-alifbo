@@ -84,6 +84,23 @@ jobs:
           name: yangialifbo-linux-${{ matrix.arch }}
           path: yangialifbo-linux-${{ matrix.arch }}.tar.gz*
 
+  # Run by hand after a release: the public one-line install, exactly as a user runs it.
+  public-install:
+    if: github.event_name == 'workflow_dispatch'
+    strategy:
+      fail-fast: false
+      matrix:
+        runner: [ubuntu-24.04, ubuntu-24.04-arm]
+    runs-on: ${{ matrix.runner }}
+    steps:
+      - uses: actions/checkout@v4
+      - run: sudo apt-get update -q && sudo apt-get install -yq ibus python3-gi gir1.2-ibus-1.0 dbus-daemon
+      - name: curl | sh from the latest release, then type through ibus-daemon
+        run: |
+          curl -fsSL https://github.com/BilolbekYoldoshxojayev/yangicha-alifbo/releases/latest/download/install.sh | sh
+          dbus-run-session -- sh -c 'ibus-daemon -dr --panel disable && sleep 3 && python3 linux/tests/e2e_ibus.py'
+          curl -fsSL https://github.com/BilolbekYoldoshxojayev/yangicha-alifbo/releases/latest/download/install.sh | sh -s -- --uninstall
+
   release:
     if: github.event_name == 'release'
     needs: build
