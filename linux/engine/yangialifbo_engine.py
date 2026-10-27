@@ -96,7 +96,8 @@ class YangiAlifboEngine(IBus.Engine):
         if not self._active():
             self._flush(False)
             return False
-        ch = chr(IBus.keyval_to_unicode(keyval)) if IBus.keyval_to_unicode(keyval) else ""
+        u = IBus.keyval_to_unicode(keyval)   # a str in PyGObject ("\0" for keys without a character)
+        ch = (u if isinstance(u, str) else chr(u) if u else "").replace("\0", "")
         consumed, commit = self.buffer.key(ch, IBus.keyval_name(keyval) or "", bool(state & SHORTCUT))
         if commit:
             self.commit_text(IBus.Text.new_from_string(commit))
