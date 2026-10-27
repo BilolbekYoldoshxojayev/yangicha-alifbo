@@ -68,7 +68,10 @@ jobs:
         run: |
           YANGIALIFBO_TARBALL=$PWD/yangialifbo-linux-${{ matrix.arch }}.tar.gz sh linux/install.sh
           cat /usr/share/ibus/component/yangialifbo.xml
-          dbus-run-session -- sh -c 'ibus-daemon -dr --panel disable && sleep 3 && python3 linux/tests/e2e_ibus.py'
+          ok=0
+          dbus-run-session -- sh -c 'ibus-daemon -dr --panel disable && sleep 3 && python3 linux/tests/e2e_ibus.py' || ok=$?
+          echo "--- engine log"; cat ~/.cache/yangialifbo-engine.log 2>/dev/null || echo "(none: the engine was never started)"
+          exit $ok
 
       - name: Uninstall leaves nothing behind
         run: |

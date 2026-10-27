@@ -1,7 +1,10 @@
 #!/bin/sh
 # Started by ibus-daemon (see the component file written by install.sh).
 # The system Python is used on purpose: it has the IBus GObject bindings.
+# Errors go to ~/.cache/yangialifbo-engine.log (ibus-daemon would drop them).
 here=$(dirname "$(readlink -f "$0")")
 py=/usr/bin/python3
 [ -x "$py" ] || py=python3
-exec "$py" "$here/yangialifbo_engine.py" "$@"
+log="${XDG_CACHE_HOME:-$HOME/.cache}/yangialifbo-engine.log"
+mkdir -p "$(dirname "$log")"
+exec "$py" "$here/yangialifbo_engine.py" "$@" 2>>"$log"
