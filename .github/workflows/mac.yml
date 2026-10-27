@@ -81,9 +81,11 @@ jobs:
         run: |
           open YangiAlifbo.app; sleep 5
           pgrep -x YangiAlifbo
+          for k in NSAutomaticCapitalizationEnabled NSAutomaticSpellingCorrectionEnabled NSAutomaticPeriodSubstitutionEnabled NSAutomaticTextCompletionEnabled; do defaults write NSGlobalDomain $k -bool false; done
           : > typed.txt
           open -a TextEdit typed.txt; sleep 4
-          osascript -e 'tell application "System Events" to keystroke "shahar choyxona fresh 5-chi "'
+          osascript -e 'set s to "shahar choyxona fresh 5-chi "' -e 'tell application "System Events"' \
+            -e 'repeat with c in characters of s' -e 'keystroke (c as text)' -e 'delay 0.08' -e 'end repeat' -e 'end tell'
           sleep 2
           osascript -e 'tell application "System Events" to keystroke "s" using command down'
           sleep 2

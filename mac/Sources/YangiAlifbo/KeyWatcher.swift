@@ -106,6 +106,7 @@ final class KeyWatcher {
         }
         mark(replay)
         wordsConverted += 1
+        Log.write("converted a word (\(count) → \(text.count) characters)")   // never the word itself
         return nil
     }
 
