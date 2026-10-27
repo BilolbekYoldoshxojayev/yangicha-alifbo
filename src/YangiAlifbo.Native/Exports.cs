@@ -63,7 +63,19 @@ public static unsafe class Exports
         }
     }
 
-    /// <summary>Frees a string returned by ya_convert_word.</summary>
+    /// <summary>Path of the user whitelist (0) or blacklist (1); release with ya_free.</summary>
+    [UnmanagedCallersOnly(EntryPoint = "ya_user_file")]
+    public static byte* UserFile(int kind)
+    {
+        string path = kind == 1 ? LanguageDetector.GetBlacklistPath() : LanguageDetector.GetWhitelistPath();
+        int n = Encoding.UTF8.GetByteCount(path);
+        byte* p = (byte*)NativeMemory.Alloc((nuint)n + 1);
+        fixed (char* c = path) Encoding.UTF8.GetBytes(c, path.Length, p, n);
+        p[n] = 0;
+        return p;
+    }
+
+    /// <summary>Frees a string returned by ya_convert_word or ya_user_file.</summary>
     [UnmanagedCallersOnly(EntryPoint = "ya_free")]
     public static void Free(byte* p) => NativeMemory.Free(p);
 

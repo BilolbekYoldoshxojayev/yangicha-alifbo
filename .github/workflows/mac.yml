@@ -1,0 +1,112 @@
+# macOS build: universal libyangialifbo.dylib (NativeAOT) + Swift menu-bar app,
+# signed with the project's own certificate (secrets MAC_CERT_P12 / MAC_CERT_PASSWORD)
+# so the Accessibility permission survives updates. A published release gets the files.
+name: macOS
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  release:
+    types: [published]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Engine dylib (arm64 + x64 → universal)
+        run: |
+          for a in arm64 x64; do dotnet publish src/YangiAlifbo.Native -c Release -r osx-$a -o out/$a; done
+          lipo -create out/arm64/libyangialifbo.dylib out/x64/libyangialifbo.dylib -output libyangialifbo.dylib
+          lipo -info libyangialifbo.dylib
+
+      - name: Parity with Windows (dylib)
+        run: |
+          dotnet run -c Release --project tools/parity -- words.txt managed.tsv
+          python3 linux/tests/parity.py "$PWD/libyangialifbo.dylib" words.txt native.tsv tests/data/parity.sha256
+
+      - name: Swift tests
+        working-directory: mac
+        run: swift test
+
+      - name: Build app (universal)
+        run: |
+          cd mac && swift build -c release --arch arm64 --arch x86_64 && cd ..
+          version=$(dotnet msbuild src/YangiAlifbo.Native -getProperty:Version)
+          app=YangiAlifbo.app
+          mkdir -p $app/Contents/MacOS $app/Contents/Frameworks
+          cp mac/.build/apple/Products/Release/YangiAlifbo $app/Contents/MacOS/
+          cp libyangialifbo.dylib $app/Contents/Frameworks/
+          sed "s/VERSION/$version/g" mac/Info.plist > $app/Contents/Info.plist
+          lipo -info $app/Contents/MacOS/YangiAlifbo
+
+      - name: Sign with the project certificate
+        env:
+          P12: ${{ secrets.MAC_CERT_P12 }}
+          P12_PASSWORD: ${{ secrets.MAC_CERT_PASSWORD }}
+        run: |
+          pw=$(printf '%s' "$P12_PASSWORD" | tr -d '\r\n')
+          echo "$P12" | base64 -d > cert.p12
+          kc=$RUNNER_TEMP/sign.keychain-db
+          security create-keychain -p ci "$kc"
+          security set-keychain-settings "$kc"
+          security unlock-keychain -p ci "$kc"
+          security import cert.p12 -k "$kc" -P "$pw" -T /usr/bin/codesign
+          security set-key-partition-list -S apple-tool:,apple: -s -k ci "$kc" >/dev/null
+          security list-keychains -d user -s "$kc" $(security list-keychains -d user | tr -d '"')
+          openssl pkcs12 -in cert.p12 -nokeys -passin pass:"$pw" -legacy 2>/dev/null > cert.pem || openssl pkcs12 -in cert.p12 -nokeys -passin pass:"$pw" > cert.pem
+          sudo security add-trusted-cert -d -r trustRoot -p codeSign -k /Library/Keychains/System.keychain cert.pem
+          id="YangiAlifbo Self-Signed"
+          codesign --force --sign "$id" --keychain "$kc" --timestamp=none YangiAlifbo.app/Contents/Frameworks/libyangialifbo.dylib
+          codesign --force --sign "$id" --keychain "$kc" --timestamp=none --identifier uz.yangialifbo.app YangiAlifbo.app
+          codesign --verify --strict --verbose=2 YangiAlifbo.app
+          codesign -d -r- YangiAlifbo.app
+          rm cert.p12
+
+      - name: Self-test (Apple Silicon, then Intel under Rosetta)
+        run: |
+          YangiAlifbo.app/Contents/MacOS/YangiAlifbo --selftest
+          if arch -x86_64 /usr/bin/true 2>/dev/null; then arch -x86_64 YangiAlifbo.app/Contents/MacOS/YangiAlifbo --selftest; else echo "Rosetta not available: Intel self-test skipped"; fi
+
+      - name: Package
+        run: |
+          ditto -c -k --keepParent YangiAlifbo.app YangiAlifbo-mac.zip
+          shasum -a 256 YangiAlifbo-mac.zip > YangiAlifbo-mac.zip.sha256
+          ls -l YangiAlifbo-mac.zip
+
+      - name: Install script from the built zip, then uninstall
+        run: |
+          YANGIALIFBO_ZIP=$PWD/YangiAlifbo-mac.zip YANGIALIFBO_NO_OPEN=1 sh mac/install-mac.sh
+          codesign --verify --strict ~/Applications/YangiAlifbo.app
+          ~/Applications/YangiAlifbo.app/Contents/MacOS/YangiAlifbo --selftest
+          sh mac/install-mac.sh --uninstall
+          test ! -e ~/Applications/YangiAlifbo.app
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: yangialifbo-mac
+          path: YangiAlifbo-mac.zip*
+
+  release:
+    if: github.event_name == 'release'
+    needs: build
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: yangialifbo-mac
+          path: dist
+      - name: Attach macOS files to the release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release upload "${{ github.event.release.tag_name }}" dist/* mac/install-mac.sh --clobber
