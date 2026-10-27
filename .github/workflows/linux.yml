@@ -1,0 +1,97 @@
+# Linux build: libyangialifbo.so (NativeAOT) + IBus input method.
+# Every push checks that Linux converts exactly like Windows and that the engine
+# works through a real ibus-daemon. A published release gets the Linux files attached.
+name: Linux
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  release:
+    types: [published]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { runner: ubuntu-24.04, arch: x64 }
+          - { runner: ubuntu-24.04-arm, arch: arm64 }
+    runs-on: ${{ matrix.runner }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Install build and test dependencies
+        run: |
+          sudo apt-get update -q
+          sudo apt-get install -yq clang zlib1g-dev ibus python3-gi gir1.2-ibus-1.0 dbus-daemon
+
+      - name: Build libyangialifbo.so (NativeAOT)
+        run: dotnet publish src/YangiAlifbo.Native -c Release -r linux-${{ matrix.arch }} -o out/native
+
+      - name: Package
+        run: |
+          version=$(dotnet msbuild src/YangiAlifbo.Native -getProperty:Version)
+          mkdir -p pkg/yangialifbo
+          cp out/native/libyangialifbo.so linux/engine/*.py linux/yangialifbo-engine LICENSE pkg/yangialifbo/
+          echo "$version" > pkg/yangialifbo/VERSION
+          name=yangialifbo-linux-${{ matrix.arch }}.tar.gz
+          tar -czf "$name" -C pkg yangialifbo
+          sha256sum "$name" > "$name.sha256"
+          ls -l "$name" out/native/libyangialifbo.so
+
+      - name: Key handling tests
+        run: python3 -m unittest discover -s linux/tests -p "test_*.py" -v
+
+      - name: Parity with Windows (managed engine on Linux)
+        run: |
+          out=$(dotnet run -c Release --project tools/parity -- words.txt managed.tsv)
+          echo "$out"
+          got=$(echo "$out" | sed -n 's/.*sha256 //p')
+          test "$got" = "$(cut -d' ' -f1 tests/data/parity.sha256)"
+
+      - name: Parity with Windows (libyangialifbo.so)
+        run: |
+          python3 linux/tests/parity.py out/native/libyangialifbo.so words.txt native.tsv tests/data/parity.sha256 \
+            || { diff managed.tsv native.tsv | head -20; exit 1; }
+
+      - name: Install script, then typing through a real ibus-daemon
+        run: |
+          YANGIALIFBO_TARBALL=$PWD/yangialifbo-linux-${{ matrix.arch }}.tar.gz sh linux/install.sh
+          cat /usr/share/ibus/component/yangialifbo.xml
+          dbus-run-session -- sh -c 'ibus-daemon -dr --panel disable && sleep 3 && python3 linux/tests/e2e_ibus.py'
+
+      - name: Uninstall leaves nothing behind
+        run: |
+          sh linux/install.sh --uninstall
+          test ! -e ~/.local/share/yangialifbo
+          test ! -e /usr/share/ibus/component/yangialifbo.xml
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: yangialifbo-linux-${{ matrix.arch }}
+          path: yangialifbo-linux-${{ matrix.arch }}.tar.gz*
+
+  release:
+    if: github.event_name == 'release'
+    needs: build
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          path: dist
+          merge-multiple: true
+      - name: Attach Linux files to the release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release upload "${{ github.event.release.tag_name }}" dist/* linux/install.sh --clobber

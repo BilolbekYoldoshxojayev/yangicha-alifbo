@@ -1,5 +1,5 @@
 """Copies a trained model into the app: Brotli-compressed weights into
-src/Core/Dictionaries and the PyTorch scores into tests/data for the parity test.
+src/YangiAlifbo.Core/Dictionaries and the PyTorch scores into tests/data for the parity test.
 
     python pack.py <out_dir_of_train.py>
 """
@@ -26,7 +26,7 @@ def brotli(src, dst):
 
 def main():
     out = sys.argv[1]
-    dst = os.path.join(ROOT, "src", "Core", "Dictionaries", "uzbek_neural.bin.br")
+    dst = os.path.join(ROOT, "src", "YangiAlifbo.Core", "Dictionaries", "uzbek_neural.bin.br")
     brotli(os.path.join(out, "uzbek_neural.bin"), dst)
     os.makedirs(os.path.join(ROOT, "tests", "data"), exist_ok=True)
     shutil.copy(os.path.join(out, "vectors.tsv"), os.path.join(ROOT, "tests", "data", "neural_vectors.tsv"))

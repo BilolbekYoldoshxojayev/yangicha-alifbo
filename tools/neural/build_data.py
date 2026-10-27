@@ -1,6 +1,6 @@
 """Builds the training data for the neural fallback (tools/neural/README.md).
 
-Positives: Uzbek word forms from src/Core/Dictionaries/uzbek_words.txt, in the
+Positives: Uzbek word forms from src/YangiAlifbo.Core/Dictionaries/uzbek_words.txt, in the
 old (1995) spelling people type. Negatives: English/Spanish/French words
 expanded from LibreOffice's Hunspell dictionaries, english_reject.txt, the
 English thesaurus, and identifiers found in source code on this machine.
@@ -19,7 +19,7 @@ import sys
 import unicodedata
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-DICT = os.path.join(HERE, "..", "..", "src", "Core", "Dictionaries")
+DICT = os.path.join(HERE, "..", "..", "src", "YangiAlifbo.Core", "Dictionaries")
 LO = r"C:\Program Files\LibreOffice\share\extensions"
 
 APOS = "'\u2018\u2019\u02bb\u02bc`\u00b4\u201b\u2032"

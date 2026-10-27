@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!-- The conversion engine and its dictionaries, without any Windows API:
+       used by the Windows app (src/YangiAlifbo.csproj) and the Linux library
+       (src/YangiAlifbo.Native). -->
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <RootNamespace>YangiAlifbo.Core</RootNamespace>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <IsTrimmable>true</IsTrimmable>
+    <IsAotCompatible>true</IsAotCompatible>
+    <InvariantGlobalization>false</InvariantGlobalization>
+    <NuGetAudit>false</NuGetAudit>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Dictionaries\uzbek_forms.br" LogicalName="uzbek_forms.br" />
+    <EmbeddedResource Include="Dictionaries\english_reject.br" LogicalName="english_reject.br" />
+    <EmbeddedResource Include="Dictionaries\foreign_words.br" LogicalName="foreign_words.br" />
+    <EmbeddedResource Include="Dictionaries\uzbek_neural.bin.br" LogicalName="uzbek_neural.bin.br" WithCulture="false" />
+  </ItemGroup>
+
+</Project>

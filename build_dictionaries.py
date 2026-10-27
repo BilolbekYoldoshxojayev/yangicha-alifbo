@@ -14,7 +14,7 @@ import urllib.request
 
 print("=== Building YangiAlifbo Dictionaries ===")
 
-dict_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "src", "Core", "Dictionaries")
+dict_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "src", "YangiAlifbo.Core", "Dictionaries")
 os.makedirs(dict_dir, exist_ok=True)
 
 raw_path = os.path.join(dict_dir, "uzwords_raw.txt")

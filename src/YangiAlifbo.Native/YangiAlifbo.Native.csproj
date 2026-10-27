@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!-- libyangialifbo.so: the engine as a native library for the Linux input method
+       (linux/engine). Built with NativeAOT on Linux:
+         dotnet publish src/YangiAlifbo.Native -c Release -r linux-x64 -->
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <OutputType>Library</OutputType>
+    <AssemblyName>libyangialifbo</AssemblyName>
+    <RootNamespace>YangiAlifbo.Native</RootNamespace>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <PublishAot>true</PublishAot>
+    <!-- No libicu needed on the user's machine; casing still follows Unicode. -->
+    <InvariantGlobalization>true</InvariantGlobalization>
+    <NuGetAudit>false</NuGetAudit>
+    <!-- Same version as the Windows app. -->
+    <Version>$([System.Text.RegularExpressions.Regex]::Match($([System.IO.File]::ReadAllText('$(MSBuildThisFileDirectory)../YangiAlifbo.csproj')), '&lt;Version&gt;([^&lt;]+)&lt;/Version&gt;').Groups[1].Value)</Version>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\YangiAlifbo.Core\YangiAlifbo.Core.csproj" />
+  </ItemGroup>
+
+</Project>

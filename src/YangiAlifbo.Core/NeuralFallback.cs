@@ -11,6 +11,7 @@
 
 using System.Buffers.Binary;
 using System.IO.Compression;
+using System.Runtime.Intrinsics;
 using System.Text.RegularExpressions;
 
 namespace YangiAlifbo.Core;
@@ -203,18 +204,15 @@ public sealed partial class NeuralFallback
         return 1.0 / (1.0 + Math.Exp(-logit));
     }
 
+    // Fixed 4-lane accumulation: the same summation order on every CPU (x64 and ARM64),
+    // so Windows and Linux give bit-identical scores.
     private static float Dot(ReadOnlySpan<float> a, ReadOnlySpan<float> b)
     {
         int i = 0;
-        float sum = 0;
-        if (System.Numerics.Vector.IsHardwareAccelerated && a.Length >= System.Numerics.Vector<float>.Count)
-        {
-            var acc = System.Numerics.Vector<float>.Zero;
-            int w = System.Numerics.Vector<float>.Count;
-            for (; i <= a.Length - w; i += w)
-                acc += new System.Numerics.Vector<float>(a.Slice(i)) * new System.Numerics.Vector<float>(b.Slice(i));
-            sum = System.Numerics.Vector.Sum(acc);
-        }
+        var acc = Vector128<float>.Zero;
+        for (; i <= a.Length - 4; i += 4)
+            acc += Vector128.Create(a.Slice(i, 4)) * Vector128.Create(b.Slice(i, 4));
+        float sum = (acc.GetElement(0) + acc.GetElement(1)) + (acc.GetElement(2) + acc.GetElement(3));
         for (; i < a.Length; i++) sum += a[i] * b[i];
         return sum;
     }

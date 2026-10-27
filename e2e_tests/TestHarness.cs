@@ -24,7 +24,8 @@ public static class TestHarness
 {
     // ── Reflection Access to Internal Types ─────────────────────────────
 
-    public static readonly Assembly YangiAlifboAssembly = typeof(UzbekPhonetics).Assembly;
+    // The app (UI, hooks); the engine types live in YangiAlifbo.Core.
+    public static readonly Assembly YangiAlifboAssembly = typeof(YangiAlifbo.Win32.KeyboardHook).Assembly;
 
     public static readonly Type? KeyboardHookType =
         YangiAlifboAssembly.GetType("YangiAlifbo.Win32.KeyboardHook");

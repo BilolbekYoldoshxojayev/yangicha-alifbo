@@ -1140,7 +1140,7 @@ public class Tier2_BoundaryCornerTests
     [TestMethod]
     public void F14_B07_TransliterationModeEnum_ValuesExist()
     {
-        var modeType = TestHarness.YangiAlifboAssembly.GetType("YangiAlifbo.Win32.TransliterationMode");
+        var modeType = typeof(YangiAlifbo.Win32.TransliterationMode);
         Assert.IsNotNull(modeType, "TransliterationMode enum must exist in Win32 namespace");
         var names = Enum.GetNames(modeType);
         Assert.IsTrue(names.Contains("Strict"));

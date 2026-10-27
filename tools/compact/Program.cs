@@ -1,4 +1,4 @@
-// Builds the embedded dictionaries in src/Core/Dictionaries and proves what they change.
+// Builds the embedded dictionaries in src/YangiAlifbo.Core/Dictionaries and proves what they change.
 //
 //   dotnet run -c Release --project tools/compact -- wiki <wiki.tsv> <foreign_raw.txt> <out.tsv>
 //       Uzbek Wikipedia words (tools/dict/wiki_words.py) the engine does not know yet and no
@@ -18,7 +18,7 @@ using System.IO.Compression;
 using System.Text;
 using YangiAlifbo.Core;
 
-string dir = Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, "../../../../../src/Core/Dictionaries"));
+string dir = Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, "../../../../../src/YangiAlifbo.Core/Dictionaries"));
 HashSet<string> ReadFile(string path) => new(File.ReadLines(path, Encoding.UTF8)
     .Select(l => l.Split('\t')[0].Trim().ToLowerInvariant()).Where(l => l.Length > 0 && !l.StartsWith('#')), StringComparer.OrdinalIgnoreCase);
 HashSet<string> Read(string f) => ReadFile(Path.Combine(dir, f));

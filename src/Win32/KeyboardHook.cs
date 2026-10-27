@@ -324,48 +324,8 @@ public sealed class KeyboardHook : IDisposable
     /// Attempts to convert a word from 1995 Uzbek Latin to the reformed alphabet.
     /// Returns the converted word, or null if no conversion should happen.
     /// </summary>
-    private string? TryConvertWord(string word)
-    {
-        if (string.IsNullOrWhiteSpace(word) || word.Length < 2)
-            return null;
-
-        // Tier 1: Absolute protection for English and foreign words
-        if (_detector.IsForeignOrReject(word))
-            return null;
-
-        string workWord = word;
-        if (IsChatSlangNormalizerEnabled)
-        {
-            workWord = ChatNormalizer.Normalize(word);
-        }
-
-        // Quick check: does the workWord contain convertible patterns?
-        if (!UzbekPhonetics.HasConvertiblePatterns(workWord))
-        {
-            // If the word was expanded/normalized (e.g. contraction like bilmadm -> bilmadim, or kirasz -> kirasiz),
-            // and it changed from the original word:
-            if (workWord != word && _detector.IsUzbek(workWord))
-            {
-                return workWord;
-            }
-            return null;
-        }
-
-        // In Aggressive mode, skip dictionary checks
-        if (Mode == TransliterationMode.Aggressive)
-        {
-            return UzbekPhonetics.Convert(workWord);
-        }
-
-        // Strict mode: verify the word is Uzbek before converting. The neural
-        // fallback only judges words as typed, never slang rewrites.
-        if (workWord == word ? _detector.IsUzbekOrLikely(workWord) : _detector.IsUzbek(workWord))
-        {
-            return UzbekPhonetics.Convert(workWord);
-        }
-
-        return null;
-    }
+    private string? TryConvertWord(string word) =>
+        WordConverter.Convert(_detector, word, Mode, IsChatSlangNormalizerEnabled);
 
     // ── Helper Methods ─────────────────────────────────────────────────
 
@@ -469,20 +429,3 @@ public sealed class KeyboardHook : IDisposable
     }
 }
 
-/// <summary>
-/// Transliteration mode determines how strictly words are verified.
-/// </summary>
-public enum TransliterationMode
-{
-    /// <summary>
-    /// Only convert words confirmed to be Uzbek by the dictionary
-    /// and morphological analyzer. Default and safest mode.
-    /// </summary>
-    Strict,
-
-    /// <summary>
-    /// Convert all words containing sh/ch/o'/g' patterns without
-    /// dictionary verification. Use at your own risk.
-    /// </summary>
-    Aggressive
-}
