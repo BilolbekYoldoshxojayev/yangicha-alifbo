@@ -115,6 +115,18 @@ jobs:
           name: yangialifbo-mac
           path: YangiAlifbo-mac.zip*
 
+  # Run by hand after a release: the public one-line install, exactly as a user runs it.
+  public-install:
+    if: github.event_name == 'workflow_dispatch'
+    runs-on: macos-15
+    steps:
+      - name: curl | sh from the latest release, self-test, uninstall
+        run: |
+          curl -fsSL https://github.com/BilolbekYoldoshxojayev/yangicha-alifbo/releases/latest/download/install-mac.sh | YANGIALIFBO_NO_OPEN=1 sh
+          codesign --verify --strict ~/Applications/YangiAlifbo.app
+          ~/Applications/YangiAlifbo.app/Contents/MacOS/YangiAlifbo --selftest
+          curl -fsSL https://github.com/BilolbekYoldoshxojayev/yangicha-alifbo/releases/latest/download/install-mac.sh | sh -s -- --uninstall
+
   release:
     if: github.event_name == 'release'
     needs: build
