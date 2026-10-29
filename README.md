@@ -51,7 +51,7 @@ Linux’da Windows’dagidek ishlamaydi, chunki Wayland (va Linux xavfsizlik mod
 
 1. [Relizlar](https://github.com/BilolbekYoldoshxojayev/yangicha-alifbo/releases/latest) sahifasidan `yangialifbo-android.apk` ni yuklab oling va o‘rnating (Android 8.0+). Brauzer yoki fayllar ilovasiga «noma’lum manbalardan o‘rnatish» ruxsatini bering.
 2. YangiAlifbo ilovasini oching va ikki usuldan birini tanlang:
-   - **A. Istalgan klaviatura bilan (Samsung, Gboard…).** «Maxsus imkoniyatlarni ochish» → YangiAlifbo’ni yoqing. Klaviaturani almashtirish shart emas: odatdagidek yozasiz, probel yoki tinish belgisidan keyin so‘z yangi alifboga almashtiriladi. Android sideload qilingan ilova uchun maxsus imkoniyatni o‘chirib qo‘ygan bo‘lsa: Sozlamalar → Ilovalar → YangiAlifbo → ⋮ → «Cheklangan sozlamalarga ruxsat berish».
+   - **A. Istalgan klaviatura bilan (Samsung, Gboard…).** Bosh ekrandagi «Yoqish» tugmasini bosing va ro‘yxatdan YangiAlifbo’ni yoqing (ilova qadamlarni o‘zi ko‘rsatadi). Klaviaturani almashtirish shart emas: odatdagidek yozasiz, probel yoki tinish belgisidan keyin so‘z yangi alifboga almashtiriladi. Android sideload qilingan ilova uchun maxsus imkoniyatni o‘chirib qo‘ygan bo‘lsa: Sozlamalar → Ilovalar → YangiAlifbo → ⋮ → «Cheklangan sozlamalarga ruxsat berish».
    - **B. YangiAlifbo klaviaturasi.** **1. Klaviaturani yoqish**, so‘ng **2. Klaviaturani tanlash**. So‘z yozilayotganda tagiga chizilgan holda turadi; o‘tkazishdan keyin darhol **⌫** bossangiz, so‘z yozilganidek qaytadi.
 3. Odatdagidek eski imloda yozing: so‘z probel, tinish belgisi (B usulida Enter ham) bilan tugagach, u yangi alifboga o‘tadi (`shahar` → `şahar`).
 

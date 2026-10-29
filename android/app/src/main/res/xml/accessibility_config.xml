@@ -6,4 +6,4 @@
     android:description="@string/a11y_description"
     android:isAccessibilityTool="false"
     android:notificationTimeout="0"
-    android:settingsActivity="uz.yangialifbo.keyboard.MainActivity" />
+    android:settingsActivity="uz.yangialifbo.keyboard.SettingsActivity" />

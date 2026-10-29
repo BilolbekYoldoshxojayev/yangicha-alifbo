@@ -2,8 +2,11 @@ package uz.yangialifbo.keyboard
 
 import android.content.Context
 import android.graphics.Canvas
+import android.graphics.LinearGradient
 import android.graphics.Paint
+import android.graphics.RadialGradient
 import android.graphics.RectF
+import android.graphics.Shader
 import android.graphics.Typeface
 import android.os.Handler
 import android.os.Looper
@@ -59,20 +62,33 @@ class KeyboardView(context: Context) : View(context) {
     private fun dp(v: Float) = v * density
 
     private val keyHeight = dp(50f)
-    private val gap = dp(3f)
-    private val radius = dp(7f)
+    private val gap = dp(4f)
+    private val radius = dp(11f)
     private val verticalPad = dp(5f)
 
-    private val cBackground = ContextCompat.getColor(context, R.color.kb_background)
+    private val cBgTop = ContextCompat.getColor(context, R.color.kb_bg_top)
+    private val cBgBottom = ContextCompat.getColor(context, R.color.kb_bg_bottom)
+    private val cBlob1 = ContextCompat.getColor(context, R.color.kb_blob_1)
+    private val cBlob2 = ContextCompat.getColor(context, R.color.kb_blob_2)
     private val cKey = ContextCompat.getColor(context, R.color.kb_key)
     private val cSpecial = ContextCompat.getColor(context, R.color.kb_key_special)
     private val cPressed = ContextCompat.getColor(context, R.color.kb_key_pressed)
+    private val cBorder = ContextCompat.getColor(context, R.color.kb_key_border)
     private val cText = ContextCompat.getColor(context, R.color.kb_text)
     private val cHint = ContextCompat.getColor(context, R.color.kb_hint)
     private val cAccent = ContextCompat.getColor(context, R.color.kb_accent)
+    private val cAccent2 = ContextCompat.getColor(context, R.color.kb_accent2)
     private val cAccentText = ContextCompat.getColor(context, R.color.kb_accent_text)
 
     private val fill = Paint(Paint.ANTI_ALIAS_FLAG)
+    private val border = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+        style = Paint.Style.STROKE
+        strokeWidth = dp(1f)
+        color = cBorder
+    }
+    private val bgPaint = Paint()
+    private val blob1 = Paint()
+    private val blob2 = Paint()
     private val text = Paint(Paint.ANTI_ALIAS_FLAG).apply { textAlign = Paint.Align.CENTER }
     private val hint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         textAlign = Paint.Align.RIGHT
@@ -119,6 +135,11 @@ class KeyboardView(context: Context) : View(context) {
     }
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
+        bgPaint.shader = LinearGradient(0f, 0f, 0f, h.toFloat(), cBgTop, cBgBottom, Shader.TileMode.CLAMP)
+        // Two soft patches of colour behind the keys, so the translucent keys read as glass.
+        val r = maxOf(w, h) * 0.55f
+        blob1.shader = RadialGradient(w * 0.15f, h * 0.2f, r, cBlob1, cBlob1 and 0x00FFFFFF, Shader.TileMode.CLAMP)
+        blob2.shader = RadialGradient(w * 0.9f, h * 0.85f, r, cBlob2, cBlob2 and 0x00FFFFFF, Shader.TileMode.CLAMP)
         layoutKeys()
     }
 
@@ -152,19 +173,27 @@ class KeyboardView(context: Context) : View(context) {
     // ── Drawing ────────────────────────────────────────────────────────
 
     override fun onDraw(canvas: Canvas) {
-        canvas.drawColor(cBackground)
+        canvas.drawPaint(bgPaint)
+        canvas.drawPaint(blob1)
+        canvas.drawPaint(blob2)
         for ((key, r) in rects) {
             val pressed = pressedRect(r)
-            val accent = isAccent(key)
-            fill.color = when {
-                pressed -> cPressed
-                accent -> cAccent
-                key.kind == Kind.CHAR || key.kind == Kind.SPACE -> cKey
-                else -> cSpecial
+            val accent = isAccent(key) && !pressed
+            if (accent) {
+                fill.color = android.graphics.Color.BLACK // the paint's alpha would fade the shader
+                fill.shader = LinearGradient(r.left, r.top, r.right, r.bottom, cAccent, cAccent2, Shader.TileMode.CLAMP)
+            } else {
+                fill.shader = null
+                fill.color = when {
+                    pressed -> cPressed
+                    key.kind == Kind.CHAR || key.kind == Kind.SPACE -> cKey
+                    else -> cSpecial
+                }
             }
             canvas.drawRoundRect(r, radius, radius, fill)
+            if (!accent) canvas.drawRoundRect(r, radius, radius, border)
 
-            text.color = if (accent && !pressed) cAccentText else cText
+            text.color = if (accent) cAccentText else cText
             text.typeface = Typeface.DEFAULT
             val label = labelOf(key)
             text.textSize = (if (key.kind == Kind.CHAR) 22f else 17f) * scaledDensity
@@ -177,6 +206,7 @@ class KeyboardView(context: Context) : View(context) {
                 canvas.drawText(cased(alt), r.right - dp(5f), r.top + dp(14f), hint)
             }
             if (key.kind == Kind.SHIFT && shift == Shift.CAPS) {
+                fill.shader = null
                 fill.color = cAccentText
                 canvas.drawRect(r.centerX() - dp(8f), r.bottom - dp(9f), r.centerX() + dp(8f), r.bottom - dp(7f), fill)
             }
