@@ -4,10 +4,9 @@ plugins {
     id("com.android.application")
 }
 
-// One version for every platform: the Windows app's <Version> in src/YangiAlifbo.csproj.
-val appVersion: String = Regex("<Version>([^<]+)</Version>")
-    .find(file("../../src/YangiAlifbo.csproj").readText())!!.groupValues[1]
-val versionParts = appVersion.split(".").map { it.toInt() }
+// The Android app has its own version (not the Windows app's): raise versionCode on every release.
+val appVersion = "1.0.0"
+val appVersionCode = 1
 
 android {
     namespace = "uz.yangialifbo.keyboard"
@@ -18,7 +17,7 @@ android {
         minSdk = 26
         targetSdk = 36
         versionName = appVersion
-        versionCode = versionParts[0] * 1_000_000 + versionParts[1] * 1_000 + versionParts[2]
+        versionCode = appVersionCode
     }
 
     signingConfigs {
