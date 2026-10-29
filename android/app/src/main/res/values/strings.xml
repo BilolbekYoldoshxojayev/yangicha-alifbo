@@ -4,6 +4,15 @@
     <string name="ime_name">YangiAlifbo klaviaturasi</string>
     <string name="subtype_label">Oʻzbek (eski imlo → yangi alifbo)</string>
 
+
+    <string name="a11y_title">A. Istalgan klaviatura bilan (Samsung, Gboard…)</string>
+    <string name="a11y_hint">Klaviaturani almashtirish shart emas: Samsung yoki Google klaviaturasida odatdagidek yozing, probeldan keyin so‘z yangi alifboga o‘tadi. Buning uchun «Maxsus imkoniyatlar»da YangiAlifbo yoqiladi. Android «Cheklangan sozlamalar» deb o‘chirib qo‘ygan bo‘lsa: Sozlamalar → Ilovalar → YangiAlifbo → ⋮ → «Cheklangan sozlamalarga ruxsat berish».</string>
+    <string name="a11y_button">Maxsus imkoniyatlarni ochish</string>
+    <string name="a11y_enabled">Maxsus imkoniyatlar yoqilgan: istalgan klaviatura bilan ishlaydi.</string>
+    <string name="a11y_disabled">Maxsus imkoniyatlar yoqilmagan.</string>
+    <string name="a11y_label">YangiAlifbo</string>
+    <string name="a11y_description">Yozayotgan so‘zingiz tugagach (probel, nuqta), uni eski lotin imlosidan yangi alifboga almashtiradi: sh→ş, ch→ç, oʻ→ö, gʻ→ğ. Faqat oddiy matn maydonlari o‘zgaradi; parol, e-pochta va havola maydonlari o‘zgarmaydi. Matn saqlanmaydi va hech qayerga yuborilmaydi: ilovada internet ruxsati yo‘q.</string>
+    <string name="ime_title">B. Yoki YangiAlifbo klaviaturasi</string>
     <string name="intro">Eski lotin imlosida yozing — soʻz tugagach (probel, nuqta, Enter) u yangi alifboga oʻtadi: sh→ş, ch→ç, oʻ→ö, gʻ→ğ.</string>
 
     <string name="step_enable">1. Klaviaturani yoqish</string>

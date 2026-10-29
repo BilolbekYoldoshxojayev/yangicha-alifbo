@@ -16,8 +16,7 @@ class WordBuffer(private val convert: (String) -> String?) {
         word = ""
     }
 
-    fun accepts(ch: Char): Boolean =
-        ch.isLetter() || ch.isDigit() || ch in APOSTROPHES || (ch == '-' && word.isNotEmpty())
+    fun accepts(ch: Char): Boolean = isWordChar(ch, word.isNotEmpty())
 
     fun add(ch: Char) {
         word += ch
@@ -45,5 +44,9 @@ class WordBuffer(private val convert: (String) -> String?) {
 
     companion object {
         const val APOSTROPHES = "'‘’ʻʼ`´‛′"
+
+        /** [inWord]: a word has already started (a hyphen only continues a word). */
+        fun isWordChar(ch: Char, inWord: Boolean): Boolean =
+            ch.isLetter() || ch.isDigit() || ch in APOSTROPHES || (ch == '-' && inWord)
     }
 }

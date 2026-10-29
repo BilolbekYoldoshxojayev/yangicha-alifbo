@@ -66,9 +66,7 @@ class YangiIme : InputMethodService(), KeyboardView.Listener {
         typing.reset()
 
         val type = info.inputType
-        val cls = type and InputType.TYPE_MASK_CLASS
-        val variation = type and InputType.TYPE_MASK_VARIATION
-        textField = cls == InputType.TYPE_CLASS_TEXT && variation !in NO_CONVERSION
+        textField = FieldRules.isPlainText(type)
         typing.keyEventsOnly = type == InputType.TYPE_NULL
         typing.converting = textField && settings.convert
 
@@ -150,16 +148,5 @@ class YangiIme : InputMethodService(), KeyboardView.Listener {
     private fun updateShift() {
         val info = currentInputEditorInfo ?: return
         keyboard?.setAutoShift(capsWanted(info))
-    }
-
-    private companion object {
-        val NO_CONVERSION = intArrayOf(
-            InputType.TYPE_TEXT_VARIATION_PASSWORD,
-            InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD,
-            InputType.TYPE_TEXT_VARIATION_WEB_PASSWORD,
-            InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS,
-            InputType.TYPE_TEXT_VARIATION_WEB_EMAIL_ADDRESS,
-            InputType.TYPE_TEXT_VARIATION_URI,
-        )
     }
 }

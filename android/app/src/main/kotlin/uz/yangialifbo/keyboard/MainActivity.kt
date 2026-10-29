@@ -3,6 +3,7 @@ package uz.yangialifbo.keyboard
 import android.app.Activity
 import android.content.Context
 import android.os.Bundle
+import android.provider.Settings.ACTION_ACCESSIBILITY_SETTINGS
 import android.provider.Settings.ACTION_INPUT_METHOD_SETTINGS
 import android.provider.Settings.Secure
 import android.content.Intent
@@ -37,6 +38,7 @@ class MainActivity : Activity() {
         }
 
         status = findViewById(R.id.status)
+        findViewById<Button>(R.id.a11y).setOnClickListener { startActivity(Intent(ACTION_ACCESSIBILITY_SETTINGS)) }
         findViewById<Button>(R.id.enable).setOnClickListener { startActivity(Intent(ACTION_INPUT_METHOD_SETTINGS)) }
         findViewById<Button>(R.id.select).setOnClickListener {
             (getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager).showInputMethodPicker()
@@ -80,6 +82,9 @@ class MainActivity : Activity() {
     }
 
     private fun refreshStatus() {
+        val services = Secure.getString(contentResolver, Secure.ENABLED_ACCESSIBILITY_SERVICES).orEmpty()
+        val a11yOn = services.split(':').any { it.startsWith("$packageName/") }
+        findViewById<TextView>(R.id.a11yStatus).setText(if (a11yOn) R.string.a11y_enabled else R.string.a11y_disabled)
         val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         val enabled = imm.enabledInputMethodList.any { it.packageName == packageName }
         val current = Secure.getString(contentResolver, Secure.DEFAULT_INPUT_METHOD).orEmpty()
