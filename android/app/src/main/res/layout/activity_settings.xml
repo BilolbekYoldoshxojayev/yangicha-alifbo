@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <uz.yangialifbo.keyboard.AuroraBackground
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <ScrollView
+        android:id="@+id/root"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clipToPadding="false"
+        android:fillViewport="true"
+        android:overScrollMode="ifContentScrolls">
+
+        <LinearLayout
+            android:id="@+id/content"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingStart="20dp"
+            android:paddingTop="8dp"
+            android:paddingEnd="20dp"
+            android:paddingBottom="32dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <uz.yangialifbo.keyboard.GlassIconButton
+                    android:id="@+id/back"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:contentDescription="@string/back"
+                    android:src="@drawable/ic_back" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="14dp"
+                    android:layout_weight="1"
+                    android:text="@string/settings_title"
+                    android:textColor="@color/glass_text"
+                    android:textSize="26sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <!-- Conversion -->
+            <uz.yangialifbo.keyboard.GlassCard
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp">
+
+                <TextView
+                    style="@style/Glass.Title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/group_convert" />
+
+                <uz.yangialifbo.keyboard.ToggleRow
+                    android:id="@+id/slang"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    app:subtitle="@string/setting_slang_hint"
+                    app:title="@string/setting_slang" />
+
+                <uz.yangialifbo.keyboard.ToggleRow
+                    android:id="@+id/neural"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:subtitle="@string/setting_neural_hint"
+                    app:title="@string/setting_neural" />
+
+                <TextView
+                    style="@style/Glass.Label"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="4dp"
+                    android:layout_marginTop="14dp"
+                    android:text="@string/mode_title" />
+
+                <uz.yangialifbo.keyboard.GlassSegment
+                    android:id="@+id/mode"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp" />
+
+                <TextView
+                    android:id="@+id/modeHint"
+                    style="@style/Glass.Body"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="4dp"
+                    android:layout_marginTop="10dp" />
+            </uz.yangialifbo.keyboard.GlassCard>
+
+            <!-- Word lists -->
+            <uz.yangialifbo.keyboard.GlassCard
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="14dp">
+
+                <TextView
+                    style="@style/Glass.Title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/group_lists" />
+
+                <uz.yangialifbo.keyboard.NavRow
+                    android:id="@+id/whitelist"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    app:title="@string/whitelist_title" />
+
+                <uz.yangialifbo.keyboard.NavRow
+                    android:id="@+id/blacklist"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:title="@string/blacklist_title" />
+            </uz.yangialifbo.keyboard.GlassCard>
+
+            <!-- Own keyboard -->
+            <uz.yangialifbo.keyboard.GlassCard
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="14dp">
+
+                <TextView
+                    style="@style/Glass.Title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/group_keyboard" />
+
+                <TextView
+                    style="@style/Glass.Body"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:text="@string/group_keyboard_hint" />
+
+                <uz.yangialifbo.keyboard.NavRow
+                    android:id="@+id/keyboardEnable"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    app:title="@string/keyboard_enable" />
+
+                <uz.yangialifbo.keyboard.NavRow
+                    android:id="@+id/keyboardSelect"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:title="@string/keyboard_select" />
+
+                <uz.yangialifbo.keyboard.ToggleRow
+                    android:id="@+id/haptic"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:title="@string/keyboard_haptic" />
+            </uz.yangialifbo.keyboard.GlassCard>
+
+            <TextView
+                android:id="@+id/privacy"
+                style="@style/Glass.Body"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginEnd="8dp"
+                android:text="@string/privacy"
+                android:textSize="13sp" />
+
+            <TextView
+                android:id="@+id/version"
+                style="@style/Glass.Body"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="4dp"
+                android:layout_marginEnd="8dp"
+                android:textSize="13sp" />
+        </LinearLayout>
+    </ScrollView>
+</FrameLayout>

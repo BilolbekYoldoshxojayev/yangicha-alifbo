@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="GlassButton">
+        <!-- Filled with the accent gradient instead of glass. -->
+        <attr name="primary" format="boolean" />
+    </declare-styleable>
+
+    <declare-styleable name="Row">
+        <attr name="title" format="string" />
+        <attr name="subtitle" format="string" />
+    </declare-styleable>
+</resources>

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Sliders icon (settings). -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M4,7h8M18,7h2M4,17h2M12,17h8"
+        android:strokeColor="@color/glass_text"
+        android:strokeLineCap="round"
+        android:strokeWidth="2" />
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M15,7m-3,0a3,3 0 1,1 6,0a3,3 0 1,1 -6,0M9,17m-3,0a3,3 0 1,1 6,0a3,3 0 1,1 -6,0"
+        android:strokeColor="@color/glass_text"
+        android:strokeWidth="2" />
+</vector>
