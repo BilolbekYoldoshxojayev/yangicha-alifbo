@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="ic_background">#13205C</color>
+    <color name="ic_key">#F0B23A</color>
+    <color name="ic_key_soft">#FFFFFF</color>
+
+    <color name="kb_background">#D8DBE0</color>
+    <color name="kb_key">#FFFFFF</color>
+    <color name="kb_key_special">#B9BEC8</color>
+    <color name="kb_key_pressed">#9AA3B5</color>
+    <color name="kb_text">#101828</color>
+    <color name="kb_hint">#667085</color>
+    <color name="kb_accent">#13205C</color>
+    <color name="kb_accent_text">#FFFFFF</color>
+</resources>

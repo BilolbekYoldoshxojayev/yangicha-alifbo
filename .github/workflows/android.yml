@@ -1,0 +1,99 @@
+# Android build: the Kotlin port of the engine (android/engine) and the keyboard app (android/app).
+# Every push checks that the Kotlin engine converts exactly like the C# engine used on Windows,
+# then builds the APK. A published release gets yangialifbo-android.apk attached.
+#
+# Release signing (optional, otherwise the APK is signed with a throwaway debug key and a
+# phone will refuse to update it from a build signed with another key). Repository secrets:
+#   ANDROID_KEYSTORE_BASE64    base64 of the .jks      (base64 -w0 release.jks)
+#   ANDROID_KEYSTORE_PASSWORD  ANDROID_KEY_ALIAS  ANDROID_KEY_PASSWORD
+name: Android
+
+on:
+  push:
+    branches: [main]
+    paths: ["android/**", "src/YangiAlifbo.Core/**", "tools/parity/**", "tests/data/parity.sha256", ".github/workflows/android.yml"]
+  pull_request:
+    paths: ["android/**", "src/YangiAlifbo.Core/**", "tools/parity/**", "tests/data/parity.sha256", ".github/workflows/android.yml"]
+  release:
+    types: [published]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+
+      - uses: gradle/actions/setup-gradle@v4
+
+      - name: Android platform
+        run: yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" "platforms;android-37.0"
+
+      - name: Parity with Windows (C# engine)
+        run: |
+          out=$(dotnet run -c Release --project tools/parity -- words.txt managed.tsv)
+          echo "$out"
+          got=$(echo "$out" | sed -n 's/.*sha256 //p')
+          test "$got" = "$(cut -d' ' -f1 tests/data/parity.sha256)"
+
+      - name: Parity with Windows (Kotlin engine)
+        working-directory: android
+        run: |
+          out=$(./gradlew -q :engine:parity -Pwords="$GITHUB_WORKSPACE/words.txt" -Pout="$GITHUB_WORKSPACE/kotlin.tsv")
+          echo "$out"
+          got=$(echo "$out" | sed -n 's/.*sha256 //p')
+          test "$got" = "$(cut -d' ' -f1 ../tests/data/parity.sha256)" || { diff "$GITHUB_WORKSPACE/managed.tsv" "$GITHUB_WORKSPACE/kotlin.tsv" | head -20; exit 1; }
+
+      - name: Unit tests
+        working-directory: android
+        run: ./gradlew :engine:test :app:testDebugUnitTest
+
+      - name: Release key
+        env:
+          KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+        run: |
+          if [ -n "$KEYSTORE_BASE64" ]; then
+            echo "$KEYSTORE_BASE64" | base64 -d > "$RUNNER_TEMP/release.jks"
+            echo "ANDROID_KEYSTORE_FILE=$RUNNER_TEMP/release.jks" >> "$GITHUB_ENV"
+          else
+            echo "::warning::ANDROID_KEYSTORE_BASE64 is not set: the APK is signed with a debug key"
+          fi
+
+      - name: Build the APK
+        working-directory: android
+        env:
+          ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+        run: ./gradlew :app:assembleRelease
+
+      - name: Package
+        run: |
+          mkdir -p dist
+          cp android/app/build/outputs/apk/release/app-release.apk dist/yangialifbo-android.apk
+          (cd dist && sha256sum yangialifbo-android.apk > yangialifbo-android.apk.sha256)
+          ls -l dist
+          "$ANDROID_HOME"/build-tools/*/apksigner verify --print-certs dist/yangialifbo-android.apk | head -5
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: yangialifbo-android
+          path: dist/*
+
+      - name: Attach the APK to the release
+        if: github.event_name == 'release'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release upload "${{ github.event.release.tag_name }}" dist/* --clobber

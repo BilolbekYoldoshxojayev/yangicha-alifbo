@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">YangiAlifbo</string>
+    <string name="ime_name">YangiAlifbo klaviaturasi</string>
+    <string name="subtype_label">Oʻzbek (eski imlo → yangi alifbo)</string>
+
+    <string name="intro">Eski lotin imlosida yozing — soʻz tugagach (probel, nuqta, Enter) u yangi alifboga oʻtadi: sh→ş, ch→ç, oʻ→ö, gʻ→ğ.</string>
+
+    <string name="step_enable">1. Klaviaturani yoqish</string>
+    <string name="step_enable_hint">Sozlamalar ochiladi — «YangiAlifbo klaviaturasi» ni yoqing.</string>
+    <string name="step_select">2. Klaviaturani tanlash</string>
+    <string name="step_select_hint">Yozish maydonida klaviatura tanlash oynasi ochiladi.</string>
+    <string name="status_enabled">Klaviatura yoqilgan.</string>
+    <string name="status_disabled">Klaviatura hali yoqilmagan.</string>
+    <string name="status_selected">Hozir YangiAlifbo tanlangan.</string>
+    <string name="status_not_selected">Hozir boshqa klaviatura tanlangan.</string>
+
+    <string name="settings_title">Sozlamalar</string>
+    <string name="setting_convert">Avtomatik oʻtkazish</string>
+    <string name="setting_slang">Chat yozuvi (bilmadm → bilmadim)</string>
+    <string name="setting_neural">Neyron model (lugʻatda yoʻq soʻzlar uchun)</string>
+    <string name="setting_haptic">Tugma bosilganda tebranish</string>
+    <string name="mode_title">Rejim</string>
+    <string name="mode_strict">Qatʼiy: faqat lugʻat tasdiqlagan soʻzlar oʻzgaradi</string>
+    <string name="mode_aggressive">Agressiv: filtrdan oʻtgan har qanday soʻz oʻzgaradi</string>
+
+    <string name="whitelist_title">Oq roʻyxat (har qatorda bitta soʻz): doim oʻzgaradi</string>
+    <string name="blacklist_title">Qora roʻyxat (har qatorda bitta soʻz): hech qachon oʻzgarmaydi</string>
+    <string name="save">Saqlash</string>
+    <string name="saved">Saqlandi</string>
+
+    <string name="try_title">Sinab koʻring</string>
+    <string name="try_hint">Shu yerga «shahar choy oʻrtoq gʻalaba» deb yozing</string>
+
+    <string name="key_convert_on">ş</string>
+    <string name="privacy">Yozgan matningiz hech qayerga yuborilmaydi: ilovada internet ruxsati yoʻq.</string>
+    <string name="version_fmt">Versiya %1$s</string>
+</resources>
