@@ -1,6 +1,12 @@
 # Android build: the Kotlin port of the engine (android/engine) and the keyboard app (android/app).
 # Every push checks that the Kotlin engine converts exactly like the C# engine used on Windows,
-# then builds the APK. A published release gets yangialifbo-android.apk attached.
+# then builds the APK.
+#
+# Release: push a tag `android-v<versionName>` (e.g. android-v1.0.0, matching `appVersion` in
+# android/app/build.gradle.kts). The workflow builds the APK and creates the GitHub release with
+#   yangialifbo-android.apk  and  yangialifbo-android.apk.sha256
+# attached (or uploads them to the release if it already exists). The same can be started by hand:
+# Actions > Android > Run workflow, with the tag name filled in.
 #
 # Release signing (optional, otherwise the APK is signed with a throwaway debug key and a
 # phone will refuse to update it from a build signed with another key). Repository secrets:
@@ -11,12 +17,15 @@ name: Android
 on:
   push:
     branches: [main]
-    paths: ["android/**", "src/YangiAlifbo.Core/**", "tools/parity/**", "tests/data/parity.sha256", ".github/workflows/android.yml"]
+    tags: ["android-v*"]
   pull_request:
     paths: ["android/**", "src/YangiAlifbo.Core/**", "tools/parity/**", "tests/data/parity.sha256", ".github/workflows/android.yml"]
-  release:
-    types: [published]
   workflow_dispatch:
+    inputs:
+      tag:
+        description: "Create or update the release with this tag (e.g. android-v1.0.0). Empty: build only."
+        required: false
+        default: ""
 
 permissions:
   contents: write
@@ -24,8 +33,21 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-24.04
+    env:
+      # The tag to publish: the pushed tag, or the one typed into "Run workflow".
+      RELEASE_TAG: ${{ github.ref_type == 'tag' && github.ref_name || inputs.tag }}
     steps:
       - uses: actions/checkout@v4
+
+      - name: The tag matches the app version
+        if: env.RELEASE_TAG != ''
+        run: |
+          name=$(sed -n 's/^val appVersion = "\(.*\)"/\1/p' android/app/build.gradle.kts)
+          test -n "$name"
+          if [ "android-v$name" != "$RELEASE_TAG" ]; then
+            echo "::error::tag $RELEASE_TAG does not match appVersion $name in android/app/build.gradle.kts"
+            exit 1
+          fi
 
       - uses: actions/setup-dotnet@v4
         with:
@@ -92,8 +114,16 @@ jobs:
           name: yangialifbo-android
           path: dist/*
 
-      - name: Attach the APK to the release
-        if: github.event_name == 'release'
+      - name: Publish the release
+        if: env.RELEASE_TAG != ''
         env:
           GH_TOKEN: ${{ github.token }}
-        run: gh release upload "${{ github.event.release.tag_name }}" dist/* --clobber
+        run: |
+          if gh release view "$RELEASE_TAG" >/dev/null 2>&1; then
+            gh release upload "$RELEASE_TAG" dist/* --clobber
+          else
+            gh release create "$RELEASE_TAG" dist/* \
+              --target "$GITHUB_SHA" \
+              --title "YangiAlifbo Android ${RELEASE_TAG#android-v}" \
+              --notes "Android ${RELEASE_TAG#android-v}: \`yangialifbo-android.apk\` ni o‘rnating, ilovada «Yoqish» tugmasini bosing. SHA-256: \`yangialifbo-android.apk.sha256\`."
+          fi
