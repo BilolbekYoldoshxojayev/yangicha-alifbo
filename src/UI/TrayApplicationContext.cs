@@ -161,6 +161,33 @@ internal sealed class TrayApplicationContext : ApplicationContext, IControlCente
             };
             once.Start();
         }
+        else if (!Program.IsAutostart)
+        {
+            // Manual launch (e.g. freshly downloaded exe): show the menu so the user
+            // knows the app is running. First run also gets a welcome balloon.
+            string firstRunFlag = Path.Combine(
+                Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "YangiAlifbo", "first_run_done");
+            bool firstRun = !File.Exists(firstRunFlag);
+            var shown = new System.Windows.Forms.Timer { Interval = 600 };
+            shown.Tick += (_, _) =>
+            {
+                shown.Dispose();
+                OpenDashboard();
+                if (firstRun)
+                {
+                    _trayIcon.ShowBalloonTip(8000, "YangiAlifbo ishga tushdi",
+                        "Dastur fonda ishlaydi. Boshqaruv paneli — soat yonidagi “Ö” belgisida. Yoqish/o‘chirish: Ctrl+Shift+U.",
+                        ToolTipIcon.Info);
+                    try
+                    {
+                        Directory.CreateDirectory(Path.GetDirectoryName(firstRunFlag)!);
+                        File.WriteAllText(firstRunFlag, DateTime.UtcNow.ToString("o"));
+                    }
+                    catch { /* non-fatal: welcome shows again next launch */ }
+                }
+            };
+            shown.Start();
+        }
 
         // ── Install hooks and start ────────────────────────────────
         _focusTracker.Install();
@@ -414,7 +441,8 @@ internal sealed class TrayApplicationContext : ApplicationContext, IControlCente
             if (File.Exists(StartupDisabledFlagPath))
                 return;
 
-            if (!IsStartupEnabled())
+            // Also rewrites entries from older versions that lack the autostart flag.
+            if (!IsStartupEnabled() || !StartupHasAutostartFlag())
             {
                 AddToStartup();
             }
@@ -438,13 +466,27 @@ internal sealed class TrayApplicationContext : ApplicationContext, IControlCente
         }
     }
 
+    private static bool StartupHasAutostartFlag()
+    {
+        try
+        {
+            using var key = Registry.CurrentUser.OpenSubKey(StartupRegistryKey, false);
+            return (key?.GetValue(StartupValueName) as string)?.Contains(Program.AutostartArg) == true;
+        }
+        catch
+        {
+            return false;
+        }
+    }
+
     private static void AddToStartup()
     {
         try
         {
             using var key = Registry.CurrentUser.OpenSubKey(StartupRegistryKey, true);
             string exePath = Application.ExecutablePath;
-            key?.SetValue(StartupValueName, $"\"{exePath}\"");
+            // The flag lets a Windows-login launch stay silent while a manual launch shows the UI.
+            key?.SetValue(StartupValueName, $"\"{exePath}\" {Program.AutostartArg}");
         }
         catch (Exception ex)
         {

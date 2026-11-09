@@ -20,9 +20,14 @@ internal static class Program
     /// </summary>
     private const string MutexName = "Global\\YangiAlifbo_SingleInstance_Mutex";
 
+    /// <summary>Passed by the Windows startup entry so login launches stay silent.</summary>
+    internal const string AutostartArg = "--autostart";
+    internal static bool IsAutostart { get; private set; }
+
     [STAThread]
     static void Main(string[] args)
     {
+        IsAutostart = Array.Exists(args, a => a == AutostartArg);
         if (args.Length > 0 && args[0] == "--selftest")
         {
             ApplicationConfiguration.Initialize();
