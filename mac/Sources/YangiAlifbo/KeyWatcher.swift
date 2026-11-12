@@ -93,9 +93,16 @@ final class KeyWatcher {
             event.keyboardGetUnicodeString(maxStringLength: 4, actualStringLength: &length, unicodeString: &chars)
             let s = String(utf16CodeUnits: chars, count: length)
             if s.count == 1, let c = s.first, !(c.unicodeScalars.first?.properties.generalCategory == .control) { kind = .character(c) }
-            else { kind = .other }
+            else if s.isEmpty, code == kVK_ANSI_Quote || code == kVK_ANSI_Grave,
+                    !flags.contains(.maskCommand), !flags.contains(.maskControl) {
+                kind = .character("'")   // dead-key layouts (U.S. International) report no text for ' and `
+            } else { kind = .other }
         }
-        let shortcut = !flags.isDisjoint(with: [.maskCommand, .maskControl, .maskAlternate])
+        // Option is a shortcut modifier, except when it types an apostrophe (Option+] gives ‘, Option+Shift+] gives ’).
+        var typesApostrophe = false
+        if case .character(let c) = kind { typesApostrophe = apostrophes.contains(c) }
+        let shortcut = flags.contains(.maskCommand) || flags.contains(.maskControl)
+            || (flags.contains(.maskAlternate) && !typesApostrophe)
         let s = settings
         let action = buffer.key(kind, shortcut: shortcut) { [engine] in engine.convert($0, aggressive: s.aggressive, slang: s.slang, neural: s.neural) }
         guard case let .retype(count, text) = action, let replay = event.copy() else { return pass }

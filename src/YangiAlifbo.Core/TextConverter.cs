@@ -34,25 +34,12 @@ public static class TextConverter
 
     private static string ConvertWord(string token, LanguageDetector detector, TransliterationMode mode, bool slang)
     {
-        if (token.Length < 2 || !(char.IsLetter(token[0]) || char.IsDigit(token[0])))
+        if (token.Length < 2) return token;
+        char first = UzbekPhonetics.NormalizeApostrophes(token[..1])[0];
+        if (!(char.IsLetter(first) || char.IsDigit(first) || first == '\''))
             return token;
 
-        if (detector.IsForeignOrReject(token))
-            return token;
-
-        string work = slang ? ChatNormalizer.Normalize(token) : token;
-
-        if (UzbekPhonetics.HasConvertiblePatterns(work))
-        {
-            if (mode == TransliterationMode.Aggressive ||
-                (work == token ? detector.IsUzbekOrLikely(work) : detector.IsUzbek(work)))
-                return UzbekPhonetics.Convert(work);
-        }
-        else if (work != token && detector.IsUzbek(work))
-        {
-            return work;
-        }
-
-        return token;
+        // Same decision as the keyboard hook.
+        return WordConverter.Convert(detector, token, mode, slang) ?? token;
     }
 }

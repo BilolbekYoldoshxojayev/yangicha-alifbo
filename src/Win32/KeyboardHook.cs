@@ -100,6 +100,9 @@ public sealed class KeyboardHook : IDisposable
         '\u02BB', // U+02BB  MODIFIER LETTER TURNED COMMA
         '\u02BC', // U+02BC  MODIFIER LETTER APOSTROPHE
         '`',      // U+0060  GRAVE ACCENT
+        '´', // U+00B4  ACUTE ACCENT
+        '‛', // U+201B  SINGLE HIGH-REVERSED-9 QUOTATION MARK
+        '′', // U+2032  PRIME
     };
 
     // Track whether we're currently injecting to avoid processing our own events

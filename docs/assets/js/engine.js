@@ -61,9 +61,27 @@
    * { from: 'sh', to: 'ş' } for converted groups and { from: 'a', to: 'a' } otherwise.
    * The parts drive the letter-fusion animations.
    */
+  // Quote marks wrapped around a word ('o'z') are not part of it.
+  function peel(word) {
+    var s = normalizeApostrophes(word), a = 0, b = s.length;
+    while (a < b && s[a] === "'") a++;
+    // A trailing ' after o/g belongs to the word (tog', bog') unless a leading quote pairs with it.
+    while (b > a && s[b - 1] === "'" && (a > 0 || b - 2 < a || 'ogOG'.indexOf(s[b - 2]) < 0)) b--;
+    return { pre: s.slice(0, a), core: s.slice(a, b), post: s.slice(b) };
+  }
+
   function convertDetailed(word) {
     var parts = [];
     if (!word) return { text: word, parts: parts };
+    var w = peel(word);
+    if (w.pre || w.post) {
+      var inner = w.core.length > 1 ? convertDetailed(w.core) : { text: w.core, parts: [] };
+      var all = [];
+      for (var k = 0; k < w.pre.length; k++) all.push({ from: "'", to: "'" });
+      all = all.concat(inner.parts);
+      for (k = 0; k < w.post.length; k++) all.push({ from: "'", to: "'" });
+      return { text: w.pre + inner.text + w.post, parts: all };
+    }
     var s = normalizeApostrophes(word);
     var p = protectedSet(s);
     var i = 0, out = '';
@@ -104,7 +122,8 @@
      minus the lexicon/morphology tiers that only exist in the desktop app. */
   function decide(word) {
     if (!word || word.trim().length < 2) return { convert: false, reason: 'short' };
-    if (!hasConvertiblePatterns(word)) return { convert: false, reason: 'nopattern' };
+    word = peel(word).core;
+    if (word.length < 2 || !hasConvertiblePatterns(word)) return { convert: false, reason: 'nopattern' };
     // Hyphenated words (check-in, 5-chi): reject when any lettered part is filtered.
     var rejected = isRejected(word) || word.split('-').some(function (p) { return /\D/.test(p) && p.length > 1 && isRejected(p) && p.toLowerCase() !== 'chi'; });
     if (rejected) return { convert: false, reason: 'rejected' };
