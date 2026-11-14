@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Launcher icon -->
+    <color name="ic_background">#13205C</color>
+    <color name="ic_key">#F0B23A</color>
+    <color name="ic_key_soft">#FFFFFF</color>
+
+    <!-- Aurora background (light) -->
+    <color name="aurora_top">#EEF1FF</color>
+    <color name="aurora_bottom">#F8F1FF</color>
+    <color name="aurora_1">#A69DB2FF</color>
+    <color name="aurora_2">#99D6A8FF</color>
+    <color name="aurora_3">#8C8FE3D6</color>
+    <color name="aurora_4">#80FFC9A8</color>
+
+    <!-- Glass surfaces and text (light) -->
+    <color name="glass_fill">#A6FFFFFF</color>
+    <color name="glass_field">#73FFFFFF</color>
+    <color name="glass_border_hi">#FFFFFFFF</color>
+    <color name="glass_border_lo">#40FFFFFF</color>
+    <color name="glass_edge">#1F3A4A9A</color>
+    <color name="glass_ripple">#223A4A9A</color>
+    <color name="glass_text">#151A33</color>
+    <color name="glass_muted">#565E84</color>
+    <color name="glass_accent">#5B6CFF</color>
+    <color name="glass_accent2">#9B6BFF</color>
+    <color name="glass_on_accent">#FFFFFF</color>
+    <color name="glass_ok">#0E9F6E</color>
+    <color name="glass_warn">#B45309</color>
+
+    <!-- Keyboard (light) -->
+    <color name="kb_bg_top">#E6EAFB</color>
+    <color name="kb_bg_bottom">#EFE9FB</color>
+    <color name="kb_blob_1">#669DB2FF</color>
+    <color name="kb_blob_2">#66D6A8FF</color>
+    <color name="kb_key">#D9FFFFFF</color>
+    <color name="kb_key_special">#8CFFFFFF</color>
+    <color name="kb_key_pressed">#80A4B4FF</color>
+    <color name="kb_key_border">#2A3A4A9A</color>
+    <color name="kb_text">#151A33</color>
+    <color name="kb_hint">#6B7396</color>
+    <color name="kb_accent">#5B6CFF</color>
+    <color name="kb_accent2">#9B6BFF</color>
+    <color name="kb_accent_text">#FFFFFF</color>
+</resources>

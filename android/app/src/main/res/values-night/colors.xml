@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="aurora_top">#0A0F25</color>
+    <color name="aurora_bottom">#151A3F</color>
+    <color name="aurora_1">#995B6CFF</color>
+    <color name="aurora_2">#80A25BFF</color>
+    <color name="aurora_3">#6614B8A6</color>
+    <color name="aurora_4">#4DFF7A59</color>
+
+    <color name="glass_fill">#1FFFFFFF</color>
+    <color name="glass_field">#14FFFFFF</color>
+    <color name="glass_border_hi">#73FFFFFF</color>
+    <color name="glass_border_lo">#0FFFFFFF</color>
+    <color name="glass_edge">#00000000</color>
+    <color name="glass_ripple">#33FFFFFF</color>
+    <color name="glass_text">#F5F7FF</color>
+    <color name="glass_muted">#AEB6D8</color>
+    <color name="glass_accent">#7C9CFF</color>
+    <color name="glass_accent2">#B28BFF</color>
+    <color name="glass_on_accent">#0B1026</color>
+    <color name="glass_ok">#3DDC97</color>
+    <color name="glass_warn">#FFB454</color>
+
+    <color name="kb_bg_top">#0C1230</color>
+    <color name="kb_bg_bottom">#151B40</color>
+    <color name="kb_blob_1">#665B6CFF</color>
+    <color name="kb_blob_2">#4DA25BFF</color>
+    <color name="kb_key">#2EFFFFFF</color>
+    <color name="kb_key_special">#17FFFFFF</color>
+    <color name="kb_key_pressed">#59FFFFFF</color>
+    <color name="kb_key_border">#33FFFFFF</color>
+    <color name="kb_text">#F5F7FF</color>
+    <color name="kb_hint">#9AA3C7</color>
+    <color name="kb_accent">#7C9CFF</color>
+    <color name="kb_accent2">#B28BFF</color>
+    <color name="kb_accent_text">#0B1026</color>
+</resources>

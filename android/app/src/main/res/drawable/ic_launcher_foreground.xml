@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Keyboard glyph in the 66dp safe zone of a 108dp adaptive icon: three rows of keys, one gold. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <path android:fillColor="@color/ic_key_soft"
+        android:pathData="M30,36h10a2,2 0 0 1 2,2v6a2,2 0 0 1 -2,2h-10a2,2 0 0 1 -2,-2v-6a2,2 0 0 1 2,-2z" />
+    <path android:fillColor="@color/ic_key_soft"
+        android:pathData="M49,36h10a2,2 0 0 1 2,2v6a2,2 0 0 1 -2,2h-10a2,2 0 0 1 -2,-2v-6a2,2 0 0 1 2,-2z" />
+    <path android:fillColor="@color/ic_key_soft"
+        android:pathData="M68,36h10a2,2 0 0 1 2,2v6a2,2 0 0 1 -2,2h-10a2,2 0 0 1 -2,-2v-6a2,2 0 0 1 2,-2z" />
+    <path android:fillColor="@color/ic_key_soft"
+        android:pathData="M30,51h10a2,2 0 0 1 2,2v6a2,2 0 0 1 -2,2h-10a2,2 0 0 1 -2,-2v-6a2,2 0 0 1 2,-2z" />
+    <path android:fillColor="@color/ic_key"
+        android:pathData="M49,51h10a2,2 0 0 1 2,2v6a2,2 0 0 1 -2,2h-10a2,2 0 0 1 -2,-2v-6a2,2 0 0 1 2,-2z" />
+    <path android:fillColor="@color/ic_key_soft"
+        android:pathData="M68,51h10a2,2 0 0 1 2,2v6a2,2 0 0 1 -2,2h-10a2,2 0 0 1 -2,-2v-6a2,2 0 0 1 2,-2z" />
+    <path android:fillColor="@color/ic_key_soft"
+        android:pathData="M30,66h48a2,2 0 0 1 2,2v6a2,2 0 0 1 -2,2h-48a2,2 0 0 1 -2,-2v-6a2,2 0 0 1 2,-2z" />
+</vector>

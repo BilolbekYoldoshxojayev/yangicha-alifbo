@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Glass.Title" parent="android:TextAppearance.Material">
+        <item name="android:textColor">@color/glass_text</item>
+        <item name="android:textSize">18sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="Glass.Body" parent="android:TextAppearance.Material">
+        <item name="android:textColor">@color/glass_muted</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:lineSpacingMultiplier">1.1</item>
+    </style>
+
+    <style name="Glass.Label" parent="android:TextAppearance.Material">
+        <item name="android:textColor">@color/glass_text</item>
+        <item name="android:textSize">16sp</item>
+    </style>
+
+    <!-- The numbered circle in front of a step. -->
+    <style name="Glass.Badge" parent="android:TextAppearance.Material">
+        <item name="android:layout_width">32dp</item>
+        <item name="android:layout_height">32dp</item>
+        <item name="android:background">@drawable/bg_badge</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textColor">@color/glass_text</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+</resources>
