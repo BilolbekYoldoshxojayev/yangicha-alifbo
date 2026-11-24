@@ -31,6 +31,9 @@ internal static class SelfTest
         public void SetNeural(bool e) { IsNeuralEnabled = e; Changed?.Invoke(); }
         public bool GetIsStartupEnabled() => _startup;
         public void SetStartup(bool e) { _startup = e; Changed?.Invoke(); }
+        private bool _shortcut;
+        public bool HasDesktopShortcut() => _shortcut;
+        public void SetDesktopShortcut(bool e) { _shortcut = e; Changed?.Invoke(); }
         public void OpenWhitelist() { }
         public void OpenBlacklist() { }
         public void ExitApplication() { }
@@ -87,6 +90,21 @@ internal static class SelfTest
             const string expected = "Özbekça gaplaşsak ham bölaveradi. 5-çi sinf, yaxşi böldi! Is'hoq show va push haqida gapirdi.";
             string got = TextConverter.Convert(input, detector, TransliterationMode.Strict, true, out _);
             return got == expected ? null : got;
+        });
+
+        Check("desktop shortcut (COM, survives trimming)", () =>
+        {
+            string lnk = DesktopShortcut.PathFor(outDir);
+            DesktopShortcut.Create(Environment.ProcessPath!, lnk);
+            bool ok = File.Exists(lnk) && new FileInfo(lnk).Length > 0;
+            DesktopShortcut.Remove(lnk);
+            return ok && !File.Exists(lnk) ? null : "shortcut not written";
+        });
+
+        Check("feedback link", () =>
+        {
+            string url = AppInfo.FeedbackUrl("word", "2.3.0", "Windows");
+            return url.Contains("template=wrong-conversion.yml") ? null : url;
         });
 
         Check("neural fallback loads and scores", () =>

@@ -1,0 +1,36 @@
+name: Noto‘g‘ri o‘girilgan so‘z
+description: So‘z noto‘g‘ri o‘girildi yoki o‘girilmasligi kerak edi
+labels: ["so‘z"]
+body:
+  - type: input
+    id: written
+    attributes:
+      label: Nima yozdingiz
+      placeholder: "masalan: bopti"
+    validations:
+      required: true
+  - type: input
+    id: got
+    attributes:
+      label: Dastur nima qildi
+      placeholder: "masalan: o‘zgarmadi"
+    validations:
+      required: true
+  - type: input
+    id: expected
+    attributes:
+      label: To‘g‘risi qanday
+      placeholder: "masalan: böpti"
+  - type: input
+    id: app
+    attributes:
+      label: Qaysi dasturda yozdingiz
+      placeholder: "Telegram, Word, Chrome…"
+  - type: input
+    id: version
+    attributes:
+      label: YangiAlifbo versiyasi
+  - type: input
+    id: os
+    attributes:
+      label: Tizim

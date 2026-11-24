@@ -22,6 +22,7 @@ gi.require_version("IBus", "1.0")
 from gi.repository import GLib, GObject, IBus  # noqa: E402
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import appinfo  # noqa: E402
 from wordbuffer import WordBuffer  # noqa: E402
 from yangialifbo_core import AGGRESSIVE, STRICT, Core  # noqa: E402
 
@@ -33,7 +34,11 @@ SHORTCUT = (IBus.ModifierType.CONTROL_MASK | IBus.ModifierType.MOD1_MASK |
             IBus.ModifierType.SUPER_MASK | IBus.ModifierType.MOD4_MASK)
 NO_CONVERT = (IBus.InputPurpose.PASSWORD, IBus.InputPurpose.PIN, IBus.InputPurpose.TERMINAL)
 
-DEFAULTS = {"enabled": True, "mode": "strict", "slang": True, "neural": True, "last_update_check": 0, "latest": ""}
+DEFAULTS = {"enabled": True, "mode": "strict", "slang": True, "neural": True, "last_update_check": 0, "latest": "",
+            "tour_done": False}
+TOUR = ("YangiAlifbo yoqildi. Odatdagidek yozing — so‘z tugashi bilan yangi alifboga o‘tadi. "
+        "Yuqoridagi “Ş” menyusida: konvertatsiyani yoqish/o‘chirish, rejim, ro‘yxatlar, qo‘llanma va fikr bildirish. "
+        "Kiritish usulini almashtirish: Super+Space.")
 
 
 def load_settings():
@@ -122,6 +127,14 @@ class YangiAlifboEngine(IBus.Engine):
 
     def do_focus_in(self):
         self.register_properties(self.props)
+        if not self.settings.get("tour_done"):
+            self.settings["tour_done"] = True
+            save_settings(self.settings)
+            try:  # first use: a short how-to as a desktop notification
+                subprocess.Popen(["notify-send", "-a", "YangiAlifbo", "YangiAlifbo", TOUR],
+                                 stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+            except OSError:
+                pass
 
     def do_focus_out(self):
         self._flush(False)
@@ -160,7 +173,15 @@ class YangiAlifboEngine(IBus.Engine):
         if s.get("latest") and newer(s["latest"], version):
             self.props.append(mk("update", IBus.PropType.NORMAL, f"⬆ {s['latest']} chiqdi — yangilash buyrug‘ini nusxalash",
                                  tip="Terminalda ishga tushiring: " + INSTALL_CMD))
-        self.props.append(mk("about", IBus.PropType.NORMAL, f"YangiAlifbo v{version}"))
+        feedback = IBus.PropList()
+        feedback.append(mk("feedback.word", IBus.PropType.NORMAL, "Noto‘g‘ri o‘girilgan so‘z…"))
+        feedback.append(mk("feedback.bug", IBus.PropType.NORMAL, "Xato haqida xabar…"))
+        feedback.append(mk("feedback.idea", IBus.PropType.NORMAL, "Taklif yoki g‘oya…"))
+        self.props.append(mk("guide", IBus.PropType.NORMAL, "Qo‘llanma: qanday ishlatish…"))
+        self.props.append(mk("feedback", IBus.PropType.MENU, "Fikr bildirish", sub=feedback))
+        self.props.append(mk("card", IBus.PropType.NORMAL, f"Qo‘llab-quvvatlash: {appinfo.DONATION_CARD} (nusxalash)",
+                             tip="Karta raqami buferga nusxalanadi"))
+        self.props.append(mk("about", IBus.PropType.NORMAL, f"YangiAlifbo v{version} — {appinfo.AUTHOR}"))
 
     def do_property_activate(self, name, state):
         s = self.settings
@@ -174,6 +195,15 @@ class YangiAlifboEngine(IBus.Engine):
             return
         elif name == "update":
             self._copy(INSTALL_CMD)
+            return
+        elif name == "guide":
+            appinfo.open_url(appinfo.GUIDE_URL)
+            return
+        elif name.startswith("feedback."):
+            appinfo.open_url(appinfo.feedback_url(name[9:], CORE.version if CORE else "?", appinfo.os_name()))
+            return
+        elif name == "card":
+            self._copy(appinfo.DONATION_CARD.replace(" ", ""))
             return
         else:
             return
@@ -214,6 +244,9 @@ class YangiAlifboEngine(IBus.Engine):
 
 
 def main():
+    if "--guide" in sys.argv:   # the desktop icon: opens the how-to page
+        appinfo.open_url(appinfo.GUIDE_URL)
+        return
     IBus.init()
     loop = GLib.MainLoop()
     bus = IBus.Bus()

@@ -42,7 +42,7 @@ jobs:
         run: |
           version=$(dotnet msbuild src/YangiAlifbo.Native -getProperty:Version)
           mkdir -p pkg/yangialifbo
-          cp out/native/libyangialifbo.so linux/engine/*.py linux/yangialifbo-engine LICENSE pkg/yangialifbo/
+          cp out/native/libyangialifbo.so linux/engine/*.py linux/yangialifbo-engine linux/share/yangialifbo.png LICENSE pkg/yangialifbo/
           echo "$version" > pkg/yangialifbo/VERSION
           name=yangialifbo-linux-${{ matrix.arch }}.tar.gz
           tar -czf "$name" -C pkg yangialifbo
@@ -68,6 +68,8 @@ jobs:
         run: |
           YANGIALIFBO_TARBALL=$PWD/yangialifbo-linux-${{ matrix.arch }}.tar.gz sh linux/install.sh
           cat /usr/share/ibus/component/yangialifbo.xml
+          grep -q "yangialifbo-engine --guide" ~/.local/share/applications/yangialifbo.desktop
+          test -f ~/.local/share/icons/hicolor/256x256/apps/yangialifbo.png
           ok=0
           dbus-run-session -- sh -c 'ibus-daemon -dr --panel disable && sleep 3 && python3 linux/tests/e2e_ibus.py' || ok=$?
           echo "--- engine log"; cat ~/.cache/yangialifbo-engine.log 2>/dev/null || echo "(none: the engine was never started)"
@@ -78,6 +80,8 @@ jobs:
           sh linux/install.sh --uninstall
           test ! -e ~/.local/share/yangialifbo
           test ! -e /usr/share/ibus/component/yangialifbo.xml
+          test ! -e ~/.local/share/applications/yangialifbo.desktop
+          test ! -e ~/.local/share/icons/hicolor/256x256/apps/yangialifbo.png
 
       - uses: actions/upload-artifact@v4
         with:

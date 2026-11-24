@@ -21,6 +21,7 @@ die() { printf 'Xato / Error: %s\n' "$*" >&2; exit 1; }
 if [ "${1:-}" = "--uninstall" ]; then
     pkill -x YangiAlifbo 2>/dev/null || true
     rm -rf "$APP" "$HOME/Library/Logs/YangiAlifbo.log"
+    [ -L "$HOME/Desktop/YangiAlifbo" ] && rm -f "$HOME/Desktop/YangiAlifbo"
     defaults delete uz.yangialifbo.app >/dev/null 2>&1 || true
     tccutil reset Accessibility uz.yangialifbo.app >/dev/null 2>&1 || true
     say "YangiAlifbo o‘chirildi. / YangiAlifbo removed."
@@ -48,6 +49,10 @@ rm -rf "$APP"
 mv "$tmp/x/YangiAlifbo.app" "$APP"
 xattr -dr com.apple.quarantine "$APP" 2>/dev/null || true
 VERSION=$(defaults read "$APP/Contents/Info" CFBundleShortVersionString)
+# Desktop icon: a link to the app (kept if the user already has something with that name)
+if [ -d "$HOME/Desktop" ] && { [ -L "$HOME/Desktop/YangiAlifbo" ] || [ ! -e "$HOME/Desktop/YangiAlifbo" ]; }; then
+    ln -sfn "$APP" "$HOME/Desktop/YangiAlifbo"
+fi
 
 say "YangiAlifbo v$VERSION o‘rnatildi: $APP"
 say ""
@@ -55,4 +60,5 @@ say "Birinchi ishga tushganda “Maxsus imkoniyatlar” (Accessibility) ruxsatin
 say "  Tizim sozlamalari → Maxfiylik va xavfsizlik → Maxsus imkoniyatlar → YangiAlifbo"
 say "First run: allow it in System Settings → Privacy & Security → Accessibility."
 say "Menyu satridagi “Ş” belgisi — sozlamalar. / The “Ş” in the menu bar has the settings."
+say "Ish stolida YangiAlifbo belgisi paydo bo‘ldi. / A YangiAlifbo icon is on your Desktop."
 [ -n "${YANGIALIFBO_NO_OPEN:-}" ] || open "$APP"

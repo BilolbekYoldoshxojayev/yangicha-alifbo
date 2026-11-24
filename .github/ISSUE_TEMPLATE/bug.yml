@@ -1,0 +1,26 @@
+name: Xato haqida xabar
+description: Dastur ishlamayapti, qotib qoldi yoki kutilmagan narsa qildi
+labels: ["xato"]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: Nima bo‘ldi
+      description: Qisqacha yozing. Skrinshot qo‘shsangiz yanada yaxshi.
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Qanday takrorlash mumkin
+      placeholder: |
+        1. ...
+        2. ...
+  - type: input
+    id: version
+    attributes:
+      label: YangiAlifbo versiyasi
+  - type: input
+    id: os
+    attributes:
+      label: Tizim

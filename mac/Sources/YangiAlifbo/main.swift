@@ -33,7 +33,14 @@ func selfTest() -> Int32 {
     }
     check("menu builds") {
         let d = AppDelegate(); d.engine = engine
-        return d.buildMenu().items.count > 8 ? nil : "menu too short"
+        let titles = d.buildMenu().items.map(\.title)
+        for want in ["Qo‘llanma: qanday ishlatish…", "Fikr bildirish", "Muallif va qo‘llab-quvvatlash…"] where !titles.contains(want) { return "missing \(want)" }
+        return titles.count > 8 ? nil : "menu too short"
+    }
+    check("feedback links") {
+        let u = AppInfo.feedbackURL("word", version: "2.3.0", os: "macOS 15.1 (Build 24B83)").absoluteString
+        guard u.hasPrefix(AppInfo.repo + "/issues/new?template=wrong-conversion.yml&") else { return u }
+        return u.contains("os=macOS%2015.1%20(Build%2024B83)") ? nil : u
     }
     check("update check reads the latest release") {
         let sem = DispatchSemaphore(value: 0)

@@ -35,8 +35,47 @@
     var nn = $('[data-bind="neuralNote"]');
     if (nn) nn.textContent = !s.neuralLoaded ? ' Model bu versiyada yo‘q.'
       : s.neuralAccepted ? ' Shu seansda ' + fmt(s.neuralAccepted) + ' ta so‘zni tanidi.' : '';
+    if (s.author) $('[data-bind="author"]').textContent = s.author;
+    if (s.card) $('[data-bind="card"]').textContent = s.card;
     if (s.update) renderUpdate(s.update, s.version);
+    if (s.tourPending && !tourOffered) { tourOffered = true; startTour(); }
   }
+
+  // ── First-run tour ───────────────────────────────────────────
+  var TOUR = [
+    { title: 'Xush kelibsiz!', text: 'YangiAlifbo fonda ishlaydi: istalgan dasturda odatdagidek yozasiz, so‘z tugashi bilan u yangi alifboga o‘tadi. Qisqa tanishuv — yarim daqiqa.' },
+    { sel: '.switch--big', title: 'Yoqish va o‘chirish', text: 'Shu tugma konvertatsiyani to‘xtatadi yoki yoqadi. Istalgan dasturda Ctrl+Shift+U ham xuddi shuni qiladi.' },
+    { sel: '[data-page="sinash"]', page: 'sinash', title: 'Sinab ko‘ring', text: 'Matn yozing — natija darhol chiqadi. “Nusxalash” bilan uni istalgan joyga qo‘yasiz.' },
+    { sel: '[data-page="sozlamalar"]', page: 'sozlamalar', title: 'Sozlamalar', text: 'Chat qisqartmalari, qat’iy yoki agressiv rejim, Windows bilan ishga tushirish, ish stolidagi belgi. O‘girilmasligi kerak bo‘lgan so‘zlarni qora ro‘yxatga yozing.' },
+    { sel: '[data-page="muallif"]', page: 'muallif', title: 'Fikr va yordam', text: 'Noto‘g‘ri o‘girilgan so‘z yoki xato topsangiz — shu yerdan xabar bering. Bu qo‘llanmani ham shu yerdan qayta ochasiz.' },
+    { sel: '[data-cmd="hide"]', title: 'Oynani yopsangiz ham ishlaydi', text: 'Dastur patnisda qoladi. Soat yonidagi “Ö” belgisini bosib, panelni qayta oching.' }
+  ];
+  var tourOffered = false, tourAt = 0;
+  var tour = $('[data-tour]'), spot = $('[data-tour-spot]');
+
+  function startTour() { tourAt = 0; tour.hidden = false; drawTour(); $('[data-tour-next]').focus(); }
+  function endTour() { tour.hidden = true; send({ type: 'tourDone' }); }
+  function drawTour() {
+    var s = TOUR[tourAt];
+    if (s.page) show(s.page);
+    $('[data-tour-step]').textContent = (tourAt + 1) + ' / ' + TOUR.length;
+    $('[data-tour-title]').textContent = s.title;
+    $('[data-tour-text]').textContent = s.text;
+    $('[data-tour-back]').hidden = tourAt === 0;
+    $('[data-tour-next]').textContent = tourAt === TOUR.length - 1 ? 'Tushunarli' : 'Keyingi';
+    var el = s.sel && $(s.sel);
+    if (el && !el.getClientRects().length) el = null;   // hidden in the narrow layout
+    tour.classList.toggle('is-center', !el);
+    if (!el) { spot.hidden = true; return; }
+    var r = el.getBoundingClientRect(), pad = 6;
+    spot.hidden = false;
+    spot.style.left = (r.left - pad) + 'px'; spot.style.top = (r.top - pad) + 'px';
+    spot.style.width = (r.width + pad * 2) + 'px'; spot.style.height = (r.height + pad * 2) + 'px';
+  }
+  $('[data-tour-next]').addEventListener('click', function () { if (tourAt < TOUR.length - 1) { tourAt++; drawTour(); } else endTour(); });
+  $('[data-tour-back]').addEventListener('click', function () { if (tourAt > 0) { tourAt--; drawTour(); } });
+  $('[data-tour-skip]').addEventListener('click', endTour);
+  window.addEventListener('resize', function () { if (!tour.hidden) drawTour(); });
 
   // ── Updates ──────────────────────────────────────────────────
   function renderUpdate(u, current) {
@@ -151,6 +190,15 @@
     toggleSlang: function () { send({ type: 'setSlang', value: !state.slang }); },
     toggleNeural: function () { if (state.neuralLoaded) send({ type: 'setNeural', value: !state.neural }); },
     toggleStartup: function () { send({ type: 'setStartup', value: !state.startup }); },
+    toggleShortcut: function () { send({ type: 'setDesktopShortcut', value: !state.desktopShortcut }); },
+    feedback: function (el) { send({ type: 'feedback', kind: el.dataset.kind }); },
+    tour: function () { startTour(); },
+    copyCard: function (el) {
+      send({ type: 'copy', text: (state.card || $('[data-bind="card"]').textContent).replace(/\s+/g, '') });
+      var label = el.querySelector('[data-card-label]');
+      el.classList.add('is-done'); label.textContent = 'Nusxalandi';
+      setTimeout(function () { el.classList.remove('is-done'); label.textContent = 'Karta raqamini nusxalash'; }, 1600);
+    },
     toggleAutoUpdate: function () { send({ type: 'setAutoUpdate', value: !(state.update && state.update.auto) }); },
     checkUpdate: function () { send({ type: 'checkUpdate' }); },
     open: function (el) { send({ type: 'open', target: el.dataset.target }); },
@@ -178,7 +226,9 @@
     if (mode) send({ type: 'setMode', value: mode.dataset.mode });
   });
   document.addEventListener('keydown', function (e) {
-    if (e.key === 'Escape') send({ type: 'hide' });
+    if (e.key !== 'Escape') return;
+    if (!tour.hidden) endTour();
+    else send({ type: 'hide' });
   });
 
   if (host) {

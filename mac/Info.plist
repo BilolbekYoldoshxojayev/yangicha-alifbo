@@ -5,6 +5,7 @@
   <key>CFBundleIdentifier</key><string>uz.yangialifbo.app</string>
   <key>CFBundleName</key><string>YangiAlifbo</string>
   <key>CFBundleDisplayName</key><string>YangiAlifbo</string>
+  <key>CFBundleIconFile</key><string>AppIcon</string>
   <key>CFBundleExecutable</key><string>YangiAlifbo</string>
   <key>CFBundlePackageType</key><string>APPL</string>
   <key>CFBundleShortVersionString</key><string>VERSION</string>

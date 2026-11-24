@@ -124,6 +124,7 @@ internal sealed class TrayApplicationContext : ApplicationContext, IControlCente
         contextMenu.Items.Add(new ToolStripSeparator());
         contextMenu.Items.Add(_startupItem);
         contextMenu.Items.Add(new ToolStripSeparator());
+        contextMenu.Items.Add("💛 Muallif, yordam va fikr-mulohaza...", null, (_, _) => OpenDashboard("muallif"));
         contextMenu.Items.Add($"ℹ️ Haqida (About) — v{UpdateController.CurrentVersion} | Lug'at: {_detector.UzbekLexiconCount:N0} so'z", null, OnAbout);
         contextMenu.Items.Add("❌ Chiqish (Exit)", null, OnExit);
 
@@ -188,6 +189,8 @@ internal sealed class TrayApplicationContext : ApplicationContext, IControlCente
             };
             shown.Start();
         }
+
+        EnsureDesktopShortcutOnce();
 
         // ── Install hooks and start ────────────────────────────────
         _focusTracker.Install();
@@ -415,7 +418,9 @@ internal sealed class TrayApplicationContext : ApplicationContext, IControlCente
             $"Ingliz filtri: {_detector.EnglishRejectCount:N0} so'z\n" +
             $"Bu sessiyada o'zgartirilgan: {_keyboardHook.WordsConverted:N0} so'z\n\n" +
             "Tezkor tugma: Ctrl+Shift+U\n\n" +
-            "sh → ş  |  ch → ç  |  o' → ö  |  g' → ğ",
+            "sh → ş  |  ch → ç  |  o' → ö  |  g' → ğ\n\n" +
+            $"Muallif: {AppInfo.Author}\n" +
+            $"Loyihani qo'llab-quvvatlash (karta): {AppInfo.DonationCard}",
             "YangiAlifbo haqida",
             MessageBoxButtons.OK,
             MessageBoxIcon.Information);
@@ -429,6 +434,42 @@ internal sealed class TrayApplicationContext : ApplicationContext, IControlCente
         // Clean shutdown
         _trayIcon.Visible = false;
         ExitThread();
+    }
+
+    // ── Desktop shortcut ───────────────────────────────────────────────
+
+    private static readonly string DesktopShortcutFlagPath = Path.Combine(
+        Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "YangiAlifbo", "desktop_shortcut_done");
+
+    /// <summary>Puts a desktop shortcut once; if the user deletes it later it stays deleted.</summary>
+    private static void EnsureDesktopShortcutOnce()
+    {
+        if (File.Exists(DesktopShortcutFlagPath)) return;
+        try
+        {
+            if (!DesktopShortcut.Exists()) DesktopShortcut.Create(Environment.ProcessPath!);
+            Directory.CreateDirectory(Path.GetDirectoryName(DesktopShortcutFlagPath)!);
+            File.WriteAllText(DesktopShortcutFlagPath, DateTime.UtcNow.ToString("o"));
+        }
+        catch (Exception ex)
+        {
+            AppLog.Write("Desktop shortcut: " + ex.Message);
+        }
+    }
+
+    public bool HasDesktopShortcut() => DesktopShortcut.Exists();
+
+    public void SetDesktopShortcut(bool enabled)
+    {
+        try
+        {
+            if (enabled) DesktopShortcut.Create(Environment.ProcessPath!);
+            else DesktopShortcut.Remove();
+        }
+        catch (Exception ex)
+        {
+            AppLog.Write("Desktop shortcut: " + ex.Message);
+        }
     }
 
     // ── Startup Registry Management ────────────────────────────────────

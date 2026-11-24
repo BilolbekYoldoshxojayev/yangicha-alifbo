@@ -37,6 +37,55 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             alert("YangiAlifbo yangilandi", String(note.prefix(1500)))
         }
         updateTimer = Timer.scheduledTimer(withTimeInterval: 15, repeats: false) { [weak self] _ in self?.checkUpdates(manual: false) }
+        if !settings.tourDone { DispatchQueue.main.async { [weak self] in self?.showTour() } }
+    }
+
+    // ── First-run tour, author and feedback ───────────────────────
+    static let tourSteps: [(String, String)] = [
+        ("Xush kelibsiz!", "YangiAlifbo fonda ishlaydi: istalgan dasturda odatdagidek yozasiz, so‘z tugashi bilan u yangi alifboga o‘tadi."),
+        ("Menyu satridagi “Ş” belgisi", "Barcha sozlamalar shu yerda. “Ş” — konvertatsiya yoqilgan, “ş” — to‘xtatilgan yoki ruxsat berilmagan."),
+        ("Yoqish va o‘chirish", "Menyudagi “Konvertatsiya” bandi yoki istalgan dasturda Control+Shift+U."),
+        ("Rejim va ro‘yxatlar", "Qat’iy rejim faqat lug‘at tasdiqlagan so‘zlarni o‘zgartiradi. O‘girilmasligi kerak bo‘lgan so‘zlarni qora ro‘yxatga yozing."),
+        ("Fikr va yordam", "Noto‘g‘ri o‘girilgan so‘z topsangiz — menyudagi “Fikr bildirish” orqali xabar bering. Bu qo‘llanma ham menyuda turadi.")
+    ]
+
+    @objc func showTour() {
+        let steps = Self.tourSteps
+        for (i, step) in steps.enumerated() {
+            let a = NSAlert()
+            a.messageText = "\(i + 1)/\(steps.count) · \(step.0)"
+            a.informativeText = step.1
+            a.addButton(withTitle: i == steps.count - 1 ? "Tushunarli" : "Keyingi")
+            a.addButton(withTitle: "O‘tkazib yuborish")
+            NSApp.activate(ignoringOtherApps: true)
+            if a.runModal() != .alertFirstButtonReturn { break }
+        }
+        settings.tourDone = true
+    }
+
+    @objc func showAbout() {
+        let a = NSAlert()
+        a.messageText = "YangiAlifbo v\(Updater.current)"
+        a.informativeText = """
+        Muallif: \(AppInfo.author)
+
+        Loyihani qo‘llab-quvvatlash (karta):
+        \(AppInfo.donationCard)
+
+        Dastur foydali bo‘lsa, istalgan summani shu kartaga o‘tkazishingiz mumkin. Rahmat!
+        """
+        a.addButton(withTitle: "Karta raqamini nusxalash")
+        a.addButton(withTitle: "Yopish")
+        NSApp.activate(ignoringOtherApps: true)
+        if a.runModal() == .alertFirstButtonReturn {
+            NSPasteboard.general.clearContents()
+            NSPasteboard.general.setString(AppInfo.donationCard.replacingOccurrences(of: " ", with: ""), forType: .string)
+        }
+    }
+
+    @objc func feedback(_ sender: NSMenuItem) {
+        let os = ProcessInfo.processInfo.operatingSystemVersionString
+        NSWorkspace.shared.open(AppInfo.feedbackURL(sender.representedObject as? String ?? "bug", version: Updater.current, os: "macOS " + os))
     }
 
     // ── Menu ─────────────────────────────────────────────────────
@@ -66,6 +115,18 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         if #available(macOS 13.0, *) { add("Kompyuter yoqilganda ishga tushirish", #selector(toggleLogin), on: SMAppService.mainApp.status == .enabled) }
         add("Avtomatik yangilash", #selector(toggleAutoUpdate), on: settings.autoUpdate)
         add(updateNote ?? "Yangilanishni tekshirish", #selector(checkNow))
+        m.addItem(.separator())
+        add("Qo‘llanma: qanday ishlatish…", #selector(showTour))
+        let fb = NSMenu()
+        for (kind, title) in [("word", "Noto‘g‘ri o‘girilgan so‘z…"), ("bug", "Xato haqida xabar…"), ("idea", "Taklif yoki g‘oya…")] {
+            let i = NSMenuItem(title: title, action: #selector(feedback(_:)), keyEquivalent: "")
+            i.target = self; i.representedObject = kind
+            fb.addItem(i)
+        }
+        let fbItem = NSMenuItem(title: "Fikr bildirish", action: nil, keyEquivalent: "")
+        fbItem.submenu = fb
+        m.addItem(fbItem)
+        add("Muallif va qo‘llab-quvvatlash…", #selector(showAbout))
         m.addItem(.separator())
         add("YangiAlifbo v\(Updater.current) — dvigatel \(engine?.version ?? "?")", nil)
         add("Chiqish", #selector(quit), key: "q")

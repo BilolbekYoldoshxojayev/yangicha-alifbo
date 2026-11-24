@@ -47,6 +47,13 @@ jobs:
           cp mac/.build/apple/Products/Release/YangiAlifbo $app/Contents/MacOS/
           cp libyangialifbo.dylib $app/Contents/Frameworks/
           sed "s/VERSION/$version/g" mac/Info.plist > $app/Contents/Info.plist
+          # App icon from the 1024 px master
+          mkdir -p AppIcon.iconset $app/Contents/Resources
+          for s in 16 32 128 256 512; do
+            sips -z $s $s mac/Resources/AppIcon-1024.png --out AppIcon.iconset/icon_${s}x${s}.png >/dev/null
+            d=$((s * 2)); sips -z $d $d mac/Resources/AppIcon-1024.png --out AppIcon.iconset/icon_${s}x${s}@2x.png >/dev/null
+          done
+          iconutil -c icns AppIcon.iconset -o $app/Contents/Resources/AppIcon.icns
           lipo -info $app/Contents/MacOS/YangiAlifbo
 
       - name: Sign with the project certificate
@@ -80,6 +87,8 @@ jobs:
       - name: Real typing test (TextEdit, keys from System Events)
         run: |
           # Started from the shell so it inherits the runner's Accessibility permission (a user grants it once).
+          # The first-run tour is a modal dialog that would take the typed keys, so mark it seen.
+          defaults write uz.yangialifbo.app tourDone -bool true
           YangiAlifbo.app/Contents/MacOS/YangiAlifbo &
           sleep 5
           pgrep -x YangiAlifbo
@@ -108,8 +117,11 @@ jobs:
           YANGIALIFBO_ZIP=$PWD/YangiAlifbo-mac.zip YANGIALIFBO_NO_OPEN=1 sh mac/install-mac.sh
           codesign --verify --strict ~/Applications/YangiAlifbo.app
           ~/Applications/YangiAlifbo.app/Contents/MacOS/YangiAlifbo --selftest
+          test -f ~/Applications/YangiAlifbo.app/Contents/Resources/AppIcon.icns
+          test -e ~/Desktop/YangiAlifbo
           sh mac/install-mac.sh --uninstall
           test ! -e ~/Applications/YangiAlifbo.app
+          test ! -e ~/Desktop/YangiAlifbo
 
       - uses: actions/upload-artifact@v4
         with:

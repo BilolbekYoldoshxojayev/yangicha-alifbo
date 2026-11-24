@@ -28,6 +28,9 @@
       <button class="nav__item" data-page="harflar" type="button">
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 19 10 5h1l5 14M7 14h7M18 9v10"/></svg>Harflar
       </button>
+      <button class="nav__item" data-page="muallif" type="button">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg>Muallif va fikr
+      </button>
     </nav>
     <div class="rail__foot">
       <button class="link" data-cmd="hide" type="button">Patnisga yashirish</button>
@@ -96,6 +99,10 @@
         <div class="row">
           <div><b>Windows bilan ishga tushirish</b><span>Kompyuter yoqilganda dastur patnisda o‘zi paydo bo‘ladi.</span></div>
           <button class="switch" role="switch" aria-checked="true" data-cmd="toggleStartup" data-bind-switch="startup" aria-label="Windows bilan ishga tushirish"><span class="switch__knob"></span></button>
+        </div>
+        <div class="row">
+          <div><b>Ish stolidagi belgi</b><span>Ish stolida YangiAlifbo yorlig‘i: bir bosishda boshqaruv paneli ochiladi.</span></div>
+          <button class="switch" role="switch" aria-checked="false" data-cmd="toggleShortcut" data-bind-switch="desktopShortcut" aria-label="Ish stolidagi belgi"><span class="switch__knob"></span></button>
         </div>
         <div class="row row--stack">
           <div><b>Rejim</b><span>Qat’iy rejim faqat lug‘at tasdiqlagan so‘zlarni o‘zgartiradi. Agressiv rejim inglizcha filtrdan o‘tgan har qanday so‘zni o‘zgartiradi.</span></div>
@@ -175,7 +182,51 @@
         <button class="btn" data-cmd="open" data-target="github" type="button">GitHub va xato haqida xabar</button>
       </div>
     </section>
+
+    <!-- Muallif va fikr -->
+    <section class="page" id="muallif" aria-labelledby="t-mua">
+      <h1 id="t-mua" class="h1">Muallif va fikr</h1>
+      <div class="about">
+        <div class="about__card">
+          <p class="about__k">Dastur muallifi</p>
+          <p class="about__name" data-bind="author">Bilolbek Yoldoshxojayev</p>
+          <p class="about__note">YangiAlifbo — bepul va ochiq kodli. Windows, macOS va Linux uchun.</p>
+        </div>
+        <div class="about__card about__card--gold">
+          <p class="about__k">Loyihani qo‘llab-quvvatlash</p>
+          <p class="about__card-no" data-bind="card">5614 6838 6100 6096</p>
+          <p class="about__note">Dastur foydali bo‘lsa, istalgan summani shu kartaga o‘tkazishingiz mumkin. Rahmat!</p>
+          <button class="chip chip--gold" data-cmd="copyCard" type="button"><span data-card-label>Karta raqamini nusxalash</span></button>
+        </div>
+      </div>
+      <h2 class="h2">Fikr-mulohaza</h2>
+      <p class="lede">GitHub’dagi tayyor shakl ochiladi — versiya va tizim o‘zi to‘ldiriladi. Dastur o‘zi hech narsa yubormaydi.</p>
+      <div class="btns">
+        <button class="btn" data-cmd="feedback" data-kind="word" type="button">Noto‘g‘ri o‘girilgan so‘z</button>
+        <button class="btn" data-cmd="feedback" data-kind="bug" type="button">Xato haqida xabar</button>
+        <button class="btn" data-cmd="feedback" data-kind="idea" type="button">Taklif yoki g‘oya</button>
+      </div>
+      <div class="btns">
+        <button class="btn btn--gold" data-cmd="tour" type="button">Qo‘llanmani qayta ko‘rish</button>
+      </div>
+    </section>
   </main>
+
+  <!-- First-run tour -->
+  <div class="tour" data-tour hidden>
+    <div class="tour__spot" data-tour-spot></div>
+    <div class="tour__card" role="dialog" aria-modal="true" aria-labelledby="tour-title">
+      <p class="tour__step" data-tour-step></p>
+      <h2 class="tour__title" id="tour-title" data-tour-title></h2>
+      <p class="tour__text" data-tour-text></p>
+      <div class="tour__bar">
+        <button class="link" data-tour-skip type="button">O‘tkazib yuborish</button>
+        <span class="tour__grow"></span>
+        <button class="btn" data-tour-back type="button">Orqaga</button>
+        <button class="btn btn--gold" data-tour-next type="button">Keyingi</button>
+      </div>
+    </div>
+  </div>
 
   <script src="app.js"></script>
 </body>

@@ -66,4 +66,22 @@ final class Settings {
     var neural: Bool { get { d.bool(forKey: "neural") } set { d.set(newValue, forKey: "neural") } }
     var autoUpdate: Bool { get { d.bool(forKey: "autoUpdate") } set { d.set(newValue, forKey: "autoUpdate") } }
     var whatsNew: String? { get { d.string(forKey: "whatsNew") } set { d.set(newValue, forKey: "whatsNew") } }
+    var tourDone: Bool { get { d.bool(forKey: "tourDone") } set { d.set(newValue, forKey: "tourDone") } }
+}
+
+/// Author, donation card and feedback links (same values as the Windows AppInfo).
+enum AppInfo {
+    static let author = "Bilolbek Yoldoshxojayev"
+    static let donationCard = "5614 6838 6100 6096"
+    static let repo = "https://github.com/BilolbekYoldoshxojayev/yangicha-alifbo"
+
+    /// New-issue form for "bug", "word" or "idea", with only the version and OS prefilled.
+    static func feedbackURL(_ kind: String, version: String, os: String) -> URL {
+        let template = ["bug": "bug.yml", "word": "wrong-conversion.yml", "idea": "idea.yml"][kind] ?? "bug.yml"
+        var c = URLComponents(string: repo + "/issues/new")!
+        c.queryItems = [URLQueryItem(name: "template", value: template),
+                        URLQueryItem(name: "version", value: version),
+                        URLQueryItem(name: "os", value: os)]
+        return c.url!
+    }
 }

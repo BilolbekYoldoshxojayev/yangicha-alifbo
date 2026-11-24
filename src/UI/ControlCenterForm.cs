@@ -37,6 +37,8 @@ public interface IControlCenterHost
     void SetNeural(bool enabled);
     bool GetIsStartupEnabled();
     void SetStartup(bool enabled);
+    bool HasDesktopShortcut();
+    void SetDesktopShortcut(bool enabled);
     void OpenWhitelist();
     void OpenBlacklist();
     void ExitApplication();
@@ -46,7 +48,9 @@ public interface IControlCenterHost
 public sealed class ControlCenterForm : Form, IStateView
 {
     private const string Origin = "https://yangialifbo.app/";
-    private const string RepoUrl = "https://github.com/BilolbekYoldoshxojayev/yangicha-alifbo";
+    private const string RepoUrl = AppInfo.RepoUrl;
+    private static readonly string TourFlagPath = Path.Combine(
+        Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "YangiAlifbo", "tour_done");
     private const string SiteUrl = "https://bilolbekyoldoshxojayev.github.io/yangicha-alifbo/";
 
     private static readonly Color Lapis = Color.FromArgb(19, 32, 92);
@@ -193,6 +197,24 @@ public sealed class ControlCenterForm : Form, IStateView
             case "setStartup":
                 _context.SetStartup(msg.GetProperty("value").GetBoolean());
                 break;
+            case "setDesktopShortcut":
+                _context.SetDesktopShortcut(msg.GetProperty("value").GetBoolean());
+                PostState();
+                break;
+            case "tourDone":
+                try
+                {
+                    Directory.CreateDirectory(Path.GetDirectoryName(TourFlagPath)!);
+                    File.WriteAllText(TourFlagPath, DateTime.UtcNow.ToString("o"));
+                }
+                catch (Exception ex) { AppLog.Write("Tour flag: " + ex.Message); }
+                break;
+            case "feedback":
+                var ver = Asm.GetName().Version;
+                Launch(AppInfo.FeedbackUrl(msg.GetProperty("kind").GetString() ?? "bug",
+                    ver == null ? "" : $"{ver.Major}.{ver.Minor}.{ver.Build}",
+                    RuntimeInformation.OSDescription));
+                break;
             case "setMode":
                 _context.SetMode(msg.GetProperty("value").GetString() == "Aggressive"
                     ? TransliterationMode.Aggressive : TransliterationMode.Strict);
@@ -281,6 +303,10 @@ public sealed class ControlCenterForm : Form, IStateView
             ["neuralLoaded"] = _detector.Neural != null,
             ["neuralAccepted"] = _detector.NeuralAccepted,
             ["startup"] = _context.GetIsStartupEnabled(),
+            ["desktopShortcut"] = _context.HasDesktopShortcut(),
+            ["tourPending"] = !File.Exists(TourFlagPath),
+            ["author"] = AppInfo.Author,
+            ["card"] = AppInfo.DonationCard,
             ["mode"] = _context.Mode.ToString(),
             ["words"] = _keyboardHook.WordsConverted,
             ["lexicon"] = _detector.UzbekLexiconCount,

@@ -13,6 +13,9 @@ REPO="BilolbekYoldoshxojayev/yangicha-alifbo"
 DEST="${XDG_DATA_HOME:-$HOME/.local/share}/yangialifbo"
 COMPONENT_DIR="${YANGIALIFBO_COMPONENT_DIR:-/usr/share/ibus/component}"
 COMPONENT="$COMPONENT_DIR/yangialifbo.xml"
+APPS="${XDG_DATA_HOME:-$HOME/.local/share}/applications"
+ICON="${XDG_DATA_HOME:-$HOME/.local/share}/icons/hicolor/256x256/apps/yangialifbo.png"
+DESKTOP_DIR=$(xdg-user-dir DESKTOP 2>/dev/null || echo "$HOME/Desktop")
 
 say() { printf '%s\n' "$*"; }
 die() { printf 'Xato / Error: %s\n' "$*" >&2; exit 1; }
@@ -33,6 +36,7 @@ restart_ibus() {
 
 if [ "${1:-}" = "--uninstall" ]; then
     rm -rf "$DEST"
+    rm -f "$APPS/yangialifbo.desktop" "$ICON" "$DESKTOP_DIR/yangialifbo.desktop"
     [ -e "$COMPONENT" ] && as_root rm -f "$COMPONENT"
     restart_ibus
     say "YangiAlifbo o‘chirildi. / YangiAlifbo removed."
@@ -93,7 +97,7 @@ cat > "$tmp/yangialifbo.xml" <<EOF
   <description>YangiAlifbo — yangi o‘zbek alifbosi</description>
   <exec>$DEST/yangialifbo-engine --ibus</exec>
   <version>$VERSION</version>
-  <author>YangiAlifbo</author>
+  <author>Bilolbek Yoldoshxojayev</author>
   <license>MIT</license>
   <homepage>https://bilolbekyoldoshxojayev.github.io/yangicha-alifbo/</homepage>
   <textdomain>yangialifbo</textdomain>
@@ -102,7 +106,8 @@ cat > "$tmp/yangialifbo.xml" <<EOF
       <name>yangialifbo</name>
       <language>uz</language>
       <license>MIT</license>
-      <author>YangiAlifbo</author>
+      <author>Bilolbek Yoldoshxojayev</author>
+      <icon>$DEST/yangialifbo.png</icon>
       <layout>default</layout>
       <longname>YangiAlifbo</longname>
       <description>Odatdagidek yozing: so‘zlar yangi alifboga o‘giriladi (sh → ş, ch → ç, o‘ → ö, g‘ → ğ).</description>
@@ -118,6 +123,24 @@ if ! cmp -s "$tmp/yangialifbo.xml" "$COMPONENT" 2>/dev/null; then
     as_root install -m 644 "$tmp/yangialifbo.xml" "$COMPONENT"
 fi
 restart_ibus
+
+# ── App menu entry and desktop icon (open the how-to guide) ─────────
+mkdir -p "$APPS" "$(dirname "$ICON")"
+cp "$DEST/yangialifbo.png" "$ICON"
+cat > "$APPS/yangialifbo.desktop" <<EOF
+[Desktop Entry]
+Type=Application
+Name=YangiAlifbo
+Comment=Yangi o‘zbek alifbosi: qanday yoqish va ishlatish
+Exec=$DEST/yangialifbo-engine --guide
+Icon=yangialifbo
+Terminal=false
+Categories=Utility;
+EOF
+if [ -d "$DESKTOP_DIR" ]; then
+    install -m 755 "$APPS/yangialifbo.desktop" "$DESKTOP_DIR/yangialifbo.desktop"
+    gio set "$DESKTOP_DIR/yangialifbo.desktop" metadata::trusted true >/dev/null 2>&1 || true
+fi
 
 say ""
 say "YangiAlifbo v$VERSION o‘rnatildi. / installed."
