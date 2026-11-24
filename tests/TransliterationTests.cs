@@ -347,11 +347,11 @@ public class TransliterationTests
     [TestMethod]
     public void Convert_ApostropheVariantInBoundaryWord_PreservedCleanly()
     {
-        // All apostrophe variants in tutuq-break words normalize to standard apostrophe
-        Assert.AreEqual("Is'hoq", UzbekPhonetics.Convert("Isʻhoq"));
-        Assert.AreEqual("mus'haf", UzbekPhonetics.Convert("mus’haf"));
-        Assert.AreEqual("as'hob", UzbekPhonetics.Convert("asʻhob"));
-        Assert.AreEqual("mas'ul", UzbekPhonetics.Convert("masʻul"));
+        // Tutuq-break words keep the apostrophe variant the user typed
+        Assert.AreEqual("Isʻhoq", UzbekPhonetics.Convert("Isʻhoq"));
+        Assert.AreEqual("mus’haf", UzbekPhonetics.Convert("mus’haf"));
+        Assert.AreEqual("asʻhob", UzbekPhonetics.Convert("asʻhob"));
+        Assert.AreEqual("masʻul", UzbekPhonetics.Convert("masʻul"));
     }
 
     [TestMethod]
@@ -384,10 +384,10 @@ public class TransliterationTests
     [TestMethod]
     public void Convert_DoubleApostrophe_MixedVariants()
     {
-        // Mixed apostrophe variants: moʻ'jiza or moʻʼjiza -> mö'jiza
+        // Mixed apostrophe variants: moʻ'jiza -> mö'jiza, moʻʼjiza -> möʼjiza (tutuq kept as typed)
         Assert.AreEqual("mö'jiza", UzbekPhonetics.Convert("moʻ'jiza"));
-        Assert.AreEqual("mö'jiza", UzbekPhonetics.Convert("moʻʼjiza"));
-        Assert.AreEqual("şö'la", UzbekPhonetics.Convert("shoʻʼla"));
+        Assert.AreEqual("möʼjiza", UzbekPhonetics.Convert("moʻʼjiza"));
+        Assert.AreEqual("şöʼla", UzbekPhonetics.Convert("shoʻʼla"));
     }
 
     // ══════════════════════════════════════════════════════════════════

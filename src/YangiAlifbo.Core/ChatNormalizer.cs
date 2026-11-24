@@ -23,6 +23,24 @@ public static class ChatNormalizer
 {
     // ── Static O(1) Suffix Lookup Sets for Ultra-Fast Stem Expansion ────
 
+    /// <summary>Whole chat words seen often in the Telegram corpus (chat_corpus_extracted.txt).</summary>
+    private static readonly Dictionary<string, string> ExactSlang = new(StringComparer.Ordinal)
+    {
+        ["kere"] = "kerak", ["kerek"] = "kerak", ["keremi"] = "kerakmi", ["keyn"] = "keyin", ["kegin"] = "keyin",
+        ["buldi"] = "bo'ldi", ["bulsa"] = "bo'lsa", ["busa"] = "bo'lsa", ["buladimi"] = "bo'ladimi",
+        ["bogan"] = "bo'lgan", ["bomidi"] = "bo'lmaydi",
+        ["uzi"] = "o'zi", ["uzim"] = "o'zim", ["zur"] = "zo'r", ["tugri"] = "to'g'ri", ["kup"] = "ko'p",
+        ["kumir"] = "ko'mir", ["kotta"] = "katta",
+        ["royxatdan"] = "ro'yxatdan", ["ruyxatdan"] = "ro'yxatdan", ["ruyhatdan"] = "ro'yxatdan", ["oquv"] = "o'quv",
+        ["talim"] = "ta'lim", ["malumot"] = "ma'lumot", ["etibor"] = "e'tibor", ["yani"] = "ya'ni",
+        ["bazi"] = "ba'zi", ["maqul"] = "ma'qul",
+        ["xozir"] = "hozir", ["hozi"] = "hozir", ["xamma"] = "hamma", ["hursand"] = "xursand",
+        ["hohlasa"] = "xohlasa", ["xoxlasa"] = "xohlasa", ["habar"] = "xabar", ["huddi"] = "xuddi",
+        ["hullas"] = "xullas", ["suxbat"] = "suhbat",
+        ["nme"] = "nima", ["qande"] = "qanday", ["lkn"] = "lekin", ["szga"] = "sizga",
+        ["qalesan"] = "qalaysan", ["qalesiz"] = "qalaysiz", ["sog"] = "sog'", ["mablag"] = "mablag'", ["qib"] = "qilib",
+    };
+
     private static readonly HashSet<string> BolSuffixes = new(StringComparer.OrdinalIgnoreCase)
     {
         "", "adi", "di", "sa", "ib", "gan", "gani", "ishi", "averadi", "sin", "maydi",
@@ -40,7 +58,7 @@ public static class ChatNormalizer
 
     private static readonly HashSet<string> OzSuffixes = new(StringComparer.OrdinalIgnoreCase)
     {
-        "", "i", "im", "ing", "imiz", "iz", "lari", "bekcha", "bek", "gina", "roq",
+        "", "i", "im", "ing", "imiz", "iz", "lari", "bekcha", "bek", "roq",   // not "gina": ozgina (a little)
         "ini", "icha", "iga", "ida", "idan", "imizga", "imizda", "imizni", "ingiz"
     };
 
@@ -66,7 +84,7 @@ public static class ChatNormalizer
 
     private static readonly HashSet<string> OrtSuffixes = new(StringComparer.OrdinalIgnoreCase)
     {
-        "a", "oq", "iq", "iqcha", "ada", "asida", "iqroq", "ada", "asiga", "og'i", "og'im"
+        "a", "oq", "ada", "asida", "asiga", "og'i", "og'im"   // not "iq": ortiq, ortiqcha are standard
     };
 
     private static readonly HashSet<string> OchirSuffixes = new(StringComparer.OrdinalIgnoreCase)
@@ -86,7 +104,7 @@ public static class ChatNormalizer
 
     private static readonly HashSet<string> QoshSuffixes = new(StringComparer.OrdinalIgnoreCase)
     {
-        "", "imcha", "ish", "ildi", "ilgan", "moq", "ilsin", "amiz", "amz", "adi", "di", "dim", "dm"
+        "imcha", "ish", "ildi", "ilgan", "moq", "ilsin", "amiz", "amz", "adi", "di", "dim", "dm"   // not "": qosh (eyebrow)
     };
 
     private static readonly HashSet<string> OrinSuffixes = new(StringComparer.OrdinalIgnoreCase)
@@ -199,7 +217,8 @@ public static class ChatNormalizer
         else if (norm == "necu") norm = "nechun";
 
         // ── 3. Dialectal & spoken stems ─────────────────────────────
-        if (norm.StartsWith("osha"))
+        // osha -> o'sha, but not oshamoq / oshatmoq (standard verbs)
+        if (norm.StartsWith("osha") && !norm.StartsWith("osham") && !norm.StartsWith("oshat"))
         {
             norm = "o'sha" + norm[4..];
         }
@@ -258,6 +277,10 @@ public static class ChatNormalizer
         else if (norm == "qanaqangisi")
         {
             norm = "qanaqangisi";
+        }
+        else if (ExactSlang.TryGetValue(norm, out string? exact))
+        {
+            norm = exact;
         }
         else if (norm.StartsWith("aytvor"))
         {
@@ -324,7 +347,8 @@ public static class ChatNormalizer
         {
             return "to'g'ri" + norm[5..];
         }
-        if (norm == "zor" || norm.StartsWith("zor"))
+        // zor -> zo'r, but not zor-intizor / zor-mushtoq (zor = longing)
+        if (norm.StartsWith("zor") && !norm.StartsWith("zor-"))
         {
             return "zo'r" + norm[3..];
         }
@@ -402,7 +426,8 @@ public static class ChatNormalizer
         {
             return "o'rgat" + norm[5..];
         }
-        if (norm.StartsWith("organ"))
+        // Not organik, organizm, organizatsiya, organlar (organ = body part)
+        if (norm.StartsWith("organ") && !norm.StartsWith("organik") && !norm.StartsWith("organiz") && !norm.StartsWith("organl"))
         {
             return "o'rgan" + norm[5..];
         }

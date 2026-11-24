@@ -304,8 +304,8 @@ public sealed class KeyboardHook : IDisposable
         // ── Check if it's an apostrophe-like character ────────────
         if (ApostropheChars.Contains(ch))
         {
-            // Apostrophes are part of Uzbek words (o', g', Is'hoq)
-            _wordBuffer.Append('\'');
+            // Apostrophes are part of Uzbek words (o', g', Is'hoq); kept as typed (ʼ ’ ‘)
+            _wordBuffer.Append(ch);
             return NativeMethods.CallNextHookEx(_hookId, nCode, wParam, lParam);
         }
 
@@ -340,7 +340,9 @@ public sealed class KeyboardHook : IDisposable
         if (vk == NativeMethods.VK_SPACE || vk == NativeMethods.VK_RETURN || vk == NativeMethods.VK_TAB)
             return true;
 
-        return Delimiters.Contains(ch);
+        // Any other printable mark (« » “ ” „ … $) also ends the word, as on Linux and macOS.
+        return Delimiters.Contains(ch) ||
+               (!char.IsLetterOrDigit(ch) && !char.IsControl(ch) && !ApostropheChars.Contains(ch));
     }
 
     /// <summary>

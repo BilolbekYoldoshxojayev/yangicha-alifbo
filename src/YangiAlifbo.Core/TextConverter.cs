@@ -12,8 +12,9 @@ namespace YangiAlifbo.Core;
 
 public static class TextConverter
 {
-    // Same delimiters as KeyboardHook, except '-' which joins 5-chi, o'z-o'zidan.
-    private static readonly Regex Tokens = new(@"(\s+|[.,!?:;""\(\)\[\]\{\}\/\\])", RegexOptions.Compiled);
+    // Word = letters, digits, apostrophe variants and '-' (5-chi, o'z-o'zidan); anything
+    // else ends it, as in KeyboardHook and the Linux/macOS word buffer.
+    private static readonly Regex Tokens = new(@"([^\p{L}\p{M}\p{N}\-'‘’ʻʼ`´‛′]+)", RegexOptions.Compiled);
 
     /// <summary>Converts <paramref name="input"/> and reports how many words changed.</summary>
     public static string Convert(string input, LanguageDetector detector, TransliterationMode mode, bool slang, out int changed)

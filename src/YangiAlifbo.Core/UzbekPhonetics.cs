@@ -149,7 +149,7 @@ public sealed class UzbekPhonetics
             // Skip protected positions (apostrophe-boundary sequences)
             if (protectedPositions.Contains(idx))
             {
-                result.Add(chars[idx].Char);
+                result.Add(word[idx]);   // as typed: keeps the user's tutuq (ʼ ’ ‘)
                 idx++;
                 continue;
             }
@@ -200,7 +200,7 @@ public sealed class UzbekPhonetics
             }
 
             // No pattern matched — pass character through
-            result.Add(chars[idx].Char);
+            result.Add(word[idx]);
             idx++;
         }
 

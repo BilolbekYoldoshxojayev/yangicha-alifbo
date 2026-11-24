@@ -328,6 +328,10 @@ public sealed class LanguageDetector : ILanguageDetector, IDisposable
             if (part2 == "chi") // e.g. kel-chi, ayt-chi
                 return IsRejectWord(part1);
 
+            // A known Uzbek compound wins over an English-looking half (gap-so'z, osh-non).
+            if (!IsRejectWord(normalized) && InLexicon(normalized))
+                return false;
+
             if (IsRejectWord(part1) || IsRejectWord(part2))
                 return true;
         }

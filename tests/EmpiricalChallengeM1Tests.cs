@@ -210,11 +210,11 @@ public class EmpiricalChallengeM1Tests
         {
             string input = $"Is{v}hoq";
             string converted = UzbekPhonetics.Convert(input);
-            Assert.AreEqual("Is'hoq", converted, $"Variant U+{(int)v:X4} failed boundary preservation in Is{v}hoq!");
+            Assert.AreEqual(input, converted, $"Variant U+{(int)v:X4} failed boundary preservation in Is{v}hoq!");
 
             string mushaf = $"mus{v}haf";
             string convertedMushaf = UzbekPhonetics.Convert(mushaf);
-            Assert.AreEqual("mus'haf", convertedMushaf, $"Variant U+{(int)v:X4} failed boundary preservation in mus{v}haf!");
+            Assert.AreEqual(mushaf, convertedMushaf, $"Variant U+{(int)v:X4} failed boundary preservation in mus{v}haf!");
         }
     }
 
@@ -441,7 +441,7 @@ public class EmpiricalChallengeM1Tests
         string[] singles = ["a", "b", "c", "s", "h", "o", "g", "'", "`", "1", " ", "\n"];
         foreach (string s in singles)
         {
-            string expected = s == "`" ? "'" : s;
+            string expected = s;   // a lone tutuq is kept as typed
             Assert.AreEqual(expected, UzbekPhonetics.Convert(s));
         }
     }

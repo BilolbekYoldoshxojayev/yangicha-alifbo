@@ -24,9 +24,16 @@ public static class WordConverter
         string norm = UzbekPhonetics.NormalizeApostrophes(word);
         int start = 0, end = norm.Length;
         while (start < end && norm[start] == '\'') start++;
-        // A trailing ' after o/g is the tutuq of the word itself (tog', bog'), unless a leading quote pairs with it.
-        while (end > start && norm[end - 1] == '\'' &&
-               (start > 0 || end - 2 < start || "ogOG".IndexOf(norm[end - 2]) < 0)) end--;
+        if (start > 0)
+        {
+            // Each opening quote closes once; any ' left after o/g is the tutuq ('tog'' -> 'toğ').
+            for (int open = start; open > 0 && end > start && norm[end - 1] == '\''; open--) end--;
+        }
+        else
+        {
+            // A trailing ' after o/g is the tutuq of the word itself (tog', bog').
+            while (end > 0 && norm[end - 1] == '\'' && (end < 2 || "ogOG".IndexOf(norm[end - 2]) < 0)) end--;
+        }
         if (start > 0 || end < norm.Length)
         {
             if (end - start < 2) return null;

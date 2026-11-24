@@ -161,9 +161,9 @@ public class AdversarialPhoneticTests
     public void ExtremeApostrophes_MixedVariantsInExtremeSequences()
     {
         // Mixed apostrophe variants in multi-quote sequence
-        Assert.AreEqual("ö'''rtoq", UzbekPhonetics.Convert("oʻʼʻʼrtoq"));
-        Assert.AreEqual("mö'''jiza", UzbekPhonetics.Convert("mo‘’’`jiza"));
-        Assert.AreEqual("ğ''alaba", UzbekPhonetics.Convert("g´‛′alaba"));
+        Assert.AreEqual("öʼʻʼrtoq", UzbekPhonetics.Convert("oʻʼʻʼrtoq"));   // extra tutuqs kept as typed
+        Assert.AreEqual("mö’’`jiza", UzbekPhonetics.Convert("mo‘’’`jiza"));
+        Assert.AreEqual("ğ‛′alaba", UzbekPhonetics.Convert("g´‛′alaba"));
     }
 
     // ══════════════════════════════════════════════════════════════════
@@ -241,10 +241,10 @@ public class AdversarialPhoneticTests
             string ashob = $"as{v}hoblar";
             string masul = $"mas{v}uliyatli";
 
-            Assert.AreEqual("Is'hoq", UzbekPhonetics.Convert(ishoq), $"Failed for Ishoq with variant {v}");
-            Assert.AreEqual("mus'haf", UzbekPhonetics.Convert(mushaf), $"Failed for mushaf with variant {v}");
-            Assert.AreEqual("as'hoblar", UzbekPhonetics.Convert(ashob), $"Failed for ashoblar with variant {v}");
-            Assert.AreEqual("mas'uliyatli", UzbekPhonetics.Convert(masul), $"Failed for masuliyatli with variant {v}");
+            Assert.AreEqual($"Is{v}hoq", UzbekPhonetics.Convert(ishoq), $"Failed for Ishoq with variant {v}");
+            Assert.AreEqual($"mus{v}haf", UzbekPhonetics.Convert(mushaf), $"Failed for mushaf with variant {v}");
+            Assert.AreEqual($"as{v}hoblar", UzbekPhonetics.Convert(ashob), $"Failed for ashoblar with variant {v}");
+            Assert.AreEqual($"mas{v}uliyatli", UzbekPhonetics.Convert(masul), $"Failed for masuliyatli with variant {v}");
 
             Assert.IsFalse(UzbekPhonetics.HasConvertiblePatterns(ishoq));
             Assert.IsFalse(UzbekPhonetics.HasConvertiblePatterns(mushaf));
@@ -308,8 +308,8 @@ public class AdversarialPhoneticTests
     public void NonLatin_Cyrillic_WithTutuqVariants_NormalizedCleanly()
     {
         // Cyrillic with tutuq turned comma or acute
-        Assert.AreEqual("Мў'жиза", UzbekPhonetics.Convert("Мўʻжиза"));
-        Assert.AreEqual("сан'ат", UzbekPhonetics.Convert("санʼат"));
+        Assert.AreEqual("Мўʻжиза", UzbekPhonetics.Convert("Мўʻжиза"));
+        Assert.AreEqual("санʼат", UzbekPhonetics.Convert("санʼат"));
     }
 
     [TestMethod]
