@@ -47,6 +47,18 @@ So‘ng: **Sozlamalar → Klaviatura → Kiritish manbalari → + → O‘zbek �
 
 Linux’da Windows’dagidek ishlamaydi, chunki Wayland (va Linux xavfsizlik modeli) bir dasturga boshqa dasturlardagi tugmalarni kuzatish va o‘rniga tugma bosishga ruxsat bermaydi — bu aynan keylogger qiladigan ish. Shuning uchun YangiAlifbo IBus kiritish usuli sifatida ishlaydi: yozilayotgan so‘z tagiga chiziladi, probel yoki tinish belgisi bosilganda yangi alifboda qo‘yiladi. Dvigatel (lug‘at, morfologiya, neyron model) Windows’dagi bilan bir xil: 1 230 222 ta so‘zda natijalar baytma-bayt mos keladi. Parol maydonlari va terminallarda konvertatsiya o‘chadi. Talab: IBus va Python GObject (`python3-gi`); o‘rnatuvchi yo‘qlarini aytadi.
 
+### Android
+
+1. [Relizlar](https://github.com/BilolbekYoldoshxojayev/yangicha-alifbo/releases/latest) sahifasidan `yangialifbo-android.apk` ni yuklab oling va o‘rnating (Android 8.0+). Brauzer yoki fayllar ilovasiga «noma’lum manbalardan o‘rnatish» ruxsatini bering.
+2. YangiAlifbo ilovasini oching va ikki usuldan birini tanlang:
+   - **A. Istalgan klaviatura bilan (Samsung, Gboard…).** Bosh ekrandagi «Yoqish» tugmasini bosing va ro‘yxatdan YangiAlifbo’ni yoqing (ilova qadamlarni o‘zi ko‘rsatadi). Klaviaturani almashtirish shart emas: odatdagidek yozasiz, probel yoki tinish belgisidan keyin so‘z yangi alifboga almashtiriladi. Android sideload qilingan ilova uchun maxsus imkoniyatni o‘chirib qo‘ygan bo‘lsa: Sozlamalar → Ilovalar → YangiAlifbo → ⋮ → «Cheklangan sozlamalarga ruxsat berish».
+   - **B. YangiAlifbo klaviaturasi.** **1. Klaviaturani yoqish**, so‘ng **2. Klaviaturani tanlash**. So‘z yozilayotganda tagiga chizilgan holda turadi; o‘tkazishdan keyin darhol **⌫** bossangiz, so‘z yozilganidek qaytadi.
+3. Odatdagidek eski imloda yozing: so‘z probel, tinish belgisi (B usulida Enter ham) bilan tugagach, u yangi alifboga o‘tadi (`shahar` → `şahar`).
+
+Android’da boshqa ilovalardagi tugmalarni to‘g‘ridan-to‘g‘ri kuzatish mumkin emas. A usuli Maxsus imkoniyatlar xizmati orqali ishlaydi: u matn maydonidagi o‘zgarishni ko‘radi va tugagan so‘zni almashtiradi. Faqat oddiy matn maydonlari o‘zgaradi (parol, e-pochta, URL va raqam maydonlari emas); matn saqlanmaydi va yuborilmaydi. Cheklov: bu usulda so‘zni almashtirish klaviatura so‘zni kiritib bo‘lgandan keyin bo‘ladi, shuning uchun ba’zi ilovalarda matn bir lahza o‘zgarib ko‘rinishi yoki kursor sakrashi mumkin, va ⌫ bilan qaytarish ishlamaydi (so‘zni qora ro‘yxatga qo‘shing). B usuli bunday emas, lekin klaviaturani almashtirishni talab qiladi. Dvigatel — C# dvigatelning Kotlin’dagi nusxasi (`android/engine`); CI har safar u Windows’dagi bilan 1 230 222 so‘zda baytma-bayt bir xil natija berishini tekshiradi. Ilovada internet ruxsati yo‘q. Sozlamalar: yoqish/o‘chirish, chat yozuvi, neyron model, qat’iy/agressiv rejim, oq va qora ro‘yxat. B usulida `s`, `c`, `o`, `g` va `'` tugmalarini uzoq bosib, `ş ç ö ğ ʼ` ni to‘g‘ridan-to‘g‘ri yozish mumkin.
+
+APK’ni o‘zingiz yig‘ish: `cd android && ./gradlew :app:assembleRelease` (JDK 17+, Android SDK 37). GitHub’da reliz avtomatik: `git tag android-v1.0.0 && git push origin android-v1.0.0` (tag `appVersion` bilan bir xil bo‘lishi kerak) — Actions APK’ni yig‘adi va `yangialifbo-android.apk` bilan relizni o‘zi yaratadi. Reliz imzolanishi uchun `ANDROID_KEYSTORE_BASE64`, `ANDROID_KEYSTORE_PASSWORD`, `ANDROID_KEY_ALIAS`, `ANDROID_KEY_PASSWORD` secret’larini qo‘shing, aks holda APK vaqtinchalik debug kalit bilan imzolanadi va keyingi relizni ustiga o‘rnatib bo‘lmaydi.
+
 ## Foydalanish
 
 - **`Ctrl + Shift + U`** — konvertorni yoqish / o‘chirish.

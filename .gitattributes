@@ -4,3 +4,4 @@ src/YangiAlifbo.Core/Dictionaries/*.txt -text
 *.sh text eol=lf
 linux/yangialifbo-engine text eol=lf
 *.py text eol=lf
+android/gradlew text eol=lf

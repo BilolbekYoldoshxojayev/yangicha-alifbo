@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">YangiAlifbo</string>
+    <string name="ime_name">YangiAlifbo klaviaturasi</string>
+    <string name="subtype_label">Oʻzbek (eski imlo → yangi alifbo)</string>
+    <string name="a11y_label">YangiAlifbo</string>
+    <string name="a11y_description">Yozayotgan so‘zingiz tugagach (probel, nuqta), uni eski lotin imlosidan yangi alifboga almashtiradi: sh→ş, ch→ç, oʻ→ö, gʻ→ğ. Faqat oddiy matn maydonlari o‘zgaradi; parol, e-pochta va havola maydonlari o‘zgarmaydi. Matn saqlanmaydi va hech qayerga yuborilmaydi: ilovada internet ruxsati yo‘q.</string>
+
+    <!-- Home -->
+    <string name="state_off_title">Yoqilmagan</string>
+    <string name="state_off_text">Samsung yoki Google klaviaturasi bilan ishlaydi. Klaviaturani almashtirish shart emas.</string>
+    <string name="state_on_title">Ishlayapti</string>
+    <string name="state_on_text">Istalgan ilovada yozing: so‘z probeldan keyin yangi alifboga o‘tadi.</string>
+    <string name="state_paused_title">To‘xtatilgan</string>
+    <string name="state_paused_text">Avtomatik o‘tkazish o‘chiq. Yoqish uchun tugmani bosing.</string>
+    <string name="action_enable">Yoqish</string>
+    <string name="toggle_convert">Avtomatik o‘tkazish</string>
+
+    <string name="steps_title">Qanday yoqiladi</string>
+    <string name="step_1">«Yoqish» tugmasini bosing</string>
+    <string name="step_2">Ro‘yxatdan YangiAlifbo’ni tanlab, yoqing</string>
+    <string name="step_3">Ruxsat so‘ralsa, «Ha» deng</string>
+    <string name="help_link">Yoqilmayaptimi?</string>
+    <string name="help_title">Yoqilmayaptimi?</string>
+    <string name="help_text">Android noma’lum manbadan o‘rnatilgan ilovada maxsus imkoniyatni bloklashi mumkin.\n\nIlova sozlamalarini oching, o‘ng yuqoridagi ⋮ tugmasini bosing va «Cheklangan sozlamalarga ruxsat berish» ni tanlang. Keyin «Yoqish» ni qayta bosing.</string>
+    <string name="help_open">Ilova sozlamalari</string>
+    <string name="close">Yopish</string>
+
+    <string name="try_title">Sinab ko‘ring</string>
+    <string name="try_hint">Shu yerga yozing, masalan: shahar</string>
+    <string name="try_tip">Yoki bosing:</string>
+
+    <!-- Settings -->
+    <string name="settings_title">Sozlamalar</string>
+    <string name="back">Orqaga</string>
+
+    <string name="group_convert">O‘tkazish</string>
+    <string name="setting_slang">Chat yozuvi</string>
+    <string name="setting_slang_hint">bilmadm → bilmadim</string>
+    <string name="setting_neural">Neyron model</string>
+    <string name="setting_neural_hint">Lug‘atda yo‘q so‘zlarni ham taniydi</string>
+    <string name="mode_title">Qat’iylik</string>
+    <string name="mode_strict">Qat’iy</string>
+    <string name="mode_aggressive">Agressiv</string>
+    <string name="mode_strict_hint">Faqat lug‘atda tasdiqlangan so‘zlar o‘zgaradi.</string>
+    <string name="mode_aggressive_hint">Filtrdan o‘tgan har qanday so‘z o‘zgaradi.</string>
+
+    <string name="group_lists">Ro‘yxatlar</string>
+    <string name="whitelist_title">Doim o‘zgaradigan so‘zlar</string>
+    <string name="blacklist_title">Hech qachon o‘zgarmaydigan so‘zlar</string>
+    <string name="list_hint">Har qatorda bitta so‘z</string>
+    <string name="list_count">%1$d ta so‘z</string>
+    <string name="list_empty">Bo‘sh</string>
+    <string name="save">Saqlash</string>
+    <string name="cancel">Bekor qilish</string>
+
+    <string name="group_keyboard">YangiAlifbo klaviaturasi</string>
+    <string name="group_keyboard_hint">Ixtiyoriy: o‘z klaviaturamiz bilan so‘z yozilayotganda tagiga chizilib turadi va ⌫ bilan qaytariladi.</string>
+    <string name="keyboard_enable">Klaviaturani yoqish</string>
+    <string name="keyboard_select">Klaviaturani tanlash</string>
+    <string name="keyboard_haptic">Tugma bosilganda tebranish</string>
+    <string name="keyboard_status_on">Yoqilgan</string>
+    <string name="keyboard_status_off">Yoqilmagan</string>
+    <string name="keyboard_status_selected">Yoqilgan va tanlangan</string>
+
+    <string name="about_title">Ilova haqida</string>
+    <string name="privacy">Yozgan matningiz hech qayerga yuborilmaydi: ilovada internet ruxsati yo‘q.</string>
+    <string name="version_fmt">Versiya %1$s</string>
+</resources>
